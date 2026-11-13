@@ -288,3 +288,24 @@ html[data-mode="geek"] .article-hero{min-height:calc(72dvh - 64px);background:#0
 html[data-mode="geek"] body.profile-page .site-header,html[data-mode="geek"] body.notes-page .site-header,html[data-mode="geek"] body.article-page .site-header{background:rgba(0,0,0,.94);border-color:#282a29}
 html[data-mode="geek"] body.profile-page .site-footer,html[data-mode="geek"] body.notes-page .site-footer,html[data-mode="geek"] body.article-page .site-footer{background:#000;border-color:#282a29}
 .constellation-bar{background:rgba(0,0,0,.92)}
+
+/* Mobile Geek Mode: scrollable, touch-friendly, and deliberately quieter. */
+@media(max-width:680px){
+  html[data-mode="geek"],html[data-mode="geek"] body{height:auto!important;min-height:100%;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch}
+  html[data-mode="geek"] main{height:auto!important;min-height:100svh;overflow:visible!important}
+  html[data-mode="geek"] .geek-console.constellation{display:block;height:auto!important;min-height:100svh;overflow:visible!important}
+  .constellation-bar{position:sticky;top:0;height:56px;z-index:30;padding:0 .75rem;grid-template-columns:minmax(0,1fr) auto}
+  .constellation-brand{gap:.55rem}.constellation-brand span{width:32px;height:32px;flex:0 0 32px}.constellation-brand b{font-size:.5rem;letter-spacing:.09em}
+  .constellation-bar button{padding:.35rem;font-size:.49rem;white-space:nowrap}
+  .constellation-grid{display:flex;min-height:0}
+  .constellation-intro{min-height:0;padding:2rem 1.1rem 1.6rem}
+  .constellation-intro h2{margin:2rem 0 1rem;font-size:clamp(2.8rem,13.5vw,4rem);line-height:.9}
+  .constellation-intro>p:nth-of-type(2){font-size:.82rem;line-height:1.65}
+  .constellation-signal{margin-top:1.25rem;padding-top:1rem}
+  .constellation-object{min-height:clamp(340px,92vw,430px);overflow:hidden}
+  .constellation-object #digitalLogo{width:min(74vw,330px);touch-action:pan-y;cursor:default}
+  .orbit-a{width:84%}.orbit-b{width:63%}.coordinate{display:none}
+  .object-instruction{left:1rem;bottom:.8rem}.object-instruction b{display:none}
+  .constellation-directions{padding:2.2rem 1.1rem}.constellation-directions>a,.constellation-directions>a:first-of-type{min-height:112px}
+  .constellation-dock>a{min-height:72px;padding:1rem 1.1rem}
+}
