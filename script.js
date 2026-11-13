@@ -31,15 +31,15 @@ const observer = new IntersectionObserver(entries => entries.forEach(entry => {
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 const responses = {
-  help: ['available commands:', '  ls research     list research pillars and application areas', '  cat about.md    read the lab statement', '  whoami          describe this visitor session', '  members         list current contributors', '  clear           clear terminal output', '  normal          return to normal mode'],
-  'ls research': ['research pillars/', '  explainable_ai/', '  computer_vision/', '  embodied_physical_ai/', 'specialization/', '  automated_driving_systems/', 'application areas/', '  medical_ai/', '  defence/'],
-  'cat about.md': ['# Academy of Science', '', 'An independent AI research lab working across XAI, computer vision,', 'and embodied AI systems, with a specialization in Automated Driving Systems.', 'Application interests include medical AI and defence.'],
-  'cat xai.md': ['# Explainable AI (XAI)', 'Inspect model behaviour, evidence, and uncertainty.'],
-  'cat computer-vision.md': ['# Computer Vision', 'Scene understanding and reliable visual perception in context.'],
-  'cat embodied-ai.md': ['# Embodied and Physical AI', 'Systems connecting perception, reasoning, and action in the physical world.'],
-  'cat ads.md': ['# Automated Driving Systems (ADS)', 'Our application specialization: perception, explanation, and reliable action in dynamic environments.'],
-  'cat medical-ai.md': ['# Medical AI', 'Research direction: reliability, interpretability, and human oversight.'],
-  'cat defence-ai.md': ['# Defence AI', 'Research direction: assurance, safety, and accountable use.'],
+  help: ['available commands:', '  ls research     list foundations and shared directions', '  cat about.md    read the lab statement', '  whoami          describe this visitor session', '  members         list current contributors', '  clear           clear terminal output', '  normal          return to normal mode'],
+  'ls research': ['independent research/', '  original_questions/', '  methods_and_systems/', 'specializations/', '  explainable_ai/          # Shankar', '  physical_ai/             # Satwik', 'applied R&D/', '  commissioned_research/', '  prototypes_and_evaluation/'],
+  'cat about.md': ['# Academy of Science', '', 'An independent AI research and development lab.', 'We conduct original research and help organizations investigate,', 'prototype, evaluate, and build intelligent systems.'],
+  'cat xai.md': ['# Explainable AI (XAI) — Shankar', 'Inspect model behaviour, evidence, uncertainty, and failure modes.'],
+  'cat physical-ai.md': ['# Physical AI — Satwik', 'Intelligent agents that learn, reason, and act in the physical world.'],
+  'cat independent.md': ['# Independent Research', 'Questions we choose and pursue to develop new knowledge and technical directions.'],
+  'cat commissioned.md': ['# Commissioned R&D', 'Research-led investigation, prototyping, and evaluation for organizations.'],
+  'cat domains.md': ['# Application Domains', 'Medicine · sports · defence · automated driving · robotics · industry · science', 'These are areas of interest, not boundaries.'],
+  'cat systems.md': ['# Integrated AI Systems', 'Combine reasoning, explanation, evaluation, perception, and physical action when the problem demands it.'],
   whoami: ['guest — curious human, local session, no tracking required'],
   members: ['01  Shankaranarayan N', '02  Satwik Ramsetti']
 };

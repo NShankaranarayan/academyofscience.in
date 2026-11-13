@@ -36,7 +36,7 @@ Typography uses system sans, monospace, and serif stacks to keep the page indepe
 
 - Header with logo, anchor navigation, and persistent mode switch.
 - Editorial hero with animated orbital measurement graphic.
-- Research cards grouped into explainability, visual perception, and embodied intelligence; ADS is highlighted as the lab's application specialization, with medical AI and defence shown as application areas.
+- The page leads with the lab's broad independent AI R&D capability. Research cards establish Shankar's Explainable AI and Satwik's Physical AI as specializations rather than boundaries. Separate work-model and application-domain sections distinguish original research from commissioned R&D and show where the lab can apply its capabilities.
 - Field-note rows, contributor cards, and high-contrast footer.
 - Pixel-rendered logo visualizer, terminal output and prompt with history/completion, telemetry/projects panel, render and palette controls, shortcut chips, and CRT toggle.
 

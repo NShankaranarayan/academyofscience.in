@@ -59,6 +59,27 @@ html[data-mode="geek"] .geek-console.light-palette .visual-stage{background:#101
 @media(max-width:900px){html[data-mode="geek"] .console-main{grid-template-columns:minmax(0,1fr) 270px}}
 @media(max-width:600px){html[data-mode="geek"] body{height:100dvh}html[data-mode="geek"] main{height:calc(100dvh - 56px)}html[data-mode="geek"] .console-top{height:50px;padding:0 .55rem;gap:.3rem}html[data-mode="geek"] .console-brand{font-size:.59rem;letter-spacing:.04em}html[data-mode="geek"] .console-brand span{margin-right:.35rem}html[data-mode="geek"] .console-path{display:none}html[data-mode="geek"] .console-top button{font-size:.57rem;padding:.35rem .3rem}html[data-mode="geek"] .console-main{display:grid;grid-template-columns:1fr;grid-template-rows:minmax(210px,38dvh) minmax(120px,20dvh) minmax(150px,24dvh);overflow-y:auto}html[data-mode="geek"] .visual-column{display:contents}html[data-mode="geek"] .visual-stage{margin:8px 8px 4px;grid-row:1}.visual-caption,.visual-coordinates{font-size:.49rem!important;padding:7px!important}html[data-mode="geek"] #digitalLogo{width:min(84vw,38dvh)}html[data-mode="geek"] .terminal-pane{grid-row:2;margin:4px 8px;padding:8px}.terminal-output{font-size:.61rem!important}html[data-mode="geek"] .system-pane{display:block;grid-row:3;border-left:0;border-top:1px solid #29292b;padding:12px 14px;margin:0 8px}.system-pane h2{margin:.2rem 0 .7rem!important}.system-pane dl{display:grid;grid-template-columns:1fr 1fr;column-gap:1rem}.system-pane .projects-heading{margin-top:1rem!important}.project-list{grid-template-columns:1fr 1fr!important;column-gap:1rem}.project-list button{padding:.5rem 0!important;font-size:.6rem!important}html[data-mode="geek"] .command-chips{height:44px;padding:.45rem .55rem}html[data-mode="geek"] .command-chips button{font-size:.56rem;padding:.35rem .5rem}html[data-mode="geek"] .console-footer{height:28px;padding:0 .6rem;font-size:.55rem}html[data-mode="geek"] .console-footer span:first-child{font-size:.58rem}html[data-mode="geek"] .console-footer span:nth-child(2),html[data-mode="geek"] .console-footer span:last-child{display:none}}
 
+/* The research story has two complementary foundations, not three separate pillars. */
+.research-grid{grid-template-columns:repeat(2,1fr)}
+.research-card:last-child{grid-column:auto}
+@media(max-width:600px){.research-grid{grid-template-columns:1fr}}
+
+/* Engagement models and application domains make the lab's applied R&D offer explicit. */
+.work{background:var(--paper-2);border-bottom:1px solid var(--line)}
+.work-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.work-card{min-height:280px;padding:1.6rem;display:flex;flex-direction:column;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.work-card>span{font:500 .65rem var(--mono);color:var(--red)}
+.work-card h3{font-size:1.3rem;line-height:1.15;margin:auto 0 1rem}
+.work-card p{font-size:.82rem;line-height:1.65;color:var(--muted);margin:0}
+.domains{margin-top:2rem;padding:clamp(1.5rem,3vw,2.5rem);background:var(--ink);color:white;display:grid;grid-template-columns:minmax(220px,.9fr) 1.6fr;gap:1.5rem 3rem;align-items:start}
+.domains .section-kicker{color:var(--red);margin:0 0 .8rem}
+.domains h3{font-size:clamp(1.4rem,2.6vw,2.1rem);line-height:1.15;letter-spacing:-.035em;margin:0}
+.domain-list{display:flex;flex-wrap:wrap;gap:.6rem}
+.domain-list span{border:1px solid rgba(255,255,255,.24);border-radius:999px;padding:.55rem .8rem;font-size:.7rem;color:#ddd}
+.domains>p{grid-column:2;color:#aaa;font-size:.75rem;line-height:1.6;margin:0}
+@media(max-width:1000px){.work-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.work-grid{grid-template-columns:1fr}.work-card{min-height:220px}.domains{grid-template-columns:1fr}.domains>p{grid-column:1}}
+
 /* Research areas: image-led cards with a separate ADS application callout. */
 .research-grid{align-items:stretch}
 .research-card{min-height:0;padding:0;overflow:hidden}
