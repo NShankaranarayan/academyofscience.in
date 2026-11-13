@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f2efe8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self' file:; script-src-attr 'none'; style-src 'self' file:; style-src-attr 'none'; font-src 'self' file:; img-src 'self' file: data:; connect-src 'self'; media-src 'self' file:; manifest-src 'self' file:; worker-src 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self' file:; script-src-attr 'none'; style-src 'self' file:; style-src-attr 'none'; font-src 'self' file:; img-src 'self' file: data:; connect-src 'self'; media-src 'self' file:; manifest-src 'self' file:; worker-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="description" content="Academy of Science is an independent research lab working on explainable AI, computer vision, and embodied AI, with a specialization in Automated Driving Systems.">
   <title>Academy of Science — XAI, Vision &amp; Embodied AI</title>
   <link rel="icon" href="assets/logo.png">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -42,11 +42,15 @@
           <a class="button text" href="#notes">Read field notes <span>→</span></a>
         </div>
       </div>
-      <div class="hero-mark reveal" aria-hidden="true">
+      <div class="hero-mark reveal">
         <div class="orbit orbit-one"></div>
         <div class="orbit orbit-two"></div>
         <div class="pulse"></div>
-        <img src="assets/logo.png" alt="">
+        <div id="heroLogo" class="hero-logo-motion" role="img" tabindex="0" aria-keyshortcuts="Space Enter ArrowLeft ArrowRight" aria-label="Animated Academy of Science logo. Touch a fan blade to pause; drag it around the hub to spin faster.">
+          <canvas id="heroLogoBase" width="1280" height="1280" aria-hidden="true"><img src="assets/logo.png" alt="Academy of Science"></canvas>
+          <canvas id="heroLogoFan" width="1280" height="1280" aria-hidden="true"></canvas>
+        </div>
+        <button class="logo-motion-toggle" id="heroLogoToggle" type="button" aria-controls="heroLogo" aria-pressed="false">Pause emblem</button>
         <span class="datum d1">INFERENCE / 01</span>
         <span class="datum d2">EMBODIMENT / 02</span>
       </div>
@@ -132,6 +136,6 @@
     <p>Researching intelligence,<br>one useful question at a time.</p>
     <div class="footer-meta"><p>Built in public<br>India · 2026</p><a href="#top">Back to top ↑</a></div>
   </footer>
-  <script src="script.js?v=3"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>

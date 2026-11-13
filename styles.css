@@ -7,6 +7,16 @@ html[data-mode="geek"]{background:#0d0d0e;color:#f3f0eb}html[data-mode="geek"] b
 @media(max-width:600px){.site-header{height:72px;padding:0 1rem}.brand span{display:none}.mode-label{font-size:.64rem}.hero{padding:3.5rem 1.1rem}.hero-mark{width:100%;margin-bottom:1rem}.hero-mark img{width:58%}h1{font-size:clamp(3rem,15vw,5rem)}.hero-actions{align-items:flex-start;flex-direction:column}.section-pad{padding:4.5rem 1.1rem}.manifesto-text{font-size:2.25rem}.section-heading{margin-bottom:2.5rem}.research-grid{grid-template-columns:1fr}.research-card:last-child{grid-column:auto}.research-card{min-height:340px}.note-row{grid-template-columns:1fr auto;gap:1.2rem}.note-meta{grid-column:1/-1}.note-row>div:nth-child(2){grid-column:1}.person{grid-template-columns:90px 1fr;gap:1rem}.site-footer{grid-template-columns:1fr;min-height:360px}.footer-meta{text-align:left}.console-top>span,.console-top>div:nth-child(2){display:none}.console-main{grid-template-columns:1fr}.system-pane{display:none}.terminal-pane{padding:1rem}.command-chips{padding:.55rem}.console-footer span:nth-child(2),.console-footer span:last-child{display:none}html[data-mode="geek"] .brand span{display:grid}html[data-mode="geek"] .mode-label{display:none}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 
+/* Keep the source emblem crisp while the two fan blades move independently. */
+.hero-logo-motion{width:55%;aspect-ratio:1;position:relative;z-index:2;border-radius:50%;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.18);touch-action:none;cursor:grab;outline:none}
+.hero-logo-motion:active{cursor:grabbing}
+.hero-logo-motion:focus-visible{outline:2px solid var(--red);outline-offset:5px}
+.hero-logo-motion canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#heroLogoFan{pointer-events:auto}
+.logo-motion-toggle{position:absolute;z-index:4;right:5%;bottom:7%;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--muted);padding:.45rem .7rem;font:500 .55rem var(--mono);text-transform:uppercase;letter-spacing:.06em;cursor:pointer}
+.logo-motion-toggle:hover,.logo-motion-toggle:focus-visible{color:var(--ink);border-color:var(--red)}
+@media(max-width:600px){.hero-logo-motion{width:58%}.logo-motion-toggle{right:2%;bottom:4%;font-size:.5rem}}
+
 .ascii-logo{position:relative;overflow:hidden}.ascii-logo canvas{display:block;width:min(100%,300px);height:auto;max-height:calc(100% - 1.2rem);touch-action:none;cursor:grab;outline:none}.ascii-logo canvas:active{cursor:grabbing}.ascii-logo canvas:focus-visible{outline:1px solid #ff574c;outline-offset:3px}.logo-hint{position:absolute;bottom:.45rem;left:0;right:0;text-align:center;color:#777674;font:400 .52rem var(--mono);letter-spacing:.025em;pointer-events:none}
 
 /* Geek Mode uses the logo as the main pixel-art panel, with telemetry at right. */
