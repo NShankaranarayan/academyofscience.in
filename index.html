@@ -9,7 +9,8 @@
   <meta name="description" content="Academy of Science is an independent AI research and development lab conducting original research and building intelligent systems for organizations.">
   <title>Academy of Science — Independent AI Research &amp; Development</title>
   <link rel="icon" href="assets/logo.png">
-  <link rel="stylesheet" href="styles.css?v=12">
+  <script src="mode-init.js?v=1"></script>
+  <link rel="stylesheet" href="styles.css?v=16">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -122,33 +123,41 @@
       </div>
     </section>
 
-    <section class="geek-console" aria-label="Academy of Science terminal">
-      <div class="console-top"><div class="console-brand"><span><b>$</b> ls</span> ACADEMY OF SCIENCE</div><div class="console-path">~/lab · tty0</div><div class="console-spacer"></div><button id="renderToggle" type="button" aria-label="Change pixel rendering">render <b id="renderMode">pixels</b> ↻</button><button id="crtToggle" type="button" aria-pressed="true">crt:on</button><button id="paletteToggle" type="button" aria-pressed="false">light</button></div>
-      <div class="console-main">
-        <div class="visual-column">
-          <section class="visual-stage" aria-label="Pixel rendered lab emblem">
-            <div class="visual-caption"><span>ACADEMY OF SCIENCE / EMBLEM_01</span><span id="visualState">LIVE PIXEL RENDER</span></div>
-            <canvas id="digitalLogo" width="360" height="360" role="img" tabindex="0" aria-label="Interactive pixel rendering of the Academy of Science logo. Touch the fan blades to stop; drag around the hub to spin them."></canvas>
-            <div class="visual-coordinates"><span>XAI / PHYSICAL AI / EMBODIED SYSTEMS</span><span>DRAG TO SPIN · TAP TO PAUSE</span></div>
-          </section>
-          <div class="terminal-pane">
-            <div id="terminalOutput" class="terminal-output" aria-live="polite">
-              <p><span class="term-red">academy_of_science</span> <span class="dim">independent AI research node</span></p>
-              <p><span class="ok">[ ok ]</span> lab <span class="dim">independent AI research + development</span></p>
-              <p><span class="ok">[ ok ]</span> specializations <span class="dim">XAI · Physical AI</span></p>
-              <p class="term-gap"></p><p>Type <span class="term-red">help</span> or select a command.</p>
-            </div>
-            <label class="terminal-input"><span>guest<b>@</b>aos<b>:~$</b></span><input id="terminalInput" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Enter terminal command"><i aria-hidden="true"></i></label>
-          </div>
-        </div>
-        <aside class="system-pane">
-          <h2>lab.telemetry</h2><dl><div><dt>type</dt><dd>independent AI R&amp;D</dd></div><div><dt>specialties</dt><dd>XAI · Physical AI</dd></div><div><dt>render</dt><dd id="sideRender">pixels</dd></div><div><dt>spin</dt><dd id="spinValue">+00.0°</dd></div><div><dt>members</dt><dd>02</dd></div><div><dt>mode</dt><dd class="term-red">active</dd></div></dl>
-          <h2 class="projects-heading">~/research</h2>
-          <div class="project-list"><button data-command="cat xai.md"><span>Explainable AI</span><small>specialization</small></button><button data-command="cat physical-ai.md"><span>Physical AI</span><small>specialization</small></button><button data-command="cat independent.md"><span>Independent Research</span><small>research</small></button><button data-command="cat commissioned.md"><span>Commissioned R&amp;D</span><small>collaborate</small></button><button data-command="cat domains.md"><span>Application Domains</span><small>explore</small></button><button data-command="cat systems.md"><span>Integrated AI</span><small>capability</small></button></div>
+    <section class="geek-console constellation" aria-label="Academy of Science research constellation">
+      <header class="constellation-bar">
+        <a href="#top" class="constellation-brand"><span>A/S</span><b>Academy of Science</b></a>
+        <p>Independent AI research<br>India · 2026</p>
+        <button id="geekExit" type="button">Return to normal <span>↗</span></button>
+      </header>
+      <div class="constellation-grid">
+        <section class="constellation-intro">
+          <p class="constellation-index">00 / THE LAB</p>
+          <h2>Intelligence,<br><em>made legible.</em></h2>
+          <p>We explore ambitious AI questions and turn them into systems that can explain, learn and act in the real world.</p>
+          <div class="constellation-signal"><i></i><span>Two researchers<br>One shared laboratory</span></div>
+        </section>
+
+        <section class="constellation-object" aria-label="Interactive dot-rendered lab emblem">
+          <div class="object-orbit orbit-a" aria-hidden="true"></div><div class="object-orbit orbit-b" aria-hidden="true"></div>
+          <span class="coordinate coordinate-x">X · 19.0760</span><span class="coordinate coordinate-y">Y · 72.8777</span>
+          <canvas id="digitalLogo" width="360" height="360" role="img" tabindex="0" aria-label="Animated dot rendering of the Academy of Science logo. Drag the fan blades to change their motion; clicking does nothing."></canvas>
+          <div class="object-instruction"><span id="visualState">LIVE DOT RENDER</span><b>Drag the blades to redirect</b></div>
+        </section>
+
+        <aside class="constellation-directions" aria-label="Research directions">
+          <p class="constellation-index">01 / COORDINATES</p>
+          <a href="#capabilities"><span>General AI capacity</span><b>Research without artificial boundaries.</b><i>01</i></a>
+          <a href="shankaranarayan.html"><span>Explainable AI</span><b>Understand evidence, uncertainty and failure.</b><i>02</i></a>
+          <a href="satwik.html"><span>Physical AI</span><b>Intelligence that learns and acts in the world.</b><i>03</i></a>
         </aside>
+
+        <nav class="constellation-dock" aria-label="Geek mode navigation">
+          <a href="#work"><small>Collaborate</small><b>Build with us</b><span>↗</span></a>
+          <a href="notes.html"><small>Read</small><b>Field notes</b><span>↗</span></a>
+          <a href="#people"><small>Meet</small><b>The researchers</b><span>↗</span></a>
+          <p><span>MODE / GEEK</span><b>DOT_01</b></p>
+        </nav>
       </div>
-      <div class="command-chips" aria-label="Terminal shortcuts"><button data-command="help">› help</button><button data-command="ls research">› ls research</button><button data-command="cat about.md">› cat about.md</button><button data-command="whoami">› whoami</button><button data-command="members">› members</button><button data-command="clear">› clear</button><button data-command="normal">› normal</button></div>
-      <footer class="console-footer"><span>academy_of_science</span><span>markdown powered · github hosted</span><span class="console-spacer"></span><span>tab = complete · ↑ = history</span></footer>
     </section>
   </main>
 
@@ -157,6 +166,6 @@
     <p>Research intelligence.<br>Build what matters.</p>
     <div class="footer-meta"><p>Built in public<br>India · 2026</p><a href="#top">Back to top ↑</a></div>
   </footer>
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=9"></script>
 </body>
 </html>

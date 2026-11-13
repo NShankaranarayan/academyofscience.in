@@ -1,18 +1,12 @@
 const root = document.documentElement;
 const modeSwitch = document.querySelector('#modeSwitch');
 const themeMeta = document.querySelector('meta[name="theme-color"]');
-const terminalInput = document.querySelector('#terminalInput');
-const terminalOutput = document.querySelector('#terminalOutput');
-const geekConsole = document.querySelector('.geek-console');
-const history = [];
-let historyIndex = 0;
 
-function setMode(mode, focus = false) {
+function setMode(mode) {
   root.dataset.mode = mode;
   modeSwitch.setAttribute('aria-pressed', String(mode === 'geek'));
   themeMeta.content = mode === 'geek' ? '#0d0d0e' : '#f2efe8';
   try { localStorage.setItem('aos-mode', mode); } catch {}
-  if (mode === 'geek' && focus) setTimeout(() => terminalInput.focus(), 150);
 }
 
 let savedMode = 'normal';
@@ -20,62 +14,16 @@ try { savedMode = localStorage.getItem('aos-mode') === 'geek' ? 'geek' : 'normal
 setMode(savedMode);
 modeSwitch.addEventListener('click', () => {
   const mode = root.dataset.mode === 'geek' ? 'normal' : 'geek';
-  setMode(mode, true);
-  if (mode === 'geek') startRotor();
-  else { logoState.paused = true; logoState.speed = 0; drawLogo(); startHeroMotion(); }
+  setMode(mode);
+  if (mode === 'geek') startLogoMotion();
+  else { logoState.paused = true; drawLogo(); startHeroMotion(); }
 });
+document.querySelector('#geekExit').addEventListener('click', () => setMode('normal'));
 
 const observer = new IntersectionObserver(entries => entries.forEach(entry => {
   if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
 }), { threshold: .12 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-const responses = {
-  help: ['available commands:', '  ls research     list foundations and shared directions', '  cat about.md    read the lab statement', '  whoami          describe this visitor session', '  members         list current contributors', '  clear           clear terminal output', '  normal          return to normal mode'],
-  'ls research': ['independent research/', '  original_questions/', '  methods_and_systems/', 'specializations/', '  explainable_ai/          # Shankar', '  physical_ai/             # Satwik', 'applied R&D/', '  commissioned_research/', '  prototypes_and_evaluation/'],
-  'cat about.md': ['# Academy of Science', '', 'An independent AI research and development lab.', 'We conduct original research and help organizations investigate,', 'prototype, evaluate, and build intelligent systems.'],
-  'cat xai.md': ['# Explainable AI (XAI) — Shankar', 'Inspect model behaviour, evidence, uncertainty, and failure modes.'],
-  'cat physical-ai.md': ['# Physical AI — Satwik', 'Intelligent agents that learn, reason, and act in the physical world.'],
-  'cat independent.md': ['# Independent Research', 'Questions we choose and pursue to develop new knowledge and technical directions.'],
-  'cat commissioned.md': ['# Commissioned R&D', 'Research-led investigation, prototyping, and evaluation for organizations.'],
-  'cat domains.md': ['# Application Domains', 'Medicine · sports · defence · automated driving · robotics · industry · science', 'These are areas of interest, not boundaries.'],
-  'cat systems.md': ['# Integrated AI Systems', 'Combine reasoning, explanation, evaluation, perception, and physical action when the problem demands it.'],
-  whoami: ['guest — curious human, local session, no tracking required'],
-  members: ['01  Shankaranarayan N', '02  Satwik Ramsetti']
-};
-
-function printCommand(command) {
-  const clean = command.trim().toLowerCase();
-  if (!clean) return;
-  if (clean === 'clear') { terminalOutput.replaceChildren(); return; }
-  if (clean === 'normal') { setMode('normal'); return; }
-  const block = document.createElement('div');
-  const prompt = document.createElement('p');
-  const promptLabel = document.createElement('span');
-  promptLabel.className = 'dim';
-  promptLabel.textContent = 'guest@aos:~$ ';
-  prompt.append(promptLabel, document.createTextNode(command));
-  block.append(prompt);
-  const lines = responses[clean] || [`command not found: ${clean}`, 'type “help” for available commands'];
-  lines.forEach(line => { const p = document.createElement('p'); p.textContent = line; if (line === 'available commands:') p.className = 'term-red'; block.append(p); });
-  terminalOutput.append(block);
-  terminalOutput.scrollTop = terminalOutput.scrollHeight;
-}
-
-terminalInput.addEventListener('keydown', event => {
-  if (event.key === 'Enter') { const value = terminalInput.value; if (value.trim()) { history.push(value); historyIndex = history.length; } printCommand(value); terminalInput.value = ''; }
-  if (event.key === 'ArrowUp') { event.preventDefault(); historyIndex = Math.max(0, historyIndex - 1); terminalInput.value = history[historyIndex] || ''; }
-  if (event.key === 'ArrowDown') { event.preventDefault(); historyIndex = Math.min(history.length, historyIndex + 1); terminalInput.value = history[historyIndex] || ''; }
-  if (event.key === 'Tab') { event.preventDefault(); const match = Object.keys(responses).find(key => key.startsWith(terminalInput.value.toLowerCase())); if (match) terminalInput.value = match; }
-});
-
-document.querySelectorAll('[data-command]').forEach(button => button.addEventListener('click', () => { printCommand(button.dataset.command); terminalInput.focus(); }));
-document.querySelector('#crtToggle').addEventListener('click', event => {
-  geekConsole.classList.toggle('crt-off');
-  const active = !geekConsole.classList.contains('crt-off');
-  event.currentTarget.textContent = `crt:${active ? 'on' : 'off'}`;
-  event.currentTarget.setAttribute('aria-pressed', String(active));
-});
 
 // Reduce the supplied logo to a clean 90×90 pixel atlas, then enlarge without smoothing.
 const logoCanvas = document.querySelector('#digitalLogo');
@@ -104,9 +52,8 @@ const pixelArt = document.createElement('canvas');
 pixelArt.width = pixelArt.height = 90;
 const pixelContext = pixelArt.getContext('2d', { willReadFrequently: true });
 const bladeCanvases = [];
-const logoState = { angle: 0, speed: .01, paused: false, dragging: false, lastPointerAngle: 0, moved: false, render: 0, palette: false };
-let rotorAnimating = false;
-const renderModes = ['pixels', 'dots'];
+const logoState = { angle: 0, speed: .012, paused: reducedMotion.matches, dragging: false, lastPointerAngle: 0, moved: false };
+let logoFrame = 0;
 const fan = { centerX: .5, centerY: .36, leftStart: .155, bladeWidth: .285, rightStart: .56, top: .295, height: .078 };
 
 function traceHeroBlades(context) {
@@ -309,48 +256,33 @@ function drawLogo() {
   const h = logoCanvas.height;
   logoContext.clearRect(0, 0, w, h);
   logoContext.save();
-  if (logoState.palette) logoContext.filter = 'sepia(1) saturate(2.5) hue-rotate(75deg) brightness(1.12)';
-  if (logoState.render === 0) {
-    logoContext.imageSmoothingEnabled = false;
-    logoContext.drawImage(pixelArt, 0, 0, w, h);
-  } else {
-    const pixels = pixelContext.getImageData(0, 0, size, size).data;
-    const cellW = w / size;
-    const cellH = h / size;
-    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
-      const i = (y * size + x) * 4;
-      if (pixels[i] + pixels[i + 1] + pixels[i + 2] < 100) continue;
-      logoContext.fillStyle = `rgb(${pixels[i]},${pixels[i + 1]},${pixels[i + 2]})`;
-      logoContext.beginPath();
-      logoContext.arc((x + .5) * cellW, (y + .5) * cellH, Math.min(cellW, cellH) * .34, 0, Math.PI * 2);
-      logoContext.fill();
-    }
+  const pixels = pixelContext.getImageData(0, 0, size, size).data;
+  const cellW = w / size;
+  const cellH = h / size;
+  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+    const i = (y * size + x) * 4;
+    if (pixels[i] + pixels[i + 1] + pixels[i + 2] < 100) continue;
+    logoContext.fillStyle = `rgb(${pixels[i]},${pixels[i + 1]},${pixels[i + 2]})`;
+    logoContext.beginPath();
+    logoContext.arc((x + .5) * cellW, (y + .5) * cellH, Math.min(cellW, cellH) * .34, 0, Math.PI * 2);
+    logoContext.fill();
   }
   logoContext.restore();
-  document.querySelector('#renderMode').textContent = renderModes[logoState.render];
-  document.querySelector('#sideRender').textContent = renderModes[logoState.render];
-  document.querySelector('#spinValue').textContent = `${logoState.speed < 0 ? '−' : '+'}${Math.abs(logoState.angle % (Math.PI * 2) * 180 / Math.PI).toFixed(1).padStart(4, '0')}°`;
-  document.querySelector('#visualState').textContent = `${logoState.paused ? 'PAUSED' : 'LIVE'} ${renderModes[logoState.render].toUpperCase()} RENDER`;
-  logoCanvas.setAttribute('aria-label', `Interactive ${renderModes[logoState.render]} rendering of the Academy of Science logo. Fan ${logoState.paused ? 'paused' : 'spinning'}. Touch a blade to stop; drag around the hub to spin it. Arrow keys spin; Space pauses.`);
+  document.querySelector('#visualState').textContent = `${logoState.paused ? 'PAUSED' : 'LIVE'} DOT RENDER`;
+  logoCanvas.setAttribute('aria-label', `Animated dot rendering of the Academy of Science logo. The blades are ${logoState.paused ? 'paused' : 'spinning'}; drag them to change their motion. Clicking does nothing.`);
 }
 
-function animateRotor() {
-  if (root.dataset.mode !== 'geek' || logoState.paused || Math.abs(logoState.speed) < .001) {
-    logoState.speed = 0;
-    logoState.paused = true;
-    rotorAnimating = false;
-    drawLogo();
-    return;
-  }
+function animateLogo() {
+  if (root.dataset.mode !== 'geek' || logoState.paused || logoState.dragging) { logoFrame = 0; drawLogo(); return; }
   logoState.angle += logoState.speed;
-  logoState.speed *= .997;
   drawLogo();
-  requestAnimationFrame(animateRotor);
+  logoFrame = requestAnimationFrame(animateLogo);
 }
 
-function startRotor() {
+function startLogoMotion() {
+  if (reducedMotion.matches) { logoState.paused = true; drawLogo(); return; }
   logoState.paused = false;
-  if (!rotorAnimating) { rotorAnimating = true; requestAnimationFrame(animateRotor); }
+  if (!logoFrame) logoFrame = requestAnimationFrame(animateLogo);
 }
 
 logoImage.addEventListener('load', () => {
@@ -379,8 +311,8 @@ logoImage.addEventListener('load', () => {
     cropContext.putImageData(pixels, 0, 0);
     bladeCanvases.push({ canvas: crop, destinationX });
   });
-  if (root.dataset.mode === 'geek') startRotor();
-  else { logoState.paused = true; logoState.speed = 0; drawLogo(); }
+  if (root.dataset.mode === 'geek') startLogoMotion();
+  else drawLogo();
 });
 logoImage.src = 'assets/logo.png';
 
@@ -398,10 +330,7 @@ logoCanvas.addEventListener('pointerdown', event => {
   logoState.dragging = onBlade;
   if (onBlade) {
     logoState.paused = true;
-    logoState.speed = 0;
     logoState.lastPointerAngle = Math.atan2(y - logoCanvas.height * fan.centerY, x - logoCanvas.width * fan.centerX);
-  } else {
-    logoState.render = (logoState.render + 1) % renderModes.length;
   }
   drawLogo();
   logoCanvas.setPointerCapture(event.pointerId);
@@ -416,7 +345,7 @@ logoCanvas.addEventListener('pointermove', event => {
   if (delta > Math.PI) delta -= Math.PI * 2;
   if (delta < -Math.PI) delta += Math.PI * 2;
   logoState.angle += delta;
-  logoState.speed = Math.max(-.35, Math.min(.35, delta * 4));
+  logoState.speed = Math.max(-.08, Math.min(.08, delta * 1.8));
   logoState.lastPointerAngle = angle;
   logoState.moved ||= Math.abs(delta) > .012;
   drawLogo();
@@ -424,25 +353,15 @@ logoCanvas.addEventListener('pointermove', event => {
 logoCanvas.addEventListener('pointerup', () => {
   if (!logoState.dragging) return;
   logoState.dragging = false;
-  if (logoState.moved) startRotor();
-  drawLogo();
+  if (!logoState.moved) logoState.speed ||= .012;
+  startLogoMotion();
 });
-logoCanvas.addEventListener('pointercancel', () => { logoState.dragging = false; drawLogo(); });
+logoCanvas.addEventListener('pointercancel', () => { logoState.dragging = false; startLogoMotion(); });
 logoCanvas.addEventListener('keydown', event => {
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
-    logoState.speed = event.key === 'ArrowLeft' ? -.08 : .08;
-    startRotor();
+    logoState.speed = event.key === 'ArrowLeft' ? -.018 : .018;
+    startLogoMotion();
   }
-  if (event.key === ' ') { event.preventDefault(); logoState.paused = true; logoState.speed = 0; drawLogo(); }
-  if (event.key === 'Enter') { event.preventDefault(); logoState.render = (logoState.render + 1) % renderModes.length; drawLogo(); }
-});
-
-document.querySelector('#renderToggle').addEventListener('click', () => { logoState.render = (logoState.render + 1) % renderModes.length; drawLogo(); });
-document.querySelector('#paletteToggle').addEventListener('click', event => {
-  logoState.palette = !logoState.palette;
-  geekConsole.classList.toggle('light-palette', logoState.palette);
-  event.currentTarget.textContent = logoState.palette ? 'red' : 'light';
-  event.currentTarget.setAttribute('aria-pressed', String(logoState.palette));
-  drawLogo();
+  if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); }
 });
