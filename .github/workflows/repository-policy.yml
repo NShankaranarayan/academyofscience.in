@@ -1,0 +1,61 @@
+name: Repository policy
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  policy:
+    name: Branch and commit conventions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check branch name
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          if [[ ! "$BRANCH_NAME" =~ ^(chore|feat|fix)/.+$ ]]; then
+            echo "Branch '$BRANCH_NAME' must start with chore/, feat/, or fix/."
+            exit 1
+          fi
+
+      - name: Check pull request title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if [[ ! "$PR_TITLE" =~ ^(chore|feat|fix):[[:space:]].+ ]]; then
+            echo "Pull request title must start with 'chore: ', 'feat: ', or 'fix: '."
+            exit 1
+          fi
+
+      - name: Check commit subjects
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          mapfile -t subjects < <(git log --format=%s "$BASE_SHA..$HEAD_SHA")
+
+          if (( ${#subjects[@]} == 0 )); then
+            echo "No pull request commits were found to check."
+            exit 1
+          fi
+
+          invalid=0
+          for subject in "${subjects[@]}"; do
+            if [[ ! "$subject" =~ ^(chore|feat|fix):[[:space:]].+ ]]; then
+              echo "Invalid commit subject: $subject"
+              echo "Use 'chore: ', 'feat: ', or 'fix: '."
+              invalid=1
+            fi
+          done
+
+          exit "$invalid"
