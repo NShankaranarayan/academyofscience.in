@@ -280,3 +280,11 @@ html[data-mode="geek"] .article-hero{min-height:calc(72dvh - 64px);background:#0
   .profile-intro h1{font-size:clamp(2.7rem,15vw,4rem)}
   .page-mode-toggle{padding-inline:.25rem;font-size:.52rem}
 }
+
+/* Unified site chrome: the logo's black canvas dissolves into headers and footers. */
+.site-header,.site-footer{background:#000;color:#f4f1eb}
+.brand img,.site-footer img{display:block;border-radius:0!important;background:#000;box-shadow:none!important;filter:none;mix-blend-mode:normal}
+.site-footer{border-top:1px solid #202221}
+html[data-mode="geek"] body.profile-page .site-header,html[data-mode="geek"] body.notes-page .site-header,html[data-mode="geek"] body.article-page .site-header{background:rgba(0,0,0,.94);border-color:#282a29}
+html[data-mode="geek"] body.profile-page .site-footer,html[data-mode="geek"] body.notes-page .site-footer,html[data-mode="geek"] body.article-page .site-footer{background:#000;border-color:#282a29}
+.constellation-bar{background:rgba(0,0,0,.92)}
