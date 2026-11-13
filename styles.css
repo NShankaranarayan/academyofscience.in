@@ -289,6 +289,13 @@ html[data-mode="geek"] body.profile-page .site-header,html[data-mode="geek"] bod
 html[data-mode="geek"] body.profile-page .site-footer,html[data-mode="geek"] body.notes-page .site-footer,html[data-mode="geek"] body.article-page .site-footer{background:#000;border-color:#282a29}
 .constellation-bar{background:rgba(0,0,0,.92)}
 
+/* Shared editorial hero language across Normal and Geek modes. */
+html[data-mode="normal"] .hero{background-image:linear-gradient(rgba(23,23,22,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(23,23,22,.035) 1px,transparent 1px);background-size:42px 42px}
+.hero-title{display:flex;flex-direction:column;max-width:850px;font-size:clamp(3.8rem,7.1vw,8rem);line-height:.78;letter-spacing:-.075em;margin:2.2rem 0 2rem}
+.hero-title span{display:block}.hero-title em{display:block;color:#77766f;font-family:var(--serif);font-size:.9em;font-weight:400;letter-spacing:-.055em;white-space:nowrap}
+@media(max-width:900px){html[data-mode="normal"] .hero-copy{grid-row:1}html[data-mode="normal"] .hero-mark{grid-row:2;margin-top:2rem}.hero-title{font-size:clamp(4rem,11vw,6.4rem)}}
+@media(max-width:600px){.hero-title{font-size:clamp(3rem,14.4vw,4.5rem);line-height:.82;margin:1.8rem 0 1.5rem}.hero-title em{white-space:normal}.hero .lede{font-size:.9rem;line-height:1.7}.hero .eyebrow{font-size:.57rem;line-height:1.5;align-items:flex-start}.hero .eyebrow span{white-space:nowrap}}
+
 /* Mobile Geek Mode: scrollable, touch-friendly, and deliberately quieter. */
 @media(max-width:680px){
   html[data-mode="geek"],html[data-mode="geek"] body{height:auto!important;min-height:100%;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch}
@@ -308,4 +315,5 @@ html[data-mode="geek"] body.profile-page .site-footer,html[data-mode="geek"] bod
   .object-instruction{left:1rem;bottom:.8rem}.object-instruction b{display:none}
   .constellation-directions{padding:2.2rem 1.1rem}.constellation-directions>a,.constellation-directions>a:first-of-type{min-height:112px}
   .constellation-dock>a{min-height:72px;padding:1rem 1.1rem}
+  .hero-logo-motion,.hero-logo-motion canvas{touch-action:pan-y}
 }

@@ -44,15 +44,14 @@ const heroFan = {
     [[703, 406], [764, 377], [1007, 385], [1053, 409], [781, 462], [718, 450]]
   ]
 };
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const heroMotion = { angle: 0, speed: 0.2, paused: reducedMotion.matches, dragging: false, moved: false, lastPointerAngle: 0, lastPointerTime: 0 };
+const heroMotion = { angle: 0, speed: 0.2, paused: false, dragging: false, moved: false, lastPointerAngle: 0, lastPointerTime: 0 };
 let heroFrame = 0;
 let heroLastFrameTime = 0;
 const pixelArt = document.createElement('canvas');
 pixelArt.width = pixelArt.height = 90;
 const pixelContext = pixelArt.getContext('2d', { willReadFrequently: true });
 const bladeCanvases = [];
-const logoState = { angle: 0, speed: .012, paused: reducedMotion.matches, dragging: false, lastPointerAngle: 0, moved: false };
+const logoState = { angle: 0, speed: .012, paused: false, dragging: false, lastPointerAngle: 0, moved: false };
 let logoFrame = 0;
 const fan = { centerX: .5, centerY: .36, leftStart: .155, bladeWidth: .285, rightStart: .56, top: .295, height: .078 };
 
@@ -116,7 +115,7 @@ function drawHeroLogo() {
   const paused = String(heroMotion.paused);
   if (heroContainer.dataset.paused !== paused) {
     heroContainer.dataset.paused = paused;
-    heroContainer.setAttribute('aria-label', `Animated Academy of Science logo. Fans ${heroMotion.paused ? 'paused' : 'spinning'}. Touch a blade to pause; drag around the hub to spin faster. Use Space to pause or resume.`);
+    heroContainer.setAttribute('aria-label', `Animated Academy of Science logo. Fans ${heroMotion.paused ? 'paused' : 'spinning'}. Drag around the hub to redirect them. Use the adjacent control or Space to pause or resume.`);
     heroToggle.textContent = heroMotion.paused ? 'Start emblem' : 'Pause emblem';
     heroToggle.setAttribute('aria-pressed', String(!heroMotion.paused));
   }
@@ -162,7 +161,6 @@ function pointerOnHeroBlade(event) {
 
 heroCanvas.addEventListener('pointerdown', event => {
   if (!pointerOnHeroBlade(event)) return;
-  event.preventDefault();
   heroMotion.paused = true;
   heroMotion.speed = 0;
   heroMotion.dragging = true;
@@ -197,15 +195,18 @@ heroCanvas.addEventListener('pointermove', event => {
 heroCanvas.addEventListener('pointerup', () => {
   if (!heroMotion.dragging) return;
   heroMotion.dragging = false;
-  if (heroMotion.moved) {
-    heroMotion.paused = false;
-    heroLastFrameTime = 0;
-    startHeroMotion();
-  }
+  if (!heroMotion.moved || Math.abs(heroMotion.speed) < .02) heroMotion.speed = .2;
+  heroMotion.paused = false;
+  heroLastFrameTime = 0;
+  startHeroMotion();
   drawHeroLogo();
 });
 heroCanvas.addEventListener('pointercancel', () => {
   heroMotion.dragging = false;
+  if (Math.abs(heroMotion.speed) < .02) heroMotion.speed = .2;
+  heroMotion.paused = false;
+  heroLastFrameTime = 0;
+  startHeroMotion();
   drawHeroLogo();
 });
 
@@ -280,7 +281,6 @@ function animateLogo() {
 }
 
 function startLogoMotion() {
-  if (reducedMotion.matches) { logoState.paused = true; drawLogo(); return; }
   logoState.paused = false;
   if (!logoFrame) logoFrame = requestAnimationFrame(animateLogo);
 }
