@@ -1,9 +1,12 @@
 ---
 title: XAI for Dummies
+slug: xai-for-dummies
 date: 2026-11-13
 category: Knowledge Blog
 status: published
 readTime: 7 min read
+number: 001
+home: true
 excerpt: A plain-language guide to what Explainable AI is, what an explanation can reveal, and where explanations can mislead us.
 ---
 

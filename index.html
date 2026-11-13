@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f2efe8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self' file:; script-src-attr 'none'; style-src 'self' file:; style-src-attr 'none'; font-src 'self' file:; img-src 'self' file: data:; connect-src 'self'; media-src 'self' file:; manifest-src 'self' file:; worker-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self'; script-src-attr 'none'; style-src 'self'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self'; media-src 'self'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="description" content="Academy of Science is an independent AI research and development lab conducting original research and building intelligent systems for organizations.">
   <title>Academy of Science — Independent AI Research &amp; Development</title>
   <link rel="icon" href="assets/logo.png">
-  <link rel="stylesheet" href="styles.css?v=11">
+  <link rel="stylesheet" href="styles.css?v=12">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -18,7 +18,7 @@
   <header class="site-header">
     <a class="brand" href="#top" aria-label="Academy of Science, home">
       <img src="assets/logo.png" alt="" width="46" height="46">
-      <span><b>Academy of Science</b><small>AI &amp; Physical AI research</small></span>
+      <span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span>
     </a>
     <nav aria-label="Primary navigation">
       <a href="#capabilities">Capabilities</a>
@@ -102,10 +102,12 @@
         <div><p class="section-kicker">Field notes</p><h2>Ideas in progress.<br>Knowledge in public.</h2></div>
         <p>Working research premises alongside clear, useful guides to the ideas behind our work.</p>
       </div>
+      <!-- FIELD_NOTES:START -->
       <div class="home-note-grid">
-        <a class="home-note reveal" href="note.html?note=why-explainability-matters"><span>Ideas in Progress / 001</span><div><h3>Why explainability matters when AI acts</h3><p>A working premise for interpretable decisions, accountable systems, and AI that operates in the physical world.</p></div><b>↗</b></a>
-        <a class="home-note reveal knowledge" href="note.html?note=xai-for-dummies"><span>Knowledge Blog / 001</span><div><h3>XAI for Dummies</h3><p>A plain-language guide to Explainable AI, what an explanation can reveal, and where explanations can mislead us.</p></div><b>↗</b></a>
+        <a class="home-note reveal" href="notes/why-explainability-matters.html"><span>Ideas in Progress / 001</span><div><h3>Why explainability matters when AI acts</h3><p>A working premise for interpretable decisions, accountable systems, and AI that acts in the physical world.</p></div><b aria-hidden="true">↗</b></a>
+        <a class="home-note reveal knowledge" href="notes/xai-for-dummies.html"><span>Knowledge Blog / 001</span><div><h3>XAI for Dummies</h3><p>A plain-language guide to what Explainable AI is, what an explanation can reveal, and where explanations can mislead us.</p></div><b aria-hidden="true">↗</b></a>
       </div>
+      <!-- FIELD_NOTES:END -->
       <a class="notes-all-link" href="notes.html">Browse all field notes <span>→</span></a>
     </section>
 
@@ -151,8 +153,8 @@
   </main>
 
   <footer class="site-footer">
-    <div><img src="assets/logo.png" alt="" width="48" height="48"><p><b>Academy of Science</b><br>AI &amp; Physical AI research</p></div>
-    <p>Researching intelligence,<br>one useful question at a time.</p>
+    <div><img src="assets/logo.png" alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div>
+    <p>Research intelligence.<br>Build what matters.</p>
     <div class="footer-meta"><p>Built in public<br>India · 2026</p><a href="#top">Back to top ↑</a></div>
   </footer>
   <script src="script.js?v=5"></script>
