@@ -1,28 +1,144 @@
 # Academy of Science
 
-Static, database-free website for Academy of Science, designed for GitHub Pages. The configured domain is [academyofscience.in](https://academyofscience.in).
+Static website for [academyofscience.in](https://academyofscience.in), an independent AI research and development lab. The site is designed for GitHub Pages and has no runtime framework, package manager, database, or third-party JavaScript dependency.
 
-## Local preview
+The homepage and profile pages are hand-authored HTML. Field Notes are authored in Markdown and converted into complete static HTML by a dependency-free Python build script.
 
-Run a static server from the repository root:
+## Requirements
+
+- Python 3.9 or newer
+- A local HTTP server for previewing the site
+
+No Python packages need to be installed.
+
+## Quick start
+
+From the repository root:
 
 ```bash
+python3 scripts/build_site.py
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000`.
+Open [http://localhost:8000](http://localhost:8000).
 
-## Content
+Always run the build before committing changes to Field Notes. The generated HTML is committed because GitHub Pages serves the repository directly without running a build step.
 
-Long-form source content lives in `content/` as Markdown. The current landing page is a buildless HTML/CSS/JavaScript implementation with two presentations:
+## Repository structure
 
-- Normal Mode: editorial research-lab site
-- Geek Mode: interactive terminal interface
+```text
+.
+├── index.html                 # Main landing page; note previews are generated
+├── notes.html                 # Generated Field Notes library
+├── shankaranarayan.html       # Researcher profile
+├── satwik.html                # Researcher profile
+├── styles.css                 # Shared site and article design system
+├── script.js                  # Homepage Normal/Geek mode interactions
+├── CNAME                      # GitHub Pages custom domain
+│
+├── assets/
+│   ├── logo.png
+│   ├── profiles/              # Profile project illustration atlases
+│   └── research/              # Homepage research illustrations
+│
+├── content/
+│   ├── about.md               # Durable source copy about the lab
+│   └── notes/                 # Authoritative Markdown Field Notes
+│
+├── templates/
+│   ├── note.html              # Static article template
+│   └── notes.html             # Field Notes library template
+│
+├── scripts/
+│   └── build_site.py          # Markdown renderer and static-site generator
+│
+└── notes/                     # Generated, publishable article HTML
+```
 
-The selected mode is stored only in the visitor's browser.
+`content/`, `templates/`, and `scripts/` are source. The root `notes.html`, the homepage note-card block, and `notes/*.html` are generated output.
 
-## GitHub Pages and domain
+## Writing a Field Note
 
-The root `CNAME` points GitHub Pages to `academyofscience.in`. In the repository settings, enable Pages from the main branch/root, then configure the domain registrar with GitHub's required DNS records. Enable **Enforce HTTPS** after DNS verification succeeds.
+Create a Markdown file under `content/notes/` with this front matter:
 
-See [SECURITY.md](SECURITY.md) for the static site's security policy and the GitHub account/domain settings to enable.
+```yaml
+---
+title: Example note title
+slug: example-note-title
+date: 2026-11-13
+category: Knowledge Blog
+status: published
+readTime: 5 min read
+number: 002
+home: true
+excerpt: One concise sentence used in cards and search metadata.
+---
+```
+
+Then write the article in Markdown below the front matter and run:
+
+```bash
+python3 scripts/build_site.py
+```
+
+### Metadata fields
+
+| Field | Purpose |
+|---|---|
+| `title` | Article title and social-preview title |
+| `slug` | Output filename under `notes/` |
+| `date` | Publication date in ISO `YYYY-MM-DD` form |
+| `category` | `Ideas in Progress` or `Knowledge Blog` |
+| `status` | Only `published` notes are built |
+| `readTime` | Reader-facing estimate such as `5 min read` |
+| `number` | Sequence number within the category |
+| `home` | Set to `true` to include the note on the homepage |
+| `excerpt` | Library card, article introduction, and meta description |
+
+The generator supports headings, paragraphs, emphasis, inline code, safe Markdown links, unordered and ordered lists, blockquotes, horizontal rules, and fenced code blocks. Raw HTML is escaped rather than executed.
+
+## Generated output policy
+
+Do not manually edit:
+
+- `notes.html`
+- `notes/*.html`
+- content between `<!-- FIELD_NOTES:START -->` and `<!-- FIELD_NOTES:END -->` in `index.html`
+
+Those files are deterministically rebuilt from Markdown and templates. Edit the corresponding source and run the build instead.
+
+## Validation
+
+Run the build twice when changing the generator or templates; the second run should produce no Git diff.
+
+Useful checks:
+
+```bash
+python3 scripts/build_site.py
+git diff --check
+git status --short
+```
+
+Preview these representative routes:
+
+- `/`
+- `/notes.html`
+- `/notes/xai-for-dummies.html`
+- `/shankaranarayan.html`
+- `/satwik.html`
+
+## Content and design
+
+- Normal Mode is an editorial research-lab presentation.
+- Geek Mode is an interactive terminal-style presentation available on the homepage.
+- The site uses system fonts and local assets only.
+- Styles and scripts are governed by restrictive per-page Content Security Policies.
+- Article HTML is pre-rendered for accessibility, search indexing, link previews, and operation without JavaScript.
+
+See [DESIGN.md](DESIGN.md) for the visual system and [SECURITY.md](SECURITY.md) for hosting and account guidance.
+
+## GitHub Pages deployment
+
+The root `CNAME` points to `academyofscience.in`. Configure GitHub Pages to publish from the intended branch and repository root. Enable **Enforce HTTPS** after DNS and certificate verification.
+
+Because generated HTML is committed, deployment requires no server-side or CI build process. A future CI workflow can run `python3 scripts/build_site.py` and fail when generated files are stale.
