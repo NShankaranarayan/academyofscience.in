@@ -1,7 +1,10 @@
 ---
 title: Why explainability matters when AI acts
 date: 2026-11-13
-status: draft
+category: Ideas in Progress
+status: published
+readTime: 2 min read
+excerpt: A working premise for interpretable decisions, accountable systems, and AI that acts in the physical world.
 ---
 
 # Why explainability matters when AI acts
