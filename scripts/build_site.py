@@ -35,6 +35,7 @@ class Note:
     number: str
     home: bool
     body: str
+    share_image: str
 
     @property
     def category_code(self) -> str:
@@ -85,11 +86,16 @@ def load_notes() -> list[Note]:
             raise ValueError(f"{path}: date must use YYYY-MM-DD") from error
         if not metadata["number"].isdigit():
             raise ValueError(f"{path}: number must contain digits only")
+        share_image = metadata.get("shareImage", "assets/research/explainable-ai.png")
+        share_image_path = (ROOT / share_image).resolve()
+        if not share_image.startswith("assets/") or not share_image_path.is_file() or ROOT not in share_image_path.parents:
+            raise ValueError(f"{path}: shareImage must point to an existing file under assets/")
         notes.append(Note(
             title=metadata["title"], slug=metadata["slug"], category=metadata["category"],
             published=metadata["date"], read_time=metadata["readTime"],
             excerpt=metadata["excerpt"], number=metadata["number"],
             home=metadata.get("home", "false").lower() == "true", body=body,
+            share_image=share_image,
         ))
     slugs = [note.slug for note in notes]
     if len(slugs) != len(set(slugs)):
@@ -237,10 +243,12 @@ def build_articles(notes: list[Note]) -> None:
         path = OUTPUT_DIR / f"{note.slug}.html"
         expected.add(path)
         path.write_text(fill_template("note.html", {
-            "TITLE": html.escape(note.title), "DESCRIPTION": html.escape(note.excerpt, quote=True),
-            "CATEGORY": html.escape(note.category), "READ_TIME": html.escape(note.read_time),
+            "TITLE": html.escape(note.title, quote=True), "DESCRIPTION": html.escape(note.excerpt, quote=True),
+            "SHARE_IMAGE_URL": html.escape(f"https://academyofscience.in/{note.share_image}", quote=True),
+            "CATEGORY": html.escape(note.category, quote=True), "READ_TIME": html.escape(note.read_time),
             "EXCERPT": html.escape(note.excerpt), "DATE": html.escape(note.published, quote=True),
             "DISPLAY_DATE": html.escape(note.display_date), "SLUG": html.escape(note.slug, quote=True),
+            "NUMBER": html.escape(note.number, quote=True),
             "ARTICLE_BODY": render_markdown(note.body),
         }), encoding="utf-8")
     for stale in OUTPUT_DIR.glob("*.html"):
