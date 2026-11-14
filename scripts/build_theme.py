@@ -12,7 +12,7 @@ ACTIVE = json.loads((THEMES / "active.json").read_text(encoding="utf-8"))["activ
 if ACTIVE not in {"red", "gold"}:
     raise ValueError("themes/active.json: active must name an existing supported theme")
 THEME = json.loads((THEMES / f"{ACTIVE}.json").read_text(encoding="utf-8"))
-for key in ("accent", "accent-bright", "dark-background", "header-footer", "paper", "paper-secondary"):
+for key in ("accent", "accent-bright", "dark-background", "header-footer", "paper", "paper-secondary", "logo", "logo-mark"):
     if key not in THEME:
         raise ValueError(f"themes/{ACTIVE}.json: missing {key}")
 
@@ -25,11 +25,13 @@ values = {
     "paper": THEME["paper"],
     "paperSecondary": THEME["paper-secondary"],
     "logo": THEME["logo"].replace("../", ""),
+    "logoMark": THEME["logo-mark"].replace("../", ""),
 }
-source_logo = (ROOT / "assets" / "logo.svg").read_text(encoding="utf-8")
-accented_logo = source_logo.replace("#ED3326", THEME["accent"])
-logo_name = THEME["logo"].split("/")[-1]
-(ROOT / "assets" / logo_name).write_text(accented_logo, encoding="utf-8")
+for source_name, theme_key in (("logo.svg", "logo"), ("logo-mark.svg", "logo-mark")):
+    source_logo = (ROOT / "assets" / source_name).read_text(encoding="utf-8")
+    accented_logo = source_logo.replace("#ED3326", THEME["accent"])
+    logo_name = THEME[theme_key].split("/")[-1]
+    (ROOT / "assets" / logo_name).write_text(accented_logo, encoding="utf-8")
 script = "/* Generated from themes/active.json; run python3 scripts/build_theme.py after changing themes. */\n"
 script += "const activeTheme = " + json.dumps(values, separators=(",", ":")) + ";\n"
 script += "document.documentElement.dataset.theme = activeTheme.theme;\n"

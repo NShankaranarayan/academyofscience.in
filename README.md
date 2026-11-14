@@ -40,6 +40,8 @@ Always run the build before committing changes to Field Notes. The generated HTM
 ├── assets/
 │   ├── logo.svg                # Editable vector master emblem
 │   ├── logo-gold.svg           # Generated gold accent variant
+│   ├── logo-mark.svg           # Compact vector emblem used in Geek chrome
+│   ├── logo-mark-gold.svg      # Generated gold compact emblem
 │   ├── profiles/              # Profile project illustration atlases
 │   └── research/              # Homepage research illustrations
 │
