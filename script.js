@@ -486,13 +486,19 @@ logoCanvas.addEventListener('pointermove', event => {
   drawLogo();
 });
 logoCanvas.addEventListener('pointerleave', () => { if (!logoState.dragging) logoPointer.active = false; });
-logoCanvas.addEventListener('pointerup', () => {
-  if (!logoState.dragging) return;
+logoCanvas.addEventListener('pointerup', event => {
+  if (event.pointerType !== 'mouse') logoPointer.active = false;
+  if (logoState.dragging) {
+    logoState.dragging = false;
+    if (!logoState.moved) logoState.speed = .012;
+    startLogoMotion();
+  }
+});
+logoCanvas.addEventListener('pointercancel', () => {
+  logoPointer.active = false;
   logoState.dragging = false;
-  if (!logoState.moved) logoState.speed = .012;
   startLogoMotion();
 });
-logoCanvas.addEventListener('pointercancel', () => { logoState.dragging = false; startLogoMotion(); });
 logoCanvas.addEventListener('keydown', event => {
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
