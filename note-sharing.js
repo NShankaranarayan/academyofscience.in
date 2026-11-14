@@ -149,6 +149,18 @@
     return canvas;
   }
 
+  function downloadCard() {
+    const canvas = drawShareCard();
+    if (!canvas) return false;
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = `${dialog.dataset.noteTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}-field-note.png`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    return true;
+  }
+
   document.querySelector("[data-open-share]").addEventListener("click", () => {
     updatePreview();
     dialog.showModal();
@@ -169,33 +181,19 @@
     const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(articleUrl)}`;
     const shareWindow = window.open(linkedInUrl, "_blank");
     if (shareWindow) shareWindow.opener = null;
+    const downloaded = downloadCard();
     const copied = await copyCaption();
-    status.textContent = copied
-      ? "Your caption and link are copied. Paste them into the LinkedIn composer."
-      : "LinkedIn opened. Copy your summary and article link from this panel and paste them into the post.";
+    status.textContent = copied && downloaded
+      ? "Card downloaded and caption copied. In LinkedIn, add the PNG as your image and paste the caption with its article link."
+      : copied
+        ? "Caption copied, but the card download failed. Use Download card image only, then add it to LinkedIn."
+        : "The card was prepared. Copy your summary and article link from this panel, then add the downloaded image in LinkedIn.";
   });
 
   dialog.querySelector("[data-download-card]").addEventListener("click", () => {
-    const canvas = drawShareCard();
-    if (!canvas) {
-      status.textContent = "Could not prepare the image on this browser.";
-      return;
-    }
-    canvas.toBlob(blob => {
-      if (!blob) {
-        status.textContent = "Could not prepare the image on this browser.";
-        return;
-      }
-      const objectUrl = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = objectUrl;
-      link.download = `${dialog.dataset.noteTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}-field-note.png`;
-      document.body.append(link);
-      link.click();
-      link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
-      status.textContent = "Card image downloaded. Add it as a LinkedIn image post and paste the caption with the article link.";
-    }, "image/png");
+    status.textContent = downloadCard()
+      ? "Card image downloaded. Upload it to LinkedIn and paste the caption with the article link."
+      : "Could not prepare the image on this browser.";
   });
 
   updatePreview();
