@@ -1,0 +1,11 @@
+{
+  "name": "Academy Red",
+  "accent": "#ED3326",
+  "accent-bright": "#FF574C",
+  "logo": "../assets/logo.svg",
+  "logo-mark": "../assets/logo-mark.svg",
+  "dark-background": "#090A0A",
+  "header-footer": "#000000",
+  "paper": "#F2EFE8",
+  "paper-secondary": "#E8E3D9"
+}

@@ -25,7 +25,7 @@ const observer = new IntersectionObserver(entries => entries.forEach(entry => {
 }), { threshold: .12 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// Reduce the supplied logo to a clean 90×90 pixel atlas, then enlarge without smoothing.
+// The Geek emblem is reconstructed from the active vector logo as a high-density particle field.
 const logoCanvas = document.querySelector('#digitalLogo');
 const logoContext = logoCanvas.getContext('2d');
 const logoImage = new Image();
@@ -47,13 +47,16 @@ const heroFan = {
 const heroMotion = { angle: 0, speed: 0.2, paused: false, dragging: false, moved: false, lastPointerAngle: 0, lastPointerTime: 0 };
 let heroFrame = 0;
 let heroLastFrameTime = 0;
-const pixelArt = document.createElement('canvas');
-pixelArt.width = pixelArt.height = 90;
-const pixelContext = pixelArt.getContext('2d', { willReadFrequently: true });
-const bladeCanvases = [];
-const logoState = { angle: 0, speed: .012, paused: false, dragging: false, lastPointerAngle: 0, moved: false };
+const particleSource = document.createElement('canvas');
+const particleContext = particleSource.getContext('2d', { willReadFrequently: true });
+const logoParticles = [];
+const particleLayers = [];
+const ambientParticles = [];
+const logoPointer = { x: -1000, y: -1000, active: false };
+const logoState = { angle: 0, speed: .012, yaw: 0, pitch: 0, paused: false, dragging: false, lastPointerAngle: 0, moved: false, lastFrame: 0, width: 0, height: 0, dpr: 1 };
 let logoFrame = 0;
-const fan = { centerX: .5, centerY: .36, leftStart: .155, bladeWidth: .285, rightStart: .56, top: .295, height: .078 };
+const fan = { centerX: heroFan.centerX / 1254, centerY: heroFan.centerY / 1254 };
+const particleAccent = getComputedStyle(root).getPropertyValue('--accent').trim() || '#D4AA60';
 
 function traceHeroBlades(context) {
   context.beginPath();
@@ -233,114 +236,246 @@ heroToggle.addEventListener('click', () => {
 });
 
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) { heroLastFrameTime = 0; startHeroMotion(); }
+  if (!document.hidden) { heroLastFrameTime = 0; logoState.lastFrame = 0; startHeroMotion(); startLogoMotion(); }
 });
 
 function drawLogo() {
-  if (!logoImage.complete || !logoImage.naturalWidth || bladeCanvases.length !== 2) return;
-  const size = pixelArt.width;
-  const cx = fan.centerX * size;
-  const cy = fan.centerY * size;
-  pixelContext.clearRect(0, 0, size, size);
-  pixelContext.imageSmoothingEnabled = true;
-  pixelContext.drawImage(logoImage, 0, 0, size, size);
-  pixelContext.fillStyle = '#000';
-  pixelContext.fillRect(fan.leftStart * size - 1, fan.top * size - 1, fan.bladeWidth * size + 2, fan.height * size + 2);
-  pixelContext.fillRect(fan.rightStart * size - 1, fan.top * size - 1, fan.bladeWidth * size + 2, fan.height * size + 2);
-  pixelContext.save();
-  pixelContext.translate(cx, cy);
-  pixelContext.rotate(logoState.angle);
-  bladeCanvases.forEach(({ canvas, destinationX }) => pixelContext.drawImage(canvas, destinationX * size - cx, fan.top * size - cy));
-  pixelContext.restore();
+  if (!logoParticles.length || !logoState.width) return;
+  const ctx = logoContext;
+  const width = logoState.width, height = logoState.height;
+  const scale = Math.min(width, height) * 1.14;
+  const left = (width - scale) / 2, top = (height - scale) / 2;
+  const time = performance.now() * .001;
+  ctx.setTransform(logoState.dpr, 0, 0, logoState.dpr, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  ctx.globalCompositeOperation = 'source-over';
+  const yaw = .24 + logoState.yaw + Math.sin(time * .34) * .012;
+  const pitch = -.035 + logoState.pitch + Math.cos(time * .27) * .009;
+  const cosYaw = Math.cos(yaw), sinYaw = Math.sin(yaw);
+  const cosPitch = Math.cos(pitch), sinPitch = Math.sin(pitch);
+  const accentDots = [], whiteDots = [];
 
-  const w = logoCanvas.width;
-  const h = logoCanvas.height;
-  logoContext.clearRect(0, 0, w, h);
-  logoContext.save();
-  const pixels = pixelContext.getImageData(0, 0, size, size).data;
-  const cellW = w / size;
-  const cellH = h / size;
-  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
-    const i = (y * size + x) * 4;
-    if (pixels[i] + pixels[i + 1] + pixels[i + 2] < 100) continue;
-    logoContext.fillStyle = `rgb(${pixels[i]},${pixels[i + 1]},${pixels[i + 2]})`;
-    logoContext.beginPath();
-    logoContext.arc((x + .5) * cellW, (y + .5) * cellH, Math.min(cellW, cellH) * .34, 0, Math.PI * 2);
-    logoContext.fill();
+  function repelAndFloat(p, tx, ty, radius = 118, strength = 20, rigid = false) {
+    tx += Math.sin(time * p.drift + p.phase) * p.float;
+    ty += Math.cos(time * p.drift * .83 + p.phase) * p.float;
+    if (rigid) {
+      if (logoPointer.active) {
+        const px = tx - logoPointer.x, py = ty - logoPointer.y;
+        const distance = Math.hypot(px, py);
+        if (distance < radius && distance > .01) {
+          const force = ((radius - distance) / radius) ** 2 * strength;
+          tx += px / distance * force;
+          ty += py / distance * force;
+        }
+      }
+      p.x = tx; p.y = ty; p.vx = p.vy = 0;
+      return;
+    }
+    let dx = tx - p.x, dy = ty - p.y;
+    if (logoPointer.active) {
+      const px = p.x - logoPointer.x, py = p.y - logoPointer.y;
+      const distance = Math.hypot(px, py);
+      if (distance < radius && distance > .01) {
+        const force = ((radius - distance) / radius) ** 2 * strength;
+        dx += px / distance * force;
+        dy += py / distance * force;
+      }
+    }
+    p.vx = (p.vx + dx * .055) * .84;
+    p.vy = (p.vy + dy * .055) * .84;
+    p.x += p.vx; p.y += p.vy;
   }
-  logoContext.restore();
-  document.querySelector('#visualState').textContent = `${logoState.paused ? 'PAUSED' : 'LIVE'} DOT RENDER`;
-  logoCanvas.setAttribute('aria-label', `Animated dot rendering of the Academy of Science logo. The blades are ${logoState.paused ? 'paused' : 'spinning'}; drag them to change their motion. Clicking does nothing.`);
+
+  for (const p of ambientParticles) {
+    const tx = width * (.5 + p.nx), ty = height * (.5 + p.ny);
+    repelAndFloat(p, tx, ty, 100, 9);
+    (p.accent ? accentDots : whiteDots).push(p);
+  }
+
+  function drawDots(dots, color, glow = false, brightness = 1) {
+    for (let bin = 0; bin < 4; bin++) {
+      ctx.beginPath();
+      for (let i = 0; i < dots.length; i++) {
+        const p = dots[i];
+        if (Math.min(3, Math.floor(p.alpha * 4)) !== bin || (glow && i % 6 !== 0)) continue;
+        ctx.moveTo(p.x + p.size, p.y);
+        ctx.arc(p.x, p.y, p.size * (glow ? 2.2 : 1), 0, Math.PI * 2);
+      }
+      ctx.globalAlpha = ((glow ? .1 : .55) + bin * (glow ? .055 : .15)) * brightness;
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  drawDots(accentDots, particleAccent, true, .72);
+  drawDots(whiteDots, '#A7D6D4', true, .72);
+  drawDots(accentDots, '#A67B3F', false, .66);
+  drawDots(whiteDots, '#68A7A7', false, .66);
+
+  for (const layer of particleLayers) {
+    const layerAccent = [], layerWhite = [];
+    for (const p of layer.particles) {
+      let nx = p.nx, ny = p.ny;
+      if (p.blade) {
+        const dx = nx - fan.centerX, dy = ny - fan.centerY;
+        const c = Math.cos(logoState.angle), s = Math.sin(logoState.angle);
+        nx = fan.centerX + dx * c - dy * s;
+        ny = fan.centerY + dx * s + dy * c;
+      }
+      const x = (nx - .5) * scale;
+      const y = (ny - .5) * scale;
+      const z = p.depth * scale;
+      const rotatedX = x * cosYaw + z * sinYaw;
+      const rotatedZ = -x * sinYaw + z * cosYaw;
+      const rotatedY = y * cosPitch - rotatedZ * sinPitch;
+      const depth = y * sinPitch + rotatedZ * cosPitch;
+      const perspective = 900 / (900 + depth);
+      const tx = width / 2 + rotatedX * perspective;
+      const ty = height / 2 + rotatedY * perspective;
+      repelAndFloat(p, tx, ty, 118, layer.front ? 20 : 10, p.blade);
+      (p.accent ? layerAccent : layerWhite).push(p);
+    }
+    if (layer.front) {
+      drawDots(layerAccent, particleAccent, true, 1);
+      drawDots(layerWhite, '#F7F6F0', true, 1);
+      drawDots(layerAccent, particleAccent, false, 1);
+      drawDots(layerWhite, '#F7F6F0', false, 1);
+    } else {
+      drawDots(layerAccent, '#9A7946', false, .35);
+      drawDots(layerWhite, '#538B8D', false, .34);
+    }
+  }
+  ctx.globalAlpha = 1;
+  document.querySelector('#visualState').textContent = `${logoState.dragging ? 'INTERACTING' : 'LIVE'} PARTICLE VOLUME · ${logoParticles.length.toLocaleString()}`;
+  logoCanvas.setAttribute('aria-label', `Interactive particle rendering of the Academy of Science logo with ${logoParticles.length} particles. Move a pointer to scatter and gather particles; drag the fan blades to spin them.`);
 }
 
-function animateLogo() {
-  if (root.dataset.mode !== 'geek' || logoState.paused || logoState.dragging) { logoFrame = 0; drawLogo(); return; }
-  logoState.angle += logoState.speed;
+function resizeLogoCanvas() {
+  const rect = logoCanvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  logoState.width = rect.width;
+  logoState.height = rect.height;
+  logoState.dpr = dpr;
+  logoCanvas.width = Math.round(rect.width * dpr);
+  logoCanvas.height = Math.round(rect.height * dpr);
+  const scale = Math.min(rect.width, rect.height) * 1.14;
+  const left = (rect.width - scale) / 2, top = (rect.height - scale) / 2;
+  for (const p of logoParticles) { p.x = left + p.nx * scale; p.y = top + p.ny * scale; p.vx = p.vy = 0; }
+  for (const p of ambientParticles) { p.x = rect.width * (.5 + p.nx); p.y = rect.height * (.5 + p.ny); p.vx = p.vy = 0; }
+  drawLogo();
+}
+
+function buildLogoParticles() {
+  const sampleSize = 900;
+  const samples = [];
+  logoParticles.length = 0;
+  particleLayers.length = 0;
+  ambientParticles.length = 0;
+  particleSource.width = particleSource.height = sampleSize;
+  particleContext.clearRect(0, 0, sampleSize, sampleSize);
+  particleContext.drawImage(logoImage, 0, 0, sampleSize, sampleSize);
+  const { data } = particleContext.getImageData(0, 0, sampleSize, sampleSize);
+  for (let y = 0; y < sampleSize; y += 4) for (let x = 0; x < sampleSize; x += 4) {
+    const sx = Math.min(sampleSize - 1, x + Math.random() * 2);
+    const sy = Math.min(sampleSize - 1, y + Math.random() * 2);
+    const i = (Math.floor(sy) * sampleSize + Math.floor(sx)) * 4;
+    if (Math.max(data[i], data[i + 1], data[i + 2]) < 42) continue;
+    const nx = sx / sampleSize, ny = sy / sampleSize;
+    const sourceX = nx * 1254, sourceY = ny * 1254;
+    const blade = heroFan.blades.some(points => pointInPolygon(sourceX, sourceY, points));
+    samples.push({
+      nx, ny, blade,
+      accent: data[i] > data[i + 1] * 1.12 && data[i + 1] > data[i + 2] * 1.15,
+      size: .92 + Math.random() * .62,
+      alpha: .74 + Math.random() * .26,
+      phase: Math.random() * Math.PI * 2,
+      drift: .22 + Math.random() * .62,
+      float: .08 + Math.random() * .34
+    });
+  }
+  const layerCount = matchMedia('(max-width: 680px)').matches ? 3 : 4;
+  for (let layerIndex = 0; layerIndex < layerCount; layerIndex++) {
+    const front = layerIndex === layerCount - 1;
+    const particles = samples.map(sample => ({
+      ...sample,
+      depth: (layerIndex - (layerCount - 1)) * .009,
+      front,
+      size: front ? sample.size : sample.size * .78,
+      alpha: front ? sample.alpha : sample.alpha * (.56 + layerIndex * .06),
+      x: 0, y: 0, vx: 0, vy: 0
+    }));
+    particleLayers.push({ particles, front });
+    logoParticles.push(...particles);
+  }
+  for (let i = 0; i < 240; i++) {
+    const angle = Math.random() * Math.PI * 2, radius = .42 + Math.random() * .31;
+    ambientParticles.push({
+      nx: Math.cos(angle) * radius, ny: Math.sin(angle) * radius,
+      x: 0, y: 0, vx: 0, vy: 0,
+      size: .45 + Math.random() * .75, alpha: .12 + Math.random() * .38,
+      accent: Math.random() < .36, phase: Math.random() * Math.PI * 2, drift: .08 + Math.random() * .22,
+      float: 2 + Math.random() * 4
+    });
+  }
+  resizeLogoCanvas();
+  if (root.dataset.mode === 'geek') startLogoMotion();
+}
+
+function animateLogo(timestamp) {
+  logoFrame = 0;
+  if (root.dataset.mode !== 'geek' || document.hidden) return;
+  const elapsed = logoState.lastFrame ? Math.min((timestamp - logoState.lastFrame) / 1000, .05) : 0;
+  logoState.lastFrame = timestamp;
+  const targetYaw = logoPointer.active ? (logoPointer.x / logoState.width - .5) * .54 : 0;
+  const targetPitch = logoPointer.active ? (.5 - logoPointer.y / logoState.height) * .34 : 0;
+  logoState.yaw += (targetYaw - logoState.yaw) * .045;
+  logoState.pitch += (targetPitch - logoState.pitch) * .045;
+  if (!logoState.dragging) logoState.angle += logoState.speed * elapsed * 60;
   drawLogo();
   logoFrame = requestAnimationFrame(animateLogo);
 }
 
 function startLogoMotion() {
   logoState.paused = false;
-  if (!logoFrame) logoFrame = requestAnimationFrame(animateLogo);
+  if (!logoFrame && root.dataset.mode === 'geek') logoFrame = requestAnimationFrame(animateLogo);
 }
 
 logoImage.addEventListener('load', () => {
   prepareHeroLogo();
-  pixelContext.imageSmoothingEnabled = true;
-  pixelContext.drawImage(logoImage, 0, 0, pixelArt.width, pixelArt.height);
-  const cropY = fan.top * pixelArt.height;
-  const cropH = fan.height * pixelArt.height;
-  const cropW = fan.bladeWidth * pixelArt.width;
-  [fan.leftStart, fan.rightStart].forEach(destinationX => {
-    const crop = document.createElement('canvas');
-    crop.width = Math.round(cropW);
-    crop.height = Math.round(cropH);
-    const cropContext = crop.getContext('2d', { willReadFrequently: true });
-    cropContext.drawImage(pixelArt, destinationX * pixelArt.width, cropY, cropW, cropH, 0, 0, crop.width, crop.height);
-    const pixels = cropContext.getImageData(0, 0, crop.width, crop.height);
-    for (let i = 0; i < pixels.data.length; i += 4) {
-      const red = pixels.data[i], green = pixels.data[i + 1], blue = pixels.data[i + 2];
-      const isRed = red > green * 1.25 && red > blue * 1.25;
-      const coverage = isRed ? red / 255 : (red + green + blue) / (3 * 255);
-      pixels.data[i] = 255;
-      pixels.data[i + 1] = isRed ? 0 : 255;
-      pixels.data[i + 2] = isRed ? 0 : 255;
-      pixels.data[i + 3] = coverage < .08 ? 0 : Math.round(coverage * 255);
-    }
-    cropContext.putImageData(pixels, 0, 0);
-    bladeCanvases.push({ canvas: crop, destinationX });
-  });
-  if (root.dataset.mode === 'geek') startLogoMotion();
-  else drawLogo();
+  buildLogoParticles();
 });
-logoImage.src = 'assets/logo.png';
+logoImage.src = activeTheme.logo;
+new ResizeObserver(resizeLogoCanvas).observe(logoCanvas);
 
 logoCanvas.addEventListener('pointerdown', event => {
   const rect = logoCanvas.getBoundingClientRect();
-  const x = (event.clientX - rect.left) / rect.width * logoCanvas.width;
-  const y = (event.clientY - rect.top) / rect.height * logoCanvas.height;
-  const rx = x / logoCanvas.width, ry = y / logoCanvas.height;
+  const rx = (event.clientX - rect.left) / rect.width, ry = (event.clientY - rect.top) / rect.height;
+  logoPointer.x = event.clientX - rect.left;
+  logoPointer.y = event.clientY - rect.top;
+  logoPointer.active = true;
   const dx = rx - fan.centerX, dy = ry - fan.centerY;
   const localX = fan.centerX + dx * Math.cos(logoState.angle) + dy * Math.sin(logoState.angle);
   const localY = fan.centerY - dx * Math.sin(logoState.angle) + dy * Math.cos(logoState.angle);
-  const onBlade = localY >= fan.top && localY <= fan.top + fan.height &&
-    ((localX >= fan.leftStart && localX <= fan.leftStart + fan.bladeWidth) || (localX >= fan.rightStart && localX <= fan.rightStart + fan.bladeWidth));
+  const onBlade = heroFan.blades.some(points => pointInPolygon(localX * 1254, localY * 1254, points));
   logoState.moved = false;
   logoState.dragging = onBlade;
   if (onBlade) {
     logoState.paused = true;
-    logoState.lastPointerAngle = Math.atan2(y - logoCanvas.height * fan.centerY, x - logoCanvas.width * fan.centerX);
+    logoState.lastPointerAngle = Math.atan2(ry - fan.centerY, rx - fan.centerX);
+    logoCanvas.setPointerCapture(event.pointerId);
   }
   drawLogo();
-  logoCanvas.setPointerCapture(event.pointerId);
 });
 logoCanvas.addEventListener('pointermove', event => {
-  if (!logoState.dragging) return;
   const rect = logoCanvas.getBoundingClientRect();
-  const x = (event.clientX - rect.left) / rect.width * logoCanvas.width;
-  const y = (event.clientY - rect.top) / rect.height * logoCanvas.height;
-  const angle = Math.atan2(y - logoCanvas.height * fan.centerY, x - logoCanvas.width * fan.centerX);
+  const rx = (event.clientX - rect.left) / rect.width, ry = (event.clientY - rect.top) / rect.height;
+  logoPointer.x = event.clientX - rect.left;
+  logoPointer.y = event.clientY - rect.top;
+  logoPointer.active = true;
+  if (!logoState.dragging) { drawLogo(); return; }
+  const angle = Math.atan2(ry - fan.centerY, rx - fan.centerX);
   let delta = angle - logoState.lastPointerAngle;
   if (delta > Math.PI) delta -= Math.PI * 2;
   if (delta < -Math.PI) delta += Math.PI * 2;
@@ -350,13 +485,20 @@ logoCanvas.addEventListener('pointermove', event => {
   logoState.moved ||= Math.abs(delta) > .012;
   drawLogo();
 });
-logoCanvas.addEventListener('pointerup', () => {
-  if (!logoState.dragging) return;
+logoCanvas.addEventListener('pointerleave', () => { if (!logoState.dragging) logoPointer.active = false; });
+logoCanvas.addEventListener('pointerup', event => {
+  if (event.pointerType !== 'mouse') logoPointer.active = false;
+  if (logoState.dragging) {
+    logoState.dragging = false;
+    if (!logoState.moved) logoState.speed = .012;
+    startLogoMotion();
+  }
+});
+logoCanvas.addEventListener('pointercancel', () => {
+  logoPointer.active = false;
   logoState.dragging = false;
-  if (!logoState.moved) logoState.speed ||= .012;
   startLogoMotion();
 });
-logoCanvas.addEventListener('pointercancel', () => { logoState.dragging = false; startLogoMotion(); });
 logoCanvas.addEventListener('keydown', event => {
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();

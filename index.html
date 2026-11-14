@@ -10,7 +10,8 @@
   <title>Academy of Science — Independent AI Research &amp; Development</title>
   <link rel="icon" href="assets/logo.png">
   <script src="mode-init.js?v=1"></script>
-  <link rel="stylesheet" href="styles.css?v=20">
+  <script src="themes/active-theme.js?v=dcda7e55ac87"></script>
+  <link rel="stylesheet" href="styles.css?v=26">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -18,7 +19,7 @@
   <div class="noise" aria-hidden="true"></div>
   <header class="site-header">
     <a class="brand" href="#top" aria-label="Academy of Science, home">
-      <img src="assets/logo.png" alt="" width="46" height="46">
+      <img src="assets/logo.png" data-theme-logo alt="" width="46" height="46">
       <span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span>
     </a>
     <nav aria-label="Primary navigation">
@@ -125,7 +126,7 @@
 
     <section class="geek-console constellation" aria-label="Academy of Science research constellation">
       <header class="constellation-bar">
-        <a href="#top" class="constellation-brand"><span>A/S</span><b>Academy of Science</b></a>
+        <a href="#top" class="constellation-brand"><img src="assets/logo-mark.svg" data-theme-logo-mark alt="" width="40" height="40"><b>Academy of Science</b></a>
         <p>Independent AI research<br>India · 2026</p>
         <button id="geekExit" type="button">Return to normal <span>↗</span></button>
       </header>
@@ -140,8 +141,8 @@
         <section class="constellation-object" aria-label="Interactive dot-rendered lab emblem">
           <div class="object-orbit orbit-a" aria-hidden="true"></div><div class="object-orbit orbit-b" aria-hidden="true"></div>
           <span class="coordinate coordinate-x">X · 19.0760</span><span class="coordinate coordinate-y">Y · 72.8777</span>
-          <canvas id="digitalLogo" width="360" height="360" role="img" tabindex="0" aria-label="Animated dot rendering of the Academy of Science logo. Drag the fan blades to change their motion; clicking does nothing."></canvas>
-          <div class="object-instruction"><span id="visualState">LIVE DOT RENDER</span><b>Drag the blades to redirect</b></div>
+          <canvas id="digitalLogo" width="720" height="720" role="img" tabindex="0" aria-label="Interactive particle rendering of the Academy of Science logo. Move a pointer to scatter and gather particles; drag the fan blades to spin them."></canvas>
+          <div class="object-instruction"><span id="visualState">LIVE PARTICLE FIELD</span><b>Move to scatter · drag blades to steer</b></div>
         </section>
 
         <aside class="constellation-directions" aria-label="Research directions">
@@ -162,10 +163,11 @@
   </main>
 
   <footer class="site-footer">
-    <div><img src="assets/logo.png" alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div>
+    <div><img src="assets/logo.png" data-theme-logo alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div>
     <p>Research intelligence.<br>Build what matters.</p>
     <div class="footer-meta"><p>Built in public<br>India · 2026</p><a href="#top">Back to top ↑</a></div>
   </footer>
-  <script src="script.js?v=10"></script>
+  <script src="script.js?v=16"></script>
+  <script src="theme-assets.js?v=7"></script>
 </body>
 </html>

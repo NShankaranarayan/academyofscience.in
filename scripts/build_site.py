@@ -274,6 +274,8 @@ def update_homepage(notes: list[Note]) -> None:
 
 
 def main() -> None:
+    import subprocess
+    subprocess.run(["python3", str(ROOT / "scripts" / "build_theme.py")], check=True)
     notes = load_notes()
     if not notes:
         raise ValueError("No published field notes found")
