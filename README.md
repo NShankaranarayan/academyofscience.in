@@ -109,8 +109,13 @@ python3 scripts/build_site.py
 | `number` | Sequence number within the category |
 | `home` | Set to `true` to include the note on the homepage |
 | `excerpt` | Library card, article introduction, and meta description |
+| `shareImage` | Optional image under `assets/` used for LinkedIn and social link previews; defaults to the XAI research illustration |
 
 The generator supports headings, paragraphs, emphasis, inline code, safe Markdown links, unordered and ordered lists, blockquotes, horizontal rules, and fenced code blocks. Raw HTML is escaped rather than executed.
+
+### Sharing a Field Note
+
+Open any published article and choose **Prepare a share card**. The share studio lets you write a short personal summary, preview the theme-colored card, download it as a PNG, or copy a caption with the article URL. **Copy caption & open LinkedIn** opens LinkedIn's composer and copies the caption for you to paste. For a LinkedIn image post, upload the downloaded card and paste the caption with its link. The linked article also includes Open Graph metadata and the note's `shareImage` for link previews.
 
 ## Selecting the site theme
 
