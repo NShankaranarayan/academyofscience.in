@@ -115,7 +115,7 @@ The generator supports headings, paragraphs, emphasis, inline code, safe Markdow
 
 ### Sharing a Field Note
 
-Open any published article and choose **Prepare a share card**. The share studio lets you write a short personal summary, preview the theme-colored card, and download it as a PNG. **Prepare image post for LinkedIn** downloads the personalized card, copies a caption with the article URL, and opens LinkedIn's composer. Add the downloaded PNG there and paste the caption. LinkedIn's link preview uses its own thumbnail; the article also includes Open Graph metadata and the note's `shareImage` for link previews.
+Open any published article and choose **Share this note**. The share studio lets you write a personal summary and preview the LinkedIn link card. **Copy caption & open LinkedIn** copies your text with the article URL and opens LinkedIn's link-share composer; LinkedIn fetches the preview image, title, and description from the article's Open Graph metadata. This is a link post, so no image download or LinkedIn API connection is needed. Use the separate LinkedIn photo or video composer only when you intend to publish a standalone image or video instead of the article link.
 
 ## Selecting the site theme
 

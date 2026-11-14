@@ -245,6 +245,7 @@ def build_articles(notes: list[Note]) -> None:
         path.write_text(fill_template("note.html", {
             "TITLE": html.escape(note.title, quote=True), "DESCRIPTION": html.escape(note.excerpt, quote=True),
             "SHARE_IMAGE_URL": html.escape(f"https://academyofscience.in/{note.share_image}", quote=True),
+            "SHARE_IMAGE_PATH": html.escape(note.share_image, quote=True),
             "CATEGORY": html.escape(note.category, quote=True), "READ_TIME": html.escape(note.read_time),
             "EXCERPT": html.escape(note.excerpt), "DATE": html.escape(note.published, quote=True),
             "DISPLAY_DATE": html.escape(note.display_date), "SLUG": html.escape(note.slug, quote=True),
