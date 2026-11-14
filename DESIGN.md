@@ -42,7 +42,7 @@ Typography uses system sans, monospace, and serif stacks to keep the page indepe
 
 ## Assets
 
-- User-supplied logo: `assets/logo.png`, presented unchanged except for browser scaling.
+- Editable vector emblem: `assets/logo.svg` is the master artwork. `scripts/build_theme.py` generates the active accent-color variant from `themes/active.json`; Normal and Geek modes use this same SVG source for the animated fan and dot-rendered emblem.
 - Original generated research illustrations: `assets/research/explainable-ai.png`, `assets/research/computer-vision-ads.png`, and `assets/research/embodied-physical-ai.png`.
 - Generated profile-project atlases: `assets/profiles/shankaranarayan-projects.png` and `assets/profiles/satwik-projects.png`.
 - No third-party photography or invented portraits. Contributor monograms are intentionally used until profile images and biographies are supplied.

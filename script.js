@@ -301,11 +301,8 @@ logoImage.addEventListener('load', () => {
     const pixels = cropContext.getImageData(0, 0, crop.width, crop.height);
     for (let i = 0; i < pixels.data.length; i += 4) {
       const red = pixels.data[i], green = pixels.data[i + 1], blue = pixels.data[i + 2];
-      const isRed = red > green * 1.25 && red > blue * 1.25;
-      const coverage = isRed ? red / 255 : (red + green + blue) / (3 * 255);
-      pixels.data[i] = 255;
-      pixels.data[i + 1] = isRed ? 0 : 255;
-      pixels.data[i + 2] = isRed ? 0 : 255;
+      const coverage = (red + green + blue) / (3 * 255);
+      pixels.data[i] = pixels.data[i + 1] = pixels.data[i + 2] = 255;
       pixels.data[i + 3] = coverage < .08 ? 0 : Math.round(coverage * 255);
     }
     cropContext.putImageData(pixels, 0, 0);
@@ -314,7 +311,7 @@ logoImage.addEventListener('load', () => {
   if (root.dataset.mode === 'geek') startLogoMotion();
   else drawLogo();
 });
-logoImage.src = 'assets/logo.png';
+logoImage.src = activeTheme.logo;
 
 logoCanvas.addEventListener('pointerdown', event => {
   const rect = logoCanvas.getBoundingClientRect();

@@ -16,6 +16,7 @@ No Python packages need to be installed.
 From the repository root:
 
 ```bash
+python3 scripts/build_theme.py
 python3 scripts/build_site.py
 python3 -m http.server 8000
 ```
@@ -37,7 +38,8 @@ Always run the build before committing changes to Field Notes. The generated HTM
 ├── CNAME                      # GitHub Pages custom domain
 │
 ├── assets/
-│   ├── logo.png
+│   ├── logo.svg                # Editable vector master emblem
+│   ├── logo-gold.svg           # Generated gold accent variant
 │   ├── profiles/              # Profile project illustration atlases
 │   └── research/              # Homepage research illustrations
 │
@@ -50,12 +52,23 @@ Always run the build before committing changes to Field Notes. The generated HTM
 │   └── notes.html             # Field Notes library template
 │
 ├── scripts/
-│   └── build_site.py          # Markdown renderer and static-site generator
+│   ├── build_site.py          # Markdown renderer and static-site generator
+│   └── build_theme.py         # Compiles the repository-selected theme
+│
+├── themes/
+│   ├── active.json            # Repository-owned active theme selection
+│   ├── red.json               # Red and black palette
+│   ├── gold.json              # Gold accent palette
+│   └── active-theme.js        # Generated early-loading theme variables
 │
 └── notes/                     # Generated, publishable article HTML
 ```
 
 `content/`, `templates/`, and `scripts/` are source. The root `notes.html`, the homepage note-card block, and `notes/*.html` are generated output.
+
+### Changing the site theme
+
+Edit `themes/active.json` to select `red` or `gold`, then run `python3 scripts/build_theme.py`. This generates `themes/active-theme.js` and the selected vector logo variant from `assets/logo.svg`. The homepage animation and Geek mode dot logo both render from that same SVG. Edit the SVG artwork itself to change the emblem; change the accent value in a theme JSON file to recolor it.
 
 ## Writing a Field Note
 
@@ -96,6 +109,24 @@ python3 scripts/build_site.py
 | `excerpt` | Library card, article introduction, and meta description |
 
 The generator supports headings, paragraphs, emphasis, inline code, safe Markdown links, unordered and ordered lists, blockquotes, horizontal rules, and fenced code blocks. Raw HTML is escaped rather than executed.
+
+## Selecting the site theme
+
+Theme selection is controlled in the repository. Visitors do not get a theme picker. Edit `themes/active.json` and set `active` to `red` or `gold`:
+
+```json
+{
+  "active": "gold"
+}
+```
+
+Then run the site build so the selected theme is compiled into the early-loading theme script and propagated to generated Field Notes:
+
+```bash
+python3 scripts/build_site.py
+```
+
+Set `active` back to `red` to restore the original red palette. Palette values live in `themes/red.json` and `themes/gold.json`; both Normal and Geek Mode read the same selected accent. Logo artwork uses the shared source logo and recolors its red components to match.
 
 ## Generated output policy
 
