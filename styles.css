@@ -689,6 +689,10 @@ html[data-mode="geek"] .site-header .primary-nav{margin-left:auto}
   body.profile-page .profile-header .primary-nav[data-open="true"],body.notes-page .profile-header .primary-nav[data-open="true"],body.article-page .profile-header .primary-nav[data-open="true"]{display:grid!important}
   body.profile-page .profile-header .primary-nav,body.notes-page .profile-header .primary-nav,body.article-page .profile-header .primary-nav{right:1rem}
 }
+@media(max-width:900px){
+  html[data-mode="geek"] .hero-copy{grid-row:1}
+  html[data-mode="geek"] .hero-mark{grid-row:2;margin-top:2rem}
+}
 @media(max-width:700px){
   .about-details,.contact{grid-template-columns:1fr;gap:1.5rem}
   .contact{padding-top:4.5rem;padding-bottom:4.5rem}
