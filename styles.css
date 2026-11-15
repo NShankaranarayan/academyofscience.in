@@ -67,11 +67,12 @@ html[data-mode="geek"] .geek-console.light-palette .visual-stage{background:#101
 
 /* Engagement models and application domains make the lab's applied R&D offer explicit. */
 .work{background:var(--paper-2);border-bottom:1px solid var(--line)}
-.work-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-left:1px solid var(--line)}
-.work-card{min-height:280px;padding:1.6rem;display:flex;flex-direction:column;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.work-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.work-card{min-height:300px;padding:1.6rem;display:flex;flex-direction:column;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
 .work-card>span{font:500 .65rem var(--mono);color:var(--red)}
-.work-card h3{font-size:1.3rem;line-height:1.15;margin:auto 0 1rem}
+.work-card h3{font-size:1.3rem;line-height:1.15;margin:2.2rem 0 1rem}
 .work-card p{font-size:.82rem;line-height:1.65;color:var(--muted);margin:0}
+.work-card small{display:block;margin-top:auto;padding-top:1.15rem;color:var(--red);font-size:.65rem;line-height:1.55}
 .domains{margin-top:2rem;padding:clamp(1.5rem,3vw,2.5rem);background:var(--ink);color:white;display:grid;grid-template-columns:minmax(220px,.9fr) 1.6fr;gap:1.5rem 3rem;align-items:start}
 .domains .section-kicker{color:var(--red);margin:0 0 .8rem}
 .domains h3{font-size:clamp(1.4rem,2.6vw,2.1rem);line-height:1.15;letter-spacing:-.035em;margin:0}
@@ -81,12 +82,11 @@ html[data-mode="geek"] .geek-console.light-palette .visual-stage{background:#101
 @media(max-width:1000px){.work-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.work-grid{grid-template-columns:1fr}.work-card{min-height:220px}.domains{grid-template-columns:1fr}.domains>p{grid-column:1}}
 
-/* Research areas: image-led cards with a separate ADS application callout. */
+/* Research areas: compact text cards with a separate ADS application callout. */
 .research-grid{align-items:stretch}
 .research-card{min-height:0;padding:0;overflow:hidden}
 .research-card:hover{transform:translateY(-4px)}
 .research-card .card-no{display:block;padding:1.1rem 1.25rem .85rem}
-.research-image{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;border-block:1px solid var(--line);background:var(--paper-2)}
 .research-card-body{display:flex;flex:1;flex-direction:column;padding:1.25rem}
 .research-card h3{margin:0 0 .75rem}
 .research-card h3 span{font-size:.72em;color:var(--muted)}
@@ -100,7 +100,7 @@ html[data-mode="geek"] .geek-console.light-palette .visual-stage{background:#101
 .application-tags{grid-column:2;display:flex;flex-wrap:wrap;gap:.55rem}
 .application-tags span{border:1px solid var(--line);border-radius:999px;padding:.45rem .75rem;font-size:.68rem;color:var(--muted)}
 @media(max-width:900px){.specialization{grid-template-columns:1fr 1.3fr}.application-tags{grid-column:1/-1}}
-@media(max-width:600px){.specialization{grid-template-columns:1fr;gap:1rem}.application-tags{grid-column:1}.research-card{min-height:0}.research-image{aspect-ratio:16/10}}
+@media(max-width:600px){.specialization{grid-template-columns:1fr;gap:1rem}.application-tags{grid-column:1}.research-card{min-height:0}}
 
 /* Compact dark masthead: the black emblem recedes into the bar instead of reading as a separate badge. */
 .site-header{height:76px;background:#000;color:#f4f1eb;border-bottom-color:rgba(255,255,255,.12);box-shadow:0 8px 30px rgba(23,23,22,.08)}
