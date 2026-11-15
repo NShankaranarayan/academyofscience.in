@@ -72,7 +72,7 @@ Always run the build before committing changes to Field Notes. The generated HTM
 
 Edit `themes/active.json` to select `red` or `gold`, then run `python3 scripts/build_theme.py`. This generates `themes/active-theme.js` and the selected vector logo variant from `assets/logo.svg`. The homepage animation and Geek mode dot logo both render from that same SVG. Edit the SVG artwork itself to change the emblem; change the accent value in a theme JSON file to recolor it.
 
-## Writing a Field Note
+## Adding a Portfolio Item
 
 Create a Markdown file under `content/notes/` with this front matter:
 
@@ -81,7 +81,8 @@ Create a Markdown file under `content/notes/` with this front matter:
 title: Example note title
 slug: example-note-title
 date: 2026-11-13
-category: Knowledge Blog
+type: Articles
+contributors: shankaranarayan|Author
 status: published
 readTime: 5 min read
 number: 002
@@ -103,10 +104,11 @@ python3 scripts/build_site.py
 | `title` | Article title and social-preview title |
 | `slug` | Output filename under `notes/` |
 | `date` | Publication date in ISO `YYYY-MM-DD` form |
-| `category` | `Ideas in Progress` or `Knowledge Blog` |
+| `type` | `R&D` or `Articles` |
+| `contributors` | Ordered credits in `person-id|role` form, separated by semicolons. Use `shankaranarayan` or `satwik`; each credit links to that contributor's profile. |
 | `status` | Only `published` notes are built |
 | `readTime` | Reader-facing estimate such as `5 min read` |
-| `number` | Sequence number within the category |
+| `number` | Sequence number within the content type |
 | `home` | Set to `true` to include the note on the homepage |
 | `excerpt` | Library card, article introduction, and meta description |
 | `shareImage` | Optional image under `assets/` used for LinkedIn and social link previews; defaults to the XAI research illustration |

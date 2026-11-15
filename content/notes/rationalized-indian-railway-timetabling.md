@@ -3,6 +3,7 @@ title: Rationalized Timetabling Using a Simulation Tool: A Paradigm Shift in Ind
 slug: rationalized-indian-railway-timetabling
 date: 2023-03-21
 type: R&D
+contributors: satwik|Co-author
 status: published
 readTime: 5 min read
 number: 005

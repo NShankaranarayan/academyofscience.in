@@ -3,6 +3,7 @@ title: A Novel Approach for Real-Time Vehicle Re-Identification Using Content-Ba
 slug: vehicle-reidentification-relevance-feedback
 date: 2023-01-01
 type: R&D
+contributors: shankaranarayan|Lead author
 status: published
 readTime: 4 min read
 number: 001

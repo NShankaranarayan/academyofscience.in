@@ -3,6 +3,7 @@ title: Deep Vision-Based Vehicle Retrieval for Automated Smart Traffic Surveilla
 slug: deep-vision-vehicle-retrieval
 date: 2022-11-01
 type: R&D
+contributors: shankaranarayan|Lead author
 status: published
 readTime: 3 min read
 number: 002

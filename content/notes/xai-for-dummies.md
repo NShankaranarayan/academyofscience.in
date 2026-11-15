@@ -3,6 +3,7 @@ title: XAI for Dummies
 slug: xai-for-dummies
 date: 2026-11-13
 type: Articles
+contributors: shankaranarayan|Author
 status: published
 readTime: 7 min read
 number: 001

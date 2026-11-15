@@ -25,6 +25,19 @@ HOME_END = "<!-- FIELD_NOTES:END -->"
 
 
 @dataclass(frozen=True)
+class Contributor:
+    name: str
+    profile: str
+    role: str
+
+
+PEOPLE = {
+    "shankaranarayan": ("Shankaranarayan N", "shankaranarayan.html"),
+    "satwik": ("Satwik Ramsetti", "satwik.html"),
+}
+
+
+@dataclass(frozen=True)
 class Note:
     title: str
     slug: str
@@ -36,6 +49,7 @@ class Note:
     home: bool
     body: str
     share_image: str
+    contributors: list[Contributor]
 
     @property
     def type_code(self) -> str:
@@ -67,7 +81,7 @@ def parse_front_matter(path: Path) -> tuple[dict[str, str], str]:
 
 
 def load_notes() -> list[Note]:
-    required = {"title", "slug", "date", "type", "readTime", "excerpt", "number"}
+    required = {"title", "slug", "date", "type", "readTime", "excerpt", "number", "contributors"}
     notes: list[Note] = []
     for path in sorted(CONTENT_DIR.glob("*.md")):
         metadata, body = parse_front_matter(path)
@@ -80,6 +94,15 @@ def load_notes() -> list[Note]:
             raise ValueError(f"{path}: slug must contain lowercase words separated by hyphens")
         if metadata["type"] not in {"R&D", "Articles"}:
             raise ValueError(f"{path}: type must be R&D or Articles")
+        contributors = []
+        for credit in metadata["contributors"].split(";"):
+            person_id, separator, role = credit.strip().partition("|")
+            if not separator or person_id not in PEOPLE or not role.strip():
+                raise ValueError(f"{path}: invalid contributor credit {credit!r}")
+            name, profile = PEOPLE[person_id]
+            contributors.append(Contributor(name, profile, role.strip()))
+        if not contributors:
+            raise ValueError(f"{path}: at least one contributor is required")
         try:
             date.fromisoformat(metadata["date"])
         except ValueError as error:
@@ -95,7 +118,7 @@ def load_notes() -> list[Note]:
             published=metadata["date"], read_time=metadata["readTime"],
             excerpt=metadata["excerpt"], number=metadata["number"],
             home=metadata.get("home", "false").lower() == "true", body=body,
-            share_image=share_image,
+            share_image=share_image, contributors=contributors,
         ))
     slugs = [note.slug for note in notes]
     if len(slugs) != len(set(slugs)):
@@ -227,13 +250,22 @@ def note_card(note: Note, *, home: bool = False) -> str:
     excerpt = html.escape(note.excerpt)
     href = f"notes/{html.escape(note.slug)}.html"
     if home:
+        contributors = " · ".join(html.escape(person.name) for person in note.contributors)
+    else:
+        contributors = " · ".join(
+            f'<a href="{html.escape(person.profile, quote=True)}">{html.escape(person.name)}</a>'
+            for person in note.contributors
+        )
+    if home:
         extra = " knowledge" if note.content_type == "Articles" else ""
-        return (f'<a class="home-note reveal{extra}" href="{href}"><span>{html.escape(note.content_type)} / '
-                f'{html.escape(note.number)}</span><div><h3>{title}</h3><p>{excerpt}</p></div><b aria-hidden="true">↗</b></a>')
+        return (f'<article class="home-note reveal{extra}"><span>{html.escape(note.content_type)} / '
+                f'{html.escape(note.number)}</span><div><h3><a href="{href}">{title}</a></h3><p>{excerpt}</p>'
+                f'<small class="note-contributors">{contributors}</small></div><a class="note-card-arrow" href="{href}" aria-label="Open {title}">↗</a></article>')
     extra = " featured-note" if note.content_type == "Articles" else ""
-    return (f'<a class="library-note{extra}" href="{href}"><div class="library-note-no">{note.type_code} / '
+    return (f'<article class="library-note{extra}"><div class="library-note-no">{note.type_code} / '
             f'{html.escape(note.number)}</div><div><p>{html.escape(note.content_type)} · {html.escape(note.read_time)}</p>'
-            f'<h3>{title}</h3><span>{excerpt}</span></div><b aria-hidden="true">↗</b></a>')
+            f'<h3><a href="{href}">{title}</a></h3><span>{excerpt}</span>'
+            f'<small class="note-contributors">{contributors}</small></div><a class="note-card-arrow" href="{href}" aria-label="Open {title}">↗</a></article>')
 
 
 def build_articles(notes: list[Note]) -> None:
@@ -249,6 +281,10 @@ def build_articles(notes: list[Note]) -> None:
             "EXCERPT": html.escape(note.excerpt), "DATE": html.escape(note.published, quote=True),
             "DISPLAY_DATE": html.escape(note.display_date), "SLUG": html.escape(note.slug, quote=True),
             "NUMBER": html.escape(note.number, quote=True),
+            "CONTRIBUTORS": " · ".join(
+                f'<a href="../{html.escape(person.profile, quote=True)}">{html.escape(person.name)}</a>'
+                f' <span>{html.escape(person.role)}</span>' for person in note.contributors
+            ),
             "ARTICLE_BODY": render_markdown(note.body),
         }), encoding="utf-8")
     for stale in OUTPUT_DIR.glob("*.html"):

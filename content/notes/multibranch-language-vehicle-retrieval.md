@@ -3,6 +3,7 @@ title: Multi-Branch Deep Neural Model for Natural Language-Based Vehicle Retriev
 slug: multibranch-language-vehicle-retrieval
 date: 2023-01-01
 type: R&D
+contributors: shankaranarayan|Lead author
 status: published
 readTime: 4 min read
 number: 003
