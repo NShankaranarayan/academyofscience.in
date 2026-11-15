@@ -3,7 +3,10 @@ title: XAI for Dummies
 slug: xai-for-dummies
 date: 2026-11-13
 type: Articles
+category: Articles
 contributors: shankaranarayan|Author
+tags: Explainable AI, AI fundamentals
+shareImage: assets/research/explainable-ai.png
 status: published
 readTime: 7 min read
 number: 001

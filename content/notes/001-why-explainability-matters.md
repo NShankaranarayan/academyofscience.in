@@ -3,7 +3,10 @@ title: Why explainability matters when AI acts
 slug: why-explainability-matters
 date: 2026-11-13
 type: Articles
+category: Articles
 contributors: shankaranarayan|Author
+tags: Explainable AI, Responsible AI
+shareImage: assets/research/explainable-ai.png
 status: published
 readTime: 2 min read
 number: 001

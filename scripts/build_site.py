@@ -42,6 +42,7 @@ class Note:
     title: str
     slug: str
     content_type: str
+    category: str
     published: str
     read_time: str
     excerpt: str
@@ -50,6 +51,8 @@ class Note:
     body: str
     share_image: str
     contributors: list[Contributor]
+    tags: list[str]
+    source_url: str
 
     @property
     def type_code(self) -> str:
@@ -59,6 +62,8 @@ class Note:
     def display_date(self) -> str:
         try:
             parsed = date.fromisoformat(self.published)
+            if parsed.month == 1 and parsed.day == 1:
+                return str(parsed.year)
             return f"{parsed.day} {parsed.strftime('%B %Y')}"
         except ValueError:
             return self.published
@@ -81,7 +86,7 @@ def parse_front_matter(path: Path) -> tuple[dict[str, str], str]:
 
 
 def load_notes() -> list[Note]:
-    required = {"title", "slug", "date", "type", "readTime", "excerpt", "number", "contributors"}
+    required = {"title", "slug", "date", "type", "category", "readTime", "excerpt", "number", "contributors", "tags"}
     notes: list[Note] = []
     for path in sorted(CONTENT_DIR.glob("*.md")):
         metadata, body = parse_front_matter(path)
@@ -94,6 +99,10 @@ def load_notes() -> list[Note]:
             raise ValueError(f"{path}: slug must contain lowercase words separated by hyphens")
         if metadata["type"] not in {"R&D", "Articles"}:
             raise ValueError(f"{path}: type must be R&D or Articles")
+        if metadata["category"] not in {"Research and Development", "Articles"}:
+            raise ValueError(f"{path}: category must be Research and Development or Articles")
+        if (metadata["type"] == "Articles") != (metadata["category"] == "Articles"):
+            raise ValueError(f"{path}: Articles type and category must match")
         contributors = []
         for credit in metadata["contributors"].split(";"):
             person_id, separator, role = credit.strip().partition("|")
@@ -114,11 +123,13 @@ def load_notes() -> list[Note]:
         if not share_image.startswith("assets/") or not share_image_path.is_file() or ROOT not in share_image_path.parents:
             raise ValueError(f"{path}: shareImage must point to an existing file under assets/")
         notes.append(Note(
-            title=metadata["title"], slug=metadata["slug"], content_type=metadata["type"],
+            title=metadata["title"], slug=metadata["slug"], content_type=metadata["type"], category=metadata["category"],
             published=metadata["date"], read_time=metadata["readTime"],
             excerpt=metadata["excerpt"], number=metadata["number"],
             home=metadata.get("home", "false").lower() == "true", body=body,
             share_image=share_image, contributors=contributors,
+            tags=[tag.strip() for tag in metadata["tags"].split(",") if tag.strip()],
+            source_url=metadata.get("sourceUrl", ""),
         ))
     slugs = [note.slug for note in notes]
     if len(slugs) != len(set(slugs)):
@@ -262,10 +273,18 @@ def note_card(note: Note, *, home: bool = False) -> str:
                 f'{html.escape(note.number)}</span><div><h3><a href="{href}">{title}</a></h3><p>{excerpt}</p>'
                 f'<small class="note-contributors">{contributors}</small></div><a class="note-card-arrow" href="{href}" aria-label="Open {title}">↗</a></article>')
     extra = " featured-note" if note.content_type == "Articles" else ""
-    return (f'<article class="library-note{extra}"><div class="library-note-no">{note.type_code} / '
-            f'{html.escape(note.number)}</div><div><p>{html.escape(note.content_type)} · {html.escape(note.read_time)}</p>'
-            f'<h3><a href="{href}">{title}</a></h3><span>{excerpt}</span>'
-            f'<small class="note-contributors">{contributors}</small></div><a class="note-card-arrow" href="{href}" aria-label="Open {title}">↗</a></article>')
+    author_ids = " ".join(person.profile.removesuffix(".html") for person in note.contributors)
+    category = html.escape(note.category, quote=True)
+    tags = "".join(f'<span>{html.escape(tag)}</span>' for tag in note.tags)
+    source_link = (f'<a href="{html.escape(note.source_url, quote=True)}" rel="noopener noreferrer">Source ↗</a>'
+                   if note.source_url else "")
+    return (f'<article class="library-note{extra}" data-category="{category}" data-authors="{html.escape(author_ids, quote=True)}" '
+            f'data-tags="{html.escape("|".join(tag.casefold() for tag in note.tags), quote=True)}">'
+            f'<a class="library-cover" href="{href}" aria-label="Open {title}"><img src="{html.escape(note.share_image, quote=True)}" alt="" loading="lazy"></a>'
+            f'<div class="library-note-body"><p class="portfolio-card-meta"><span>{category}</span><time datetime="{html.escape(note.published, quote=True)}">{html.escape(note.display_date)}</time></p>'
+            f'<h3><a href="{href}">{title}</a></h3><span class="portfolio-card-excerpt">{excerpt}</span>'
+            f'<small class="note-contributors">{contributors}</small><div class="portfolio-tags">{tags}</div>'
+            f'<div class="portfolio-card-links"><a href="{href}">View item ↗</a>{source_link}</div></div></article>')
 
 
 def build_articles(notes: list[Note]) -> None:
@@ -292,7 +311,7 @@ def build_articles(notes: list[Note]) -> None:
             stale.unlink()
 
 
-def build_notes_index(notes: list[Note]) -> None:
+def build_notes_index_legacy(notes: list[Note]) -> None:
     sections = []
     content_types = (("R&D", "Studies, publications, implementations, benchmarks, and prototypes."),
                      ("Articles", "Tutorials, reviews, and explainers."))
@@ -307,6 +326,29 @@ def build_notes_index(notes: list[Note]) -> None:
             f'<h2>{description}</h2></div></div>\n  <div class="library-note-list">{cards}</div>\n</div>'
         )
     NOTES_INDEX_PATH.write_text(fill_template("notes.html", {"NOTE_STREAMS": "\n".join(sections)}), encoding="utf-8")
+
+
+def build_notes_index(notes: list[Note]) -> None:
+    cards = "\n".join(note_card(note) for note in notes)
+    authors = {}
+    for note in notes:
+        for person in note.contributors:
+            person_id = person.profile.removesuffix(".html")
+            authors[person_id] = person.name
+    author_options = [
+        f'<option value="{html.escape(person_id, quote=True)}">{html.escape(name)}</option>'
+        for person_id, name in sorted(authors.items(), key=lambda item: item[1].casefold())
+    ]
+    topics = sorted({tag for note in notes for tag in note.tags}, key=str.casefold)
+    topic_options = [
+        f'<option value="{html.escape(tag.casefold(), quote=True)}">{html.escape(tag)}</option>'
+        for tag in topics
+    ]
+    NOTES_INDEX_PATH.write_text(fill_template("notes.html", {
+        "NOTE_STREAMS": cards,
+        "AUTHOR_OPTIONS": "\n          ".join(author_options),
+        "TOPIC_OPTIONS": "\n          ".join(topic_options),
+    }), encoding="utf-8")
 
 
 def update_homepage(notes: list[Note]) -> None:

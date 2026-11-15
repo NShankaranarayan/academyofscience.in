@@ -15,16 +15,33 @@
   <link rel="icon" href="assets/logo.png">
   <script src="themes/active-theme.js?v=dcda7e55ac87"></script>
   <script src="mode-init.js?v=1"></script>
-  <link rel="stylesheet" href="styles.css?v=27">
+  <link rel="stylesheet" href="styles.css?v=28">
 </head>
 <body class="notes-page">
   <a class="skip-link" href="#notes-main">Skip to portfolio</a><div class="noise" aria-hidden="true"></div>
   <header class="site-header profile-header"><a class="brand" href="index.html"><img src="assets/logo.png" data-theme-logo alt="" width="48" height="48"><span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span></a><nav aria-label="Portfolio navigation"><a href="index.html">Home</a><a href="index.html#capabilities">Capabilities</a><a href="index.html#people">People</a></nav><button class="page-mode-toggle" id="pageModeToggle" type="button" aria-pressed="false"><span></span> Geek mode</button></header>
   <main id="notes-main">
     <section class="notes-hero"><p class="eyebrow"><span>PORTFOLIO / 01</span> Research &amp; knowledge</p><h1>R&amp;D.<br>Articles.</h1><p>Explore our research and development work alongside tutorials, reviews, and explainers.</p></section>
-    <section class="notes-library section-pad">{{NOTE_STREAMS}}</section>
+    <section class="portfolio-browser section-pad" aria-label="Browse portfolio work">
+      <div class="portfolio-controls">
+        <div class="portfolio-type-filters" role="group" aria-label="Filter by type">
+          <button type="button" class="active" data-type-filter="all" aria-pressed="true">All work</button>
+          <button type="button" data-type-filter="Research and Development" aria-pressed="false">Research and Development</button>
+          <button type="button" data-type-filter="Articles" aria-pressed="false">Articles</button>
+        </div>
+        <label class="portfolio-select">Author<select id="portfolioAuthor"><option value="all">All contributors</option>
+          {{AUTHOR_OPTIONS}}
+        </select></label>
+        <label class="portfolio-select">Topic<select id="portfolioTopic"><option value="all">All topics</option>
+          {{TOPIC_OPTIONS}}
+        </select></label>
+      </div>
+      <p class="portfolio-result-count" id="portfolioResultCount" aria-live="polite"></p>
+      <div class="portfolio-grid" id="portfolioGrid">{{NOTE_STREAMS}}</div>
+      <p class="portfolio-empty" id="portfolioEmpty" hidden>No work matches these filters. Try another combination.</p>
+    </section>
   </main>
   <footer class="site-footer"><div><img src="assets/logo.png" data-theme-logo alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div><p>Research intelligence.<br>Build what matters.</p><div class="footer-meta"><a href="index.html">Return home ↑</a></div></footer>
-  <script src="page-mode.js?v=1"></script><script src="theme-assets.js?v=8"></script>
+  <script src="page-mode.js?v=1"></script><script src="theme-assets.js?v=8"></script><script src="portfolio.js?v=1"></script>
 </body>
 </html>

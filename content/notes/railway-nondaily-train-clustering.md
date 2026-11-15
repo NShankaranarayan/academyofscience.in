@@ -3,7 +3,11 @@ title: Clustering Techniques to Optimize Railway Daily Path Utilization for Non-
 slug: railway-nondaily-train-clustering
 date: 2025-01-01
 type: R&D
+category: Research and Development
 contributors: satwik|Co-author
+tags: Railway optimization, Clustering, Timetabling
+shareImage: assets/research/embodied-physical-ai.png
+sourceUrl: https://doi.org/10.1016/j.trpro.2024.12.192
 status: published
 readTime: 5 min read
 number: 004
