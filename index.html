@@ -11,7 +11,7 @@
   <link rel="icon" href="assets/logo.png">
   <script src="mode-init.js?v=1"></script>
   <script src="themes/active-theme.js?v=dcda7e55ac87"></script>
-  <link rel="stylesheet" href="styles.css?v=40">
+  <link rel="stylesheet" href="styles.css?v=41">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -46,12 +46,15 @@
       <img src="assets/logo.png" data-theme-logo alt="" width="46" height="46">
       <span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span>
     </a>
-    <nav aria-label="Primary navigation">
-      <a href="#capabilities">Capabilities</a>
-      <a href="#work">Work with us</a>
+    <nav class="primary-nav" id="primary-navigation" aria-label="Primary navigation" data-open="false">
+      <a href="#top">Home</a>
       <a href="notes.html">Portfolio</a>
+      <a href="#capabilities">Capabilities</a>
       <a href="#people">People</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
     </nav>
+    <button class="site-nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><span class="site-nav-toggle-label">Menu</span><span class="site-nav-toggle-icon" aria-hidden="true"><i></i><i></i></span></button>
     <div class="ufo-control-cell" id="ufoControlCell">
       <button class="ufo-trigger" id="ufoLaunch" type="button"><span id="ufoLaunchLabel">DO NOT CLICK</span><b>LAUNCH SAUCER ↗</b></button>
       <div class="ufo-split-controls" id="ufoSplitControls" hidden>
@@ -188,6 +191,29 @@
       </div>
     </section>
 
+    <section class="about section-pad" id="about" aria-labelledby="about-title">
+      <div class="section-heading reveal">
+        <div><p class="section-kicker">About the lab</p><h2 id="about-title">Research with engineering behind it.</h2></div>
+        <p>Academy of Science is an independent AI research and development lab. We conduct original research and work with organizations to investigate, prototype, evaluate, and build intelligent systems.</p>
+      </div>
+      <div class="about-details reveal">
+        <p>Our capabilities span AI and machine learning, with deep specialization in Explainable AI and Physical AI. We apply these independently or together, from supporting studies and early feasibility through engineered systems and deployment.</p>
+        <a href="#people">Meet the researchers <span>↗</span></a>
+      </div>
+    </section>
+
+    <section class="contact section-pad" id="contact" aria-labelledby="contact-title">
+      <div class="contact-copy reveal">
+        <p class="section-kicker">Contact</p>
+        <h2 id="contact-title">Have a research or engineering question?</h2>
+        <p>Start a conversation with the researchers about feasibility, evaluation, applied AI development, or deployment.</p>
+      </div>
+      <div class="contact-links reveal">
+        <a href="https://www.linkedin.com/in/shankaranarayan-n/" rel="noopener noreferrer"><span>Explainable &amp; reliable AI</span><b>Contact Shankaranarayan on LinkedIn <i>↗</i></b></a>
+        <a href="https://www.linkedin.com/in/rvsatwik/" rel="noopener noreferrer"><span>Physical AI &amp; optimization</span><b>Contact Satwik on LinkedIn <i>↗</i></b></a>
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-footer">
@@ -197,5 +223,6 @@
   </footer>
   <script src="script.js?v=22"></script>
   <script src="theme-assets.js?v=8"></script>
+  <script src="site-nav.js?v=1"></script>
 </body>
 </html>

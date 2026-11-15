@@ -10,6 +10,11 @@
   const count = document.getElementById("portfolioResultCount");
   let selectedType = "all";
 
+  const requestedAuthor = new URLSearchParams(window.location.search).get("author");
+  if (requestedAuthor && [...authorSelect.options].some((option) => option.value === requestedAuthor)) {
+    authorSelect.value = requestedAuthor;
+  }
+
   function update() {
     let visible = 0;
     for (const card of cards) {
