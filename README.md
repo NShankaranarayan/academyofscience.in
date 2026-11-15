@@ -153,9 +153,9 @@ Every published item uses the same Portfolio card and article template. The buil
 
 The generator supports headings, paragraphs, emphasis, inline code, safe Markdown links, unordered and ordered lists, blockquotes, horizontal rules, and fenced code blocks. Raw HTML is escaped rather than executed.
 
-### Sharing a Field Note
+### Sharing a Portfolio entry
 
-Open any published article and choose **Prepare a share card**. The share studio lets you write a short personal summary, preview the theme-colored card, and download it as a PNG. **Prepare image post for LinkedIn** downloads the personalized card, copies a caption with the article URL, and opens LinkedIn's composer. Add the downloaded PNG there and paste the caption. LinkedIn's link preview uses its own thumbnail; the article also includes Open Graph metadata and the note's `shareImage` for link previews.
+Detail pages provide a LinkedIn share link and a copy-URL action. Browsers with the Web Share API also show a device share action. **Create social image** opens the Share Kit, where visitors can personalize a caption and download a PNG sized for a LinkedIn post (1200 × 627), Instagram post (1080 × 1350), or Instagram story (1080 × 1920). Visitors upload Instagram images in the Instagram app; the website does not claim to publish directly to Instagram. The article's `shareImage` and Open Graph metadata provide the thumbnail for link previews.
 
 ## Selecting the site theme
 
