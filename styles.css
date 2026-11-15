@@ -392,6 +392,7 @@ html[data-mode="normal"] .hero{background-image:linear-gradient(rgba(23,23,22,.0
 
 /* The Geek Mode saucer remains offset from the native pointer and ignores input. */
 .cursor-ufo,.cursor-ufo[hidden]{display:none!important}
+#cursorUfo,#cursorUfo *{pointer-events:none!important}
 .cursor-ufo:not([hidden]){position:fixed;inset:0;width:100vw;height:100vh;overflow:visible;pointer-events:none;z-index:9998}
 .ufo-craft{transform-box:fill-box;transform-origin:center;animation:ufo-bob 3.4s ease-in-out infinite}
 .ufo-beam{transform-box:fill-box;transform-origin:top center;animation:ufo-beam-pulse 2.8s ease-in-out infinite}
@@ -403,7 +404,7 @@ html[data-mode="normal"] .hero{background-image:linear-gradient(rgba(23,23,22,.0
 @keyframes ufo-glow-pulse{0%,100%{opacity:.24}50%{opacity:.55}}
 @keyframes ufo-particle-drift{0%,100%{opacity:.15;transform:translateY(-3px)}50%{opacity:.9;transform:translateY(3px)}}
 #cursorUfo:not([hidden]){display:block!important}
-@media(prefers-reduced-motion:reduce){.ufo-craft,.ufo-beam,.ufo-beam-glow,.ufo-beam-particle{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.ufo-craft,.ufo-beam,.ufo-beam-glow,.ufo-beam-particle,.ufo-shot,.ufo-split-controls:not([hidden]){animation:none!important}}
 
 /* The saucer launches from one warning control, then exposes separate surrender and weapon controls. */
 .ufo-control-cell{display:flex;min-width:0}

@@ -508,7 +508,7 @@ logoCanvas.addEventListener('keydown', event => {
   if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); }
 });
 
-// A self-contained UFO companion, enabled only for Geek Mode on desktop widths.
+// The UFO companion runs only in Geek Mode on a touch-free desktop with motion enabled.
 const cursorUfo = document.querySelector('#cursorUfo');
 const cursorUfoMotion = document.querySelector('#cursorUfoMotion');
 const ufoShots = document.querySelector('#ufoShots');
@@ -518,12 +518,18 @@ const ufoSplitControls = document.querySelector('#ufoSplitControls');
 const ufoSurrender = document.querySelector('#ufoSurrender');
 const ufoWeapon = document.querySelector('#ufoWeapon');
 if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && ufoSplitControls && ufoSurrender && ufoWeapon) {
-  const ufoDesktop = matchMedia('(min-width: 681px)');
+  const ufoDesktop = matchMedia('(min-width: 681px) and (hover: hover) and (pointer: fine)');
+  const ufoReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const ufoTouchFirst = navigator.maxTouchPoints > 0
+    || navigator.userAgentData?.mobile === true
+    || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const ufoTriggerLabel = document.querySelector('#ufoLaunchLabel');
   const ufoWeaponLabel = document.querySelector('#ufoWeaponLabel');
   const ufoWeaponState = document.querySelector('#ufoWeaponState');
   let ufoEnabled = false, ufoDeployed = false, ufoLaunching = false, ufoReturning = false, ufoFollowing = false;
   let ufoFrame = 0, ufoHasPointer = false, ufoCombat = false, ufoFireTimer = 0, ufoStageTimer = 0;
+  let ufoStageDeadline = 0, ufoStageRemaining = 0, ufoStageCallback = null;
   let pointerX = 0, pointerY = 0;
   let ufoX = 0, ufoY = 0, ufoTargetX = 0, ufoTargetY = 0, ufoVelocityX = 0, ufoVelocityY = 0;
   let ufoLastFrame = 0;
@@ -531,7 +537,9 @@ if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && 
   function updateUfoTrigger() {
     ufoTrigger.disabled = !ufoEnabled || ufoDeployed;
     ufoTrigger.hidden = ufoDeployed && !ufoLaunching && !ufoReturning;
-    ufoTriggerLabel.textContent = !ufoDesktop.matches ? 'MOUSE LINK REQUIRED' : (ufoLaunching ? 'LAUNCHING...' : (ufoReturning ? 'RETURNING...' : 'DO NOT CLICK'));
+    ufoTriggerLabel.textContent = ufoReducedMotion.matches
+      ? 'REDUCED MOTION ENABLED'
+      : (!ufoDesktop.matches || ufoTouchFirst ? 'DESKTOP MOUSE REQUIRED' : (ufoLaunching ? 'LAUNCHING...' : (ufoReturning ? 'RETURNING...' : 'DO NOT CLICK')));
     ufoSplitControls.hidden = !ufoDeployed || ufoLaunching || ufoReturning;
     ufoWeapon.setAttribute('aria-pressed', String(ufoCombat));
     ufoWeaponLabel.textContent = ufoCombat ? 'TAKE AWAY WEAPON' : 'GIVE IT ABILITY TO SHOOT';
@@ -545,6 +553,46 @@ if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && 
   function clearUfoStage() {
     if (ufoStageTimer) clearTimeout(ufoStageTimer);
     ufoStageTimer = 0;
+    ufoStageDeadline = 0;
+    ufoStageRemaining = 0;
+    ufoStageCallback = null;
+  }
+
+  function startUfoStageTimer() {
+    if (document.hidden || !ufoStageCallback || ufoStageTimer) return;
+    ufoStageDeadline = performance.now() + ufoStageRemaining;
+    ufoStageTimer = setTimeout(() => {
+      const callback = ufoStageCallback;
+      clearUfoStage();
+      if (callback) callback();
+    }, ufoStageRemaining);
+  }
+
+  function scheduleUfoStage(callback, delay) {
+    clearUfoStage();
+    ufoStageCallback = callback;
+    ufoStageRemaining = delay;
+    startUfoStageTimer();
+  }
+
+  function pauseUfoStage() {
+    if (!ufoStageTimer) return;
+    clearTimeout(ufoStageTimer);
+    ufoStageTimer = 0;
+    ufoStageRemaining = Math.max(0, ufoStageDeadline - performance.now());
+    ufoStageDeadline = 0;
+  }
+
+  function stopUfoFrame() {
+    if (ufoFrame) cancelAnimationFrame(ufoFrame);
+    ufoFrame = 0;
+    ufoLastFrame = 0;
+  }
+
+  function startUfoFireTimer() {
+    if (ufoFireTimer || !ufoCombat || !ufoEnabled || document.hidden || !ufoHasPointer) return;
+    fireUfoShot();
+    ufoFireTimer = setInterval(fireUfoShot, 900);
   }
 
   function placeAtPointer() {
@@ -557,17 +605,16 @@ if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && 
     if (ufoFireTimer) clearInterval(ufoFireTimer);
     ufoFireTimer = 0;
     updateUfoTrigger();
-    if (ufoCombat) {
-      fireUfoShot();
-      ufoFireTimer = setInterval(fireUfoShot, 900);
-    } else clearUfoShots();
+    if (ufoCombat) startUfoFireTimer();
+    else clearUfoShots();
   }
 
   function syncUfoMode() {
-    ufoEnabled = root.dataset.mode === 'geek' && ufoDesktop.matches;
+    ufoEnabled = root.dataset.mode === 'geek' && ufoDesktop.matches && !ufoTouchFirst && !ufoReducedMotion.matches;
     if (!ufoEnabled) {
       clearUfoStage();
       setUfoCombat(false);
+      stopUfoFrame();
       ufoDeployed = false;
       ufoLaunching = false;
       ufoReturning = false;
@@ -635,15 +682,16 @@ if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && 
     cursorUfo.setAttribute('data-launch-state', 'launching');
     cursorUfoMotion.setAttribute('transform', `translate(${Math.round(ufoX)} ${Math.round(ufoY)})`);
     updateUfoTrigger();
-    if (!ufoFrame) ufoFrame = requestAnimationFrame(animateUfo);
-    ufoStageTimer = setTimeout(() => {
+    if (!ufoFrame && !document.hidden) ufoFrame = requestAnimationFrame(animateUfo);
+    scheduleUfoStage(() => {
       if (!ufoEnabled || !ufoDeployed) return;
       ufoLaunching = false;
       ufoFollowing = true;
       cursorUfo.removeAttribute('data-launch-state');
       placeAtPointer();
+      if (!ufoHasPointer) cursorUfo.setAttribute('hidden', '');
       updateUfoTrigger();
-      if (!ufoFrame) ufoFrame = requestAnimationFrame(animateUfo);
+      if (ufoHasPointer && !ufoFrame && !document.hidden) ufoFrame = requestAnimationFrame(animateUfo);
     }, 680);
   }
 
@@ -658,8 +706,8 @@ if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && 
     ufoReturning = true;
     cursorUfo.setAttribute('data-launch-state', 'returning');
     updateUfoTrigger();
-    if (!ufoFrame) ufoFrame = requestAnimationFrame(animateUfo);
-    ufoStageTimer = setTimeout(() => {
+    if (!ufoFrame && !document.hidden) ufoFrame = requestAnimationFrame(animateUfo);
+    scheduleUfoStage(() => {
       ufoDeployed = false;
       ufoReturning = false;
       ufoFollowing = false;
@@ -676,6 +724,7 @@ if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && 
     pointerX = event.clientX;
     pointerY = event.clientY;
     ufoHasPointer = true;
+    if (ufoCombat) startUfoFireTimer();
     if (ufoDeployed && ufoFollowing) {
       placeAtPointer();
       cursorUfo.removeAttribute('hidden');
@@ -690,21 +739,49 @@ if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && 
   window.addEventListener('pointerout', event => {
     if (event.relatedTarget === null) {
       ufoHasPointer = false;
-      if (ufoFollowing) cursorUfo.setAttribute('hidden', '');
+      if (ufoFireTimer) clearInterval(ufoFireTimer);
+      ufoFireTimer = 0;
+      if (ufoFollowing) {
+        cursorUfo.setAttribute('hidden', '');
+        stopUfoFrame();
+      }
     }
   });
   window.addEventListener('blur', () => {
     ufoHasPointer = false;
-    if (ufoFollowing) cursorUfo.setAttribute('hidden', '');
+    if (ufoFireTimer) clearInterval(ufoFireTimer);
+    ufoFireTimer = 0;
+    if (ufoFollowing) {
+      cursorUfo.setAttribute('hidden', '');
+      stopUfoFrame();
+    }
   });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       ufoHasPointer = false;
-      if (ufoFollowing) cursorUfo.setAttribute('hidden', '');
+      stopUfoFrame();
+      pauseUfoStage();
+      if (ufoFireTimer) clearInterval(ufoFireTimer);
+      ufoFireTimer = 0;
+      clearUfoShots();
+      if (ufoDeployed) cursorUfo.setAttribute('hidden', '');
+    } else {
+      startUfoStageTimer();
+      if (ufoDeployed && (ufoLaunching || ufoReturning)) {
+        cursorUfo.removeAttribute('hidden');
+        ufoFrame = requestAnimationFrame(animateUfo);
+      } else if (ufoFollowing && ufoHasPointer) {
+        placeAtPointer();
+        cursorUfo.removeAttribute('hidden');
+        ufoFrame = requestAnimationFrame(animateUfo);
+      }
+      if (ufoCombat) startUfoFireTimer();
     }
   });
   new MutationObserver(syncUfoMode).observe(root, { attributes: true, attributeFilter: ['data-mode'] });
   if (ufoDesktop.addEventListener) ufoDesktop.addEventListener('change', syncUfoMode);
   else ufoDesktop.addListener(syncUfoMode);
+  if (ufoReducedMotion.addEventListener) ufoReducedMotion.addEventListener('change', syncUfoMode);
+  else ufoReducedMotion.addListener(syncUfoMode);
   syncUfoMode();
 }
