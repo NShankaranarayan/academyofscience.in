@@ -1,11 +1,12 @@
 const root = document.documentElement;
 const modeSwitch = document.querySelector('#modeSwitch');
 const themeMeta = document.querySelector('meta[name="theme-color"]');
+const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 
 function setMode(mode) {
   root.dataset.mode = mode;
   modeSwitch.setAttribute('aria-pressed', String(mode === 'geek'));
-  themeMeta.content = mode === 'geek' ? '#0d0d0e' : '#f2efe8';
+  themeMeta.content = mode === 'geek' ? '#090a0a' : '#f2efe8';
   try { localStorage.setItem('aos-mode', mode); } catch {}
 }
 
@@ -15,11 +16,23 @@ setMode(savedMode);
 modeSwitch.addEventListener('click', () => {
   const mode = root.dataset.mode === 'geek' ? 'normal' : 'geek';
   setMode(mode);
-  if (mode === 'geek') startLogoMotion();
-  else { logoState.paused = true; drawLogo(); startHeroMotion(); }
+  if (mode === 'geek') {
+    if (heroFrame) cancelAnimationFrame(heroFrame);
+    heroFrame = 0;
+    heroMotion.paused = true;
+    drawHeroLogo();
+    ensureLogoParticles();
+    startLogoMotion();
+  } else {
+    if (logoFrame) cancelAnimationFrame(logoFrame);
+    logoFrame = 0;
+    logoState.paused = true;
+    heroMotion.paused = false;
+    drawLogo();
+    drawHeroLogo();
+    startHeroMotion();
+  }
 });
-document.querySelector('#geekExit').addEventListener('click', () => setMode('normal'));
-
 const observer = new IntersectionObserver(entries => entries.forEach(entry => {
   if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
 }), { threshold: .12 });
@@ -47,14 +60,18 @@ const heroFan = {
 const heroMotion = { angle: 0, speed: 0.2, paused: false, dragging: false, moved: false, lastPointerAngle: 0, lastPointerTime: 0 };
 let heroFrame = 0;
 let heroLastFrameTime = 0;
+let heroLogoVisible = false;
 const particleSource = document.createElement('canvas');
 const particleContext = particleSource.getContext('2d', { willReadFrequently: true });
 const logoParticles = [];
+let logoParticlesReady = false;
 const particleLayers = [];
 const ambientParticles = [];
 const logoPointer = { x: -1000, y: -1000, active: false };
 const logoState = { angle: 0, speed: .012, yaw: 0, pitch: 0, paused: false, dragging: false, lastPointerAngle: 0, moved: false, lastFrame: 0, width: 0, height: 0, dpr: 1 };
 let logoFrame = 0;
+let logoCanvasVisible = false;
+let logoUserPaused = false;
 const fan = { centerX: heroFan.centerX / 1254, centerY: heroFan.centerY / 1254 };
 const particleAccent = getComputedStyle(root).getPropertyValue('--accent').trim() || '#D4AA60';
 
@@ -115,18 +132,19 @@ function drawHeroLogo() {
   heroContext.arc(heroFan.centerX, heroFan.centerY, heroFan.hubRadius, 0, Math.PI * 2);
   heroContext.fill();
   heroContext.globalCompositeOperation = 'source-over';
-  const paused = String(heroMotion.paused);
+  const paused = String(heroMotion.paused || motionPreference.matches);
   if (heroContainer.dataset.paused !== paused) {
     heroContainer.dataset.paused = paused;
-    heroContainer.setAttribute('aria-label', `Animated Academy of Science logo. Fans ${heroMotion.paused ? 'paused' : 'spinning'}. Drag around the hub to redirect them. Use the adjacent control or Space to pause or resume.`);
-    heroToggle.textContent = heroMotion.paused ? 'Start emblem' : 'Pause emblem';
-    heroToggle.setAttribute('aria-pressed', String(!heroMotion.paused));
+    heroContainer.setAttribute('aria-label', `Animated Academy of Science logo. Fans ${paused === 'true' ? 'paused' : 'spinning'}. Drag around the hub to redirect them. Use the adjacent control or Space to pause or resume.`);
+    heroToggle.textContent = motionPreference.matches ? 'Motion reduced' : (heroMotion.paused ? 'Start emblem' : 'Pause emblem');
+    heroToggle.disabled = motionPreference.matches;
+    heroToggle.setAttribute('aria-pressed', String(!heroMotion.paused && !motionPreference.matches));
   }
 }
 
 function animateHeroLogo(timestamp) {
   heroFrame = 0;
-  if (root.dataset.mode !== 'normal' || heroMotion.paused || document.hidden) return;
+  if (root.dataset.mode !== 'normal' || heroMotion.paused || motionPreference.matches || document.hidden) return;
   const elapsed = heroLastFrameTime ? Math.min((timestamp - heroLastFrameTime) / 1000, 0.05) : 0;
   heroLastFrameTime = timestamp;
   heroMotion.angle += heroMotion.speed * elapsed;
@@ -137,7 +155,7 @@ function animateHeroLogo(timestamp) {
 }
 
 function startHeroMotion() {
-  if (!heroFrame && root.dataset.mode === 'normal' && !heroMotion.paused && !document.hidden) {
+  if (!heroFrame && heroLogoVisible && root.dataset.mode === 'normal' && !heroMotion.paused && !motionPreference.matches && !document.hidden) {
     heroFrame = requestAnimationFrame(animateHeroLogo);
   }
 }
@@ -348,7 +366,10 @@ function drawLogo() {
   }
   ctx.globalAlpha = 1;
   document.querySelector('#visualState').textContent = `${logoState.dragging ? 'INTERACTING' : 'LIVE'} PARTICLE VOLUME · ${logoParticles.length.toLocaleString()}`;
-  logoCanvas.setAttribute('aria-label', `Interactive particle rendering of the Academy of Science logo with ${logoParticles.length} particles. Move a pointer to scatter and gather particles; drag the fan blades to spin them.`);
+  const motionHint = motionPreference.matches
+    ? 'Animation is paused by your reduced motion setting.'
+    : 'Move a pointer to scatter particles, use left and right arrows to rotate, and press Space or Enter to pause or resume.';
+  logoCanvas.setAttribute('aria-label', `Interactive particle rendering of the Academy of Science logo with ${logoParticles.length} particles. ${motionHint}`);
 }
 
 function resizeLogoCanvas() {
@@ -423,9 +444,15 @@ function buildLogoParticles() {
   if (root.dataset.mode === 'geek') startLogoMotion();
 }
 
+function ensureLogoParticles() {
+  if (logoParticlesReady || !logoImage.complete || !logoImage.naturalWidth) return;
+  logoParticlesReady = true;
+  buildLogoParticles();
+}
+
 function animateLogo(timestamp) {
   logoFrame = 0;
-  if (root.dataset.mode !== 'geek' || document.hidden) return;
+  if (root.dataset.mode !== 'geek' || logoState.paused || motionPreference.matches || document.hidden) return;
   const elapsed = logoState.lastFrame ? Math.min((timestamp - logoState.lastFrame) / 1000, .05) : 0;
   logoState.lastFrame = timestamp;
   const targetYaw = logoPointer.active ? (logoPointer.x / logoState.width - .5) * .54 : 0;
@@ -438,18 +465,62 @@ function animateLogo(timestamp) {
 }
 
 function startLogoMotion() {
+  if (motionPreference.matches) { logoState.paused = true; return; }
+  if (logoUserPaused) { logoState.paused = true; return; }
+  if (!logoCanvasVisible) return;
   logoState.paused = false;
-  if (!logoFrame && root.dataset.mode === 'geek') logoFrame = requestAnimationFrame(animateLogo);
+  if (!logoFrame && root.dataset.mode === 'geek' && !motionPreference.matches && !document.hidden) logoFrame = requestAnimationFrame(animateLogo);
 }
+
+const onMotionPreferenceChange = () => {
+  if (motionPreference.matches) {
+    if (heroFrame) cancelAnimationFrame(heroFrame);
+    if (logoFrame) cancelAnimationFrame(logoFrame);
+    heroFrame = logoFrame = 0;
+    heroMotion.paused = true;
+    logoState.paused = true;
+  } else if (root.dataset.mode === 'normal') {
+    heroMotion.paused = false;
+    startHeroMotion();
+  } else {
+    logoState.paused = logoUserPaused;
+    startLogoMotion();
+  }
+  drawHeroLogo();
+  drawLogo();
+};
+if (motionPreference.addEventListener) motionPreference.addEventListener('change', onMotionPreferenceChange);
+else motionPreference.addListener(onMotionPreferenceChange);
 
 logoImage.addEventListener('load', () => {
   prepareHeroLogo();
-  buildLogoParticles();
+  if (root.dataset.mode === 'geek') ensureLogoParticles();
 });
 logoImage.src = activeTheme.logo;
 new ResizeObserver(resizeLogoCanvas).observe(logoCanvas);
 
+new IntersectionObserver(([entry]) => {
+  heroLogoVisible = entry.isIntersecting;
+  if (heroLogoVisible) startHeroMotion();
+  else {
+    if (heroFrame) cancelAnimationFrame(heroFrame);
+    heroFrame = 0;
+    heroLastFrameTime = 0;
+  }
+}, { threshold: .05 }).observe(heroContainer);
+
+new IntersectionObserver(([entry]) => {
+  logoCanvasVisible = entry.isIntersecting;
+  if (logoCanvasVisible) startLogoMotion();
+  else {
+    if (logoFrame) cancelAnimationFrame(logoFrame);
+    logoFrame = 0;
+    logoState.lastFrame = 0;
+  }
+}, { threshold: .05 }).observe(logoCanvas);
+
 logoCanvas.addEventListener('pointerdown', event => {
+  if (motionPreference.matches) return;
   const rect = logoCanvas.getBoundingClientRect();
   const rx = (event.clientX - rect.left) / rect.width, ry = (event.clientY - rect.top) / rect.height;
   logoPointer.x = event.clientX - rect.left;
@@ -469,6 +540,7 @@ logoCanvas.addEventListener('pointerdown', event => {
   drawLogo();
 });
 logoCanvas.addEventListener('pointermove', event => {
+  if (motionPreference.matches) return;
   const rect = logoCanvas.getBoundingClientRect();
   const rx = (event.clientX - rect.left) / rect.width, ry = (event.clientY - rect.top) / rect.height;
   logoPointer.x = event.clientX - rect.left;
@@ -500,12 +572,23 @@ logoCanvas.addEventListener('pointercancel', () => {
   startLogoMotion();
 });
 logoCanvas.addEventListener('keydown', event => {
+  if (motionPreference.matches) return;
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
+    logoUserPaused = false;
     logoState.speed = event.key === 'ArrowLeft' ? -.018 : .018;
     startLogoMotion();
   }
-  if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); }
+  if (event.key === ' ' || event.key === 'Enter') {
+    event.preventDefault();
+    logoUserPaused = !logoUserPaused;
+    logoState.paused = logoUserPaused;
+    if (logoState.paused) {
+      if (logoFrame) cancelAnimationFrame(logoFrame);
+      logoFrame = 0;
+    } else startLogoMotion();
+    drawLogo();
+  }
 });
 
 // The UFO companion runs only in Geek Mode on a touch-free desktop with motion enabled.
@@ -611,6 +694,7 @@ if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && 
 
   function syncUfoMode() {
     ufoEnabled = root.dataset.mode === 'geek' && ufoDesktop.matches && !ufoTouchFirst && !ufoReducedMotion.matches;
+    root.toggleAttribute('data-ufo-eligible', ufoEnabled);
     if (!ufoEnabled) {
       clearUfoStage();
       setUfoCombat(false);

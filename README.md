@@ -2,7 +2,7 @@
 
 Static website for [academyofscience.in](https://academyofscience.in), an independent AI research and development lab. The site is designed for GitHub Pages and has no runtime framework, package manager, database, or third-party JavaScript dependency.
 
-The homepage and profile pages are hand-authored HTML. Field Notes are authored in Markdown and converted into complete static HTML by a dependency-free Python build script.
+The homepage and profile pages are hand-authored HTML. Portfolio articles are authored in Markdown and converted into static HTML by a dependency-free Python build script. Normal and Geek modes share the same page content; Geek Mode is a visual theme, not a parallel copy of each page.
 
 ## Requirements
 
@@ -71,6 +71,10 @@ Always run the build before committing changes to Field Notes. The generated HTM
 ### Changing the site theme
 
 Edit `themes/active.json` to select `red` or `gold`, then run `python3 scripts/build_theme.py`. This generates `themes/active-theme.js` and the selected vector logo variant from `assets/logo.svg`. The homepage animation and Geek mode dot logo both render from that same SVG. Edit the SVG artwork itself to change the emblem; change the accent value in a theme JSON file to recolor it.
+
+### Normal and Geek modes
+
+Each page has one content source. The mode control stores the selected appearance and applies it across the homepage, contributor profiles, Portfolio library, and article pages. To publish a Portfolio item, add one Markdown file under `content/notes/` and build the site; the generated article and library entry automatically support both modes through the shared templates and stylesheet. Do not create a separate Geek version of the same content.
 
 ## Adding a Portfolio Item
 
@@ -186,7 +190,7 @@ Preview these representative routes:
 ## Content and design
 
 - Normal Mode is an editorial research-lab presentation.
-- Geek Mode is an interactive terminal-style presentation available on the homepage.
+- Geek Mode is the site-wide night theme. It keeps the same page structure and content, with the homepage fluid logo and optional UFO companion.
 - The site uses system fonts and local assets only.
 - Styles and scripts are governed by restrictive per-page Content Security Policies.
 - Article HTML is pre-rendered for accessibility, search indexing, link previews, and operation without JavaScript.

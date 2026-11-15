@@ -11,7 +11,7 @@
   <link rel="icon" href="assets/logo.png">
   <script src="mode-init.js?v=1"></script>
   <script src="themes/active-theme.js?v=dcda7e55ac87"></script>
-  <link rel="stylesheet" href="styles.css?v=36">
+  <link rel="stylesheet" href="styles.css?v=40">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -52,13 +52,20 @@
       <a href="notes.html">Portfolio</a>
       <a href="#people">People</a>
     </nav>
+    <div class="ufo-control-cell" id="ufoControlCell">
+      <button class="ufo-trigger" id="ufoLaunch" type="button"><span id="ufoLaunchLabel">DO NOT CLICK</span><b>LAUNCH SAUCER ↗</b></button>
+      <div class="ufo-split-controls" id="ufoSplitControls" hidden>
+        <button class="ufo-surrender" id="ufoSurrender" type="button"><span>I SURRENDER</span><b>RETURN SAUCER</b></button>
+        <button class="ufo-weapon" id="ufoWeapon" type="button" aria-pressed="false"><span id="ufoWeaponLabel">GIVE IT ABILITY TO SHOOT</span><b id="ufoWeaponState">WEAPON DISARMED</b></button>
+      </div>
+    </div>
     <button class="mode-switch" id="modeSwitch" type="button" aria-pressed="false">
       <span class="switch-track"><span></span></span>
-      <span class="mode-label"><span class="normal-label">Normal</span><span class="geek-label">Geek</span> mode</span>
+      <span class="mode-label"><span class="normal-label">Geek</span><span class="geek-label">Normal</span> mode</span>
     </button>
   </header>
 
-  <main id="main">
+  <main id="main" tabindex="-1">
     <section class="hero" id="top">
       <div class="hero-copy reveal">
         <p class="eyebrow"><span>00 / THE LAB</span> Independent AI research &amp; development</p>
@@ -77,6 +84,8 @@
           <canvas id="heroLogoBase" width="1280" height="1280" aria-hidden="true"><img src="assets/logo.png" alt="Academy of Science"></canvas>
           <canvas id="heroLogoFan" width="1280" height="1280" aria-hidden="true"></canvas>
         </div>
+        <canvas id="digitalLogo" width="720" height="720" role="img" tabindex="0" aria-label="Interactive particle rendering of the Academy of Science logo. Move a pointer to scatter particles, use left and right arrows to rotate, and press Space or Enter to pause or resume."></canvas>
+        <div class="object-instruction" aria-hidden="true"><span id="visualState">LIVE PARTICLE FIELD</span><b>Move to scatter · arrows rotate · Space pauses</b></div>
         <button class="logo-motion-toggle" id="heroLogoToggle" type="button" aria-controls="heroLogo" aria-pressed="false">Pause emblem</button>
         <span class="datum d1">EXPLANATION / 01</span>
         <span class="datum d2">PHYSICAL AI / 02</span>
@@ -179,48 +188,6 @@
       </div>
     </section>
 
-    <section class="geek-console constellation" aria-label="Academy of Science research constellation">
-      <header class="constellation-bar">
-        <a href="#top" class="constellation-brand"><img src="assets/logo-mark.svg" data-theme-logo-mark alt="" width="40" height="40"><b>Academy of Science</b></a>
-        <p>Independent AI research<br>India · 2026</p>
-        <button id="geekExit" type="button">Return to normal <span>↗</span></button>
-      </header>
-      <div class="constellation-grid">
-        <section class="constellation-intro">
-          <p class="constellation-index">00 / THE LAB</p>
-          <h2>Intelligence,<br><em>made legible.</em></h2>
-          <p>We explore ambitious AI questions and turn them into systems that can explain, learn and act in the real world.</p>
-          <div class="constellation-signal"><i></i><span>Two researchers<br>One shared laboratory</span></div>
-        </section>
-
-        <section class="constellation-object" aria-label="Interactive dot-rendered lab emblem">
-          <div class="object-orbit orbit-a" aria-hidden="true"></div><div class="object-orbit orbit-b" aria-hidden="true"></div>
-          <span class="coordinate coordinate-x">X · 19.0760</span><span class="coordinate coordinate-y">Y · 72.8777</span>
-          <canvas id="digitalLogo" width="720" height="720" role="img" tabindex="0" aria-label="Interactive particle rendering of the Academy of Science logo. Move a pointer to scatter and gather particles; drag the fan blades to spin them."></canvas>
-          <div class="object-instruction"><span id="visualState">LIVE PARTICLE FIELD</span><b>Move to scatter · drag blades to steer</b></div>
-        </section>
-
-        <aside class="constellation-directions" aria-label="Research directions">
-          <p class="constellation-index">01 / COORDINATES</p>
-          <a href="#capabilities"><span>General AI capacity</span><b>Research without artificial boundaries.</b><i>01</i></a>
-          <a href="shankaranarayan.html"><span>Explainable AI</span><b>Understand evidence, uncertainty and failure.</b><i>02</i></a>
-          <a href="satwik.html"><span>Physical AI</span><b>Intelligence that learns and acts in the world.</b><i>03</i></a>
-        </aside>
-
-        <nav class="constellation-dock" aria-label="Geek mode navigation">
-          <a href="#work"><small>Collaborate</small><b>Build with us</b><span>↗</span></a>
-          <a href="notes.html"><small>Read</small><b>Portfolio</b><span>↗</span></a>
-          <a href="#people"><small>Meet</small><b>The researchers</b><span>↗</span></a>
-          <div class="ufo-control-cell" id="ufoControlCell">
-            <button class="ufo-trigger" id="ufoLaunch" type="button"><span id="ufoLaunchLabel">DO NOT CLICK</span><b>LAUNCH SAUCER ↗</b></button>
-            <div class="ufo-split-controls" id="ufoSplitControls" hidden>
-              <button class="ufo-surrender" id="ufoSurrender" type="button"><span>I SURRENDER</span><b>RETURN SAUCER</b></button>
-              <button class="ufo-weapon" id="ufoWeapon" type="button" aria-pressed="false"><span id="ufoWeaponLabel">GIVE IT ABILITY TO SHOOT</span><b id="ufoWeaponState">WEAPON DISARMED</b></button>
-            </div>
-          </div>
-        </nav>
-      </div>
-    </section>
   </main>
 
   <footer class="site-footer">
@@ -228,7 +195,7 @@
     <p>Research intelligence.<br>Build what matters.</p>
     <div class="footer-meta"><p>Built in public<br>India · 2026</p><a href="#top">Back to top ↑</a></div>
   </footer>
-  <script src="script.js?v=20"></script>
+  <script src="script.js?v=22"></script>
   <script src="theme-assets.js?v=8"></script>
 </body>
 </html>
