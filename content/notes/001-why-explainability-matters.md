@@ -2,7 +2,7 @@
 title: Why explainability matters when AI acts
 slug: why-explainability-matters
 date: 2026-11-13
-category: Ideas in Progress
+type: Articles
 status: published
 readTime: 2 min read
 number: 001

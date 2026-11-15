@@ -2,7 +2,7 @@
 title: XAI for Dummies
 slug: xai-for-dummies
 date: 2026-11-13
-category: Knowledge Blog
+type: Articles
 status: published
 readTime: 7 min read
 number: 001

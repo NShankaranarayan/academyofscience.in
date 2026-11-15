@@ -28,7 +28,7 @@ HOME_END = "<!-- FIELD_NOTES:END -->"
 class Note:
     title: str
     slug: str
-    category: str
+    content_type: str
     published: str
     read_time: str
     excerpt: str
@@ -38,8 +38,8 @@ class Note:
     share_image: str
 
     @property
-    def category_code(self) -> str:
-        return "IP" if self.category == "Ideas in Progress" else "KB"
+    def type_code(self) -> str:
+        return "RD" if self.content_type == "R&D" else "ART"
 
     @property
     def display_date(self) -> str:
@@ -67,7 +67,7 @@ def parse_front_matter(path: Path) -> tuple[dict[str, str], str]:
 
 
 def load_notes() -> list[Note]:
-    required = {"title", "slug", "date", "category", "readTime", "excerpt", "number"}
+    required = {"title", "slug", "date", "type", "readTime", "excerpt", "number"}
     notes: list[Note] = []
     for path in sorted(CONTENT_DIR.glob("*.md")):
         metadata, body = parse_front_matter(path)
@@ -78,8 +78,8 @@ def load_notes() -> list[Note]:
             raise ValueError(f"{path}: missing metadata: {', '.join(sorted(missing))}")
         if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", metadata["slug"]):
             raise ValueError(f"{path}: slug must contain lowercase words separated by hyphens")
-        if metadata["category"] not in {"Ideas in Progress", "Knowledge Blog"}:
-            raise ValueError(f"{path}: unsupported category {metadata['category']!r}")
+        if metadata["type"] not in {"R&D", "Articles"}:
+            raise ValueError(f"{path}: type must be R&D or Articles")
         try:
             date.fromisoformat(metadata["date"])
         except ValueError as error:
@@ -91,7 +91,7 @@ def load_notes() -> list[Note]:
         if not share_image.startswith("assets/") or not share_image_path.is_file() or ROOT not in share_image_path.parents:
             raise ValueError(f"{path}: shareImage must point to an existing file under assets/")
         notes.append(Note(
-            title=metadata["title"], slug=metadata["slug"], category=metadata["category"],
+            title=metadata["title"], slug=metadata["slug"], content_type=metadata["type"],
             published=metadata["date"], read_time=metadata["readTime"],
             excerpt=metadata["excerpt"], number=metadata["number"],
             home=metadata.get("home", "false").lower() == "true", body=body,
@@ -227,12 +227,12 @@ def note_card(note: Note, *, home: bool = False) -> str:
     excerpt = html.escape(note.excerpt)
     href = f"notes/{html.escape(note.slug)}.html"
     if home:
-        extra = " knowledge" if note.category == "Knowledge Blog" else ""
-        return (f'<a class="home-note reveal{extra}" href="{href}"><span>{html.escape(note.category)} / '
+        extra = " knowledge" if note.content_type == "Articles" else ""
+        return (f'<a class="home-note reveal{extra}" href="{href}"><span>{html.escape(note.content_type)} / '
                 f'{html.escape(note.number)}</span><div><h3>{title}</h3><p>{excerpt}</p></div><b aria-hidden="true">↗</b></a>')
-    extra = " featured-note" if note.category == "Knowledge Blog" else ""
-    return (f'<a class="library-note{extra}" href="{href}"><div class="library-note-no">{note.category_code} / '
-            f'{html.escape(note.number)}</div><div><p>{html.escape(note.category)} · {html.escape(note.read_time)}</p>'
+    extra = " featured-note" if note.content_type == "Articles" else ""
+    return (f'<a class="library-note{extra}" href="{href}"><div class="library-note-no">{note.type_code} / '
+            f'{html.escape(note.number)}</div><div><p>{html.escape(note.content_type)} · {html.escape(note.read_time)}</p>'
             f'<h3>{title}</h3><span>{excerpt}</span></div><b aria-hidden="true">↗</b></a>')
 
 
@@ -245,7 +245,7 @@ def build_articles(notes: list[Note]) -> None:
         path.write_text(fill_template("note.html", {
             "TITLE": html.escape(note.title, quote=True), "DESCRIPTION": html.escape(note.excerpt, quote=True),
             "SHARE_IMAGE_URL": html.escape(f"https://academyofscience.in/{note.share_image}", quote=True),
-            "CATEGORY": html.escape(note.category, quote=True), "READ_TIME": html.escape(note.read_time),
+            "CATEGORY": html.escape(note.content_type, quote=True), "READ_TIME": html.escape(note.read_time),
             "EXCERPT": html.escape(note.excerpt), "DATE": html.escape(note.published, quote=True),
             "DISPLAY_DATE": html.escape(note.display_date), "SLUG": html.escape(note.slug, quote=True),
             "NUMBER": html.escape(note.number, quote=True),
@@ -258,13 +258,16 @@ def build_articles(notes: list[Note]) -> None:
 
 def build_notes_index(notes: list[Note]) -> None:
     sections = []
-    categories = (("Ideas in Progress", "Working premises, questions, and research directions."),
-                  ("Knowledge Blog", "Technical ideas explained clearly and usefully."))
-    for index, (category, description) in enumerate(categories, 1):
-        cards = "\n".join(note_card(note) for note in notes if note.category == category)
+    content_types = (("R&D", "Studies, publications, implementations, benchmarks, and prototypes."),
+                     ("Articles", "Tutorials, reviews, and explainers."))
+    for index, (content_type, description) in enumerate(content_types, 1):
+        entries = [note for note in notes if note.content_type == content_type]
+        cards = "\n".join(note_card(note) for note in entries)
+        if not entries:
+            cards = '<p class="portfolio-empty">Coming soon.</p>'
         sections.append(
             f'<div class="note-stream{" knowledge-stream" if index == 2 else ""}">\n'
-            f'  <div class="stream-heading"><span>{index:02d}</span><div><p class="section-kicker">{category}</p>'
+            f'  <div class="stream-heading"><span>{index:02d}</span><div><p class="section-kicker">{content_type}</p>'
             f'<h2>{description}</h2></div></div>\n  <div class="library-note-list">{cards}</div>\n</div>'
         )
     NOTES_INDEX_PATH.write_text(fill_template("notes.html", {"NOTE_STREAMS": "\n".join(sections)}), encoding="utf-8")
@@ -275,7 +278,7 @@ def update_homepage(notes: list[Note]) -> None:
     if source.count(HOME_START) != 1 or source.count(HOME_END) != 1:
         raise ValueError("index.html must contain exactly one Field Notes marker pair")
     selected = [note for note in notes if note.home]
-    cards = "\n        ".join(note_card(note, home=True) for note in sorted(selected, key=lambda item: item.category))
+    cards = "\n        ".join(note_card(note, home=True) for note in sorted(selected, key=lambda item: item.content_type))
     replacement = f"{HOME_START}\n      <div class=\"home-note-grid\">\n        {cards}\n      </div>\n      {HOME_END}"
     pattern = re.escape(HOME_START) + r".*?" + re.escape(HOME_END)
     INDEX_PATH.write_text(re.sub(pattern, replacement, source, flags=re.DOTALL), encoding="utf-8")
