@@ -2,7 +2,12 @@
 title: XAI for Dummies
 slug: xai-for-dummies
 date: 2026-11-13
-category: Knowledge Blog
+type: Articles
+category: Articles
+format: article
+contributors: shankaranarayan|Author
+tags: Explainable AI, AI fundamentals
+shareImage: assets/research/explainable-ai.png
 status: published
 readTime: 7 min read
 number: 001
@@ -11,6 +16,8 @@ excerpt: A plain-language guide to what Explainable AI is, what an explanation c
 ---
 
 # XAI for Dummies
+
+## Explanation
 
 Artificial intelligence often gives us an answer without showing its working. A model may flag an image, reject a transaction, recommend a treatment, or tell a vehicle to slow down. But **why did it reach that conclusion?**
 
@@ -105,3 +112,17 @@ Before trusting an AI explanation, ask:
 XAI is not about making an AI produce a confident story. It is about creating useful, testable evidence that helps people understand model behaviour and make better decisions about when—and when not—to rely on it.
 
 That is why explainability is not merely a presentation layer. In consequential AI systems, it is part of engineering for reliability and trust.
+
+## Visuals
+
+![Concept illustration of a model prediction connected to an interpretable explanation](../assets/research/explainable-ai.png)
+
+## References
+
+- [A Unified Approach to Interpreting Model Predictions (SHAP)](https://proceedings.neurips.cc/paper_files/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html)
+- [“Why Should I Trust You?”: Explaining the Predictions of Any Classifier (LIME)](https://doi.org/10.1145/2939672.2939778)
+- [Axiomatic Attribution for Deep Networks (Integrated Gradients)](https://proceedings.mlr.press/v70/sundararajan17a.html)
+
+## Related work
+
+- [Why explainability matters when AI acts](why-explainability-matters.html)

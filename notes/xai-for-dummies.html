@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#000000">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self' ; script-src-attr 'none'; style-src 'self' ; font-src 'self'; img-src 'self' data: ; connect-src 'self' ; media-src 'self'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="description" content="A plain-language guide to what Explainable AI is, what an explanation can reveal, and where explanations can mislead us.">
   <meta property="og:type" content="article">
@@ -20,14 +20,16 @@
   <link rel="icon" href="../assets/logo.png">
   <script src="../themes/active-theme.js?v=dcda7e55ac87"></script>
   <script src="../mode-init.js?v=1"></script>
-  <link rel="stylesheet" href="../styles.css?v=27">
+  <link rel="stylesheet" href="../styles.css?v=45">
 </head>
-<body class="article-page">
+<body class="article-page" data-entry-format="article">
   <a class="skip-link" href="#article-main">Skip to article</a><div class="noise" aria-hidden="true"></div>
-  <header class="site-header profile-header"><a class="brand" href="../index.html"><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span></a><nav aria-label="Article navigation"><a href="../notes.html">All field notes</a><a href="../index.html">Home</a></nav><button class="page-mode-toggle" id="pageModeToggle" type="button" aria-pressed="false"><span></span> Geek mode</button></header>
-  <main id="article-main">
-    <header class="article-hero"><a class="back-link" href="../notes.html">← All field notes</a><p class="eyebrow"><span>Knowledge Blog</span><span>7 min read</span></p><h1>XAI for Dummies</h1><p>A plain-language guide to what Explainable AI is, what an explanation can reveal, and where explanations can mislead us.</p><div class="article-date"><span>Academy of Science</span><time datetime="2026-11-13">13 November 2026</time></div></header>
-    <div class="article-layout"><aside><span>FIELD NOTE</span><div class="reading-line" aria-hidden="true"><i></i></div><a href="../notes.html">Browse the library ↗</a></aside><div class="article-column"><article class="markdown-body"><p>Artificial intelligence often gives us an answer without showing its working. A model may flag an image, reject a transaction, recommend a treatment, or tell a vehicle to slow down. But <strong>why did it reach that conclusion?</strong></p>
+  <header class="site-header profile-header"><a class="brand" href="../index.html#top" aria-label="Academy of Science, home"><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span></a><nav class="primary-nav" id="primary-navigation" aria-label="Primary navigation" data-open="false"><a href="../index.html#top">Home</a><a href="../notes.html">Portfolio</a><a href="../index.html#capabilities">Capabilities</a><a href="../index.html#people">People</a><a href="../index.html#about">About</a><a href="../index.html#contact">Contact</a></nav><button class="site-nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><span class="site-nav-toggle-label">Menu</span><span class="site-nav-toggle-icon" aria-hidden="true"><i></i><i></i></span></button><button class="page-mode-toggle" id="pageModeToggle" type="button" aria-pressed="false"><span></span> Geek mode</button></header>
+  <main id="article-main" tabindex="-1">
+    <header class="article-hero"><a class="back-link" href="../notes.html">← Portfolio</a><p class="eyebrow"><span>Articles</span><span>7 min read</span></p><h1>XAI for Dummies</h1><p>A plain-language guide to what Explainable AI is, what an explanation can reveal, and where explanations can mislead us.</p><div class="article-date"><span>Academy of Science</span><time datetime="2026-11-13">13 November 2026</time></div><p class="article-contributors"><a href="../shankaranarayan.html">Shankaranarayan N</a> <span>Author</span></p></header>
+
+    <div class="article-layout"><aside><span>PORTFOLIO</span><div class="reading-line" aria-hidden="true"><i></i></div><a href="../notes.html">Browse the portfolio ↗</a></aside><div class="article-column"><article class="markdown-body" id="article-content"><h2>Explanation</h2>
+<p>Artificial intelligence often gives us an answer without showing its working. A model may flag an image, reject a transaction, recommend a treatment, or tell a vehicle to slow down. But <strong>why did it reach that conclusion?</strong></p>
 <p>Explainable AI, usually shortened to <strong>XAI</strong>, is the collection of ideas and methods we use to investigate that question.</p>
 <h2>Start with a simple example</h2>
 <p>Imagine an AI system that decides whether a photograph contains a cat. It returns:</p>
@@ -88,36 +90,49 @@
 </ul>
 <h2>The short version</h2>
 <p>XAI is not about making an AI produce a confident story. It is about creating useful, testable evidence that helps people understand model behaviour and make better decisions about when—and when not—to rely on it.</p>
-<p>That is why explainability is not merely a presentation layer. In consequential AI systems, it is part of engineering for reliability and trust.</p></article><section class="article-share" aria-labelledby="articleShareTitle"><div><p class="eyebrow"><span>FIELD NOTE / SHARE KIT</span></p><h2 id="articleShareTitle">Make this note yours.</h2><p>Write your take, preview the card, and share the article with your network.</p></div><button class="share-open-button" type="button" data-open-share><span>Prepare a share card</span><b aria-hidden="true">↗</b></button></section></div></div>
+<p>That is why explainability is not merely a presentation layer. In consequential AI systems, it is part of engineering for reliability and trust.</p>
+<h2>Visuals</h2>
+<p><img class="article-inline-visual" src="../assets/research/explainable-ai.png" alt="Concept illustration of a model prediction connected to an interpretable explanation" loading="lazy"></p>
+<h2>References</h2>
+<ul>
+<li><a href="https://proceedings.neurips.cc/paper_files/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html" rel="noopener noreferrer">A Unified Approach to Interpreting Model Predictions (SHAP)</a></li>
+<li><a href="https://doi.org/10.1145/2939672.2939778" rel="noopener noreferrer">“Why Should I Trust You?”: Explaining the Predictions of Any Classifier (LIME)</a></li>
+<li><a href="https://proceedings.mlr.press/v70/sundararajan17a.html" rel="noopener noreferrer">Axiomatic Attribution for Deep Networks (Integrated Gradients)</a></li>
+</ul>
+<h2>Related work</h2>
+<ul>
+<li><a href="why-explainability-matters.html">Why explainability matters when AI acts</a></li>
+</ul></article><section class="article-share" aria-labelledby="articleShareTitle" data-note-url="https://academyofscience.in/notes/xai-for-dummies.html"><div><p class="eyebrow"><span>PORTFOLIO / SHARE</span></p><h2 id="articleShareTitle">Pass this work along.</h2><p>Share the entry directly, or make a visual card for your post.</p></div><div class="article-share-actions"><a class="share-action-primary" data-share-linkedin href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Facademyofscience.in%2Fnotes%2Fxai-for-dummies.html" target="_blank" rel="noopener noreferrer"><span>Share on LinkedIn</span><b aria-hidden="true">↗</b></a><button class="share-action-secondary" type="button" data-copy-url>Copy article URL</button><button class="share-action-secondary" type="button" data-native-share hidden>Share from this device</button><button class="share-open-button" type="button" data-open-share><span>Create social image</span><b aria-hidden="true">↗</b></button><span class="article-share-status" role="status" aria-live="polite" data-inline-share-status></span></div></section></div></div>
   </main>
-  <dialog class="share-dialog" id="fieldNoteShareDialog" aria-labelledby="shareDialogTitle" data-note-title="XAI for Dummies" data-note-category="Knowledge Blog" data-note-number="001" data-note-url="https://academyofscience.in/notes/xai-for-dummies.html">
+  <dialog class="share-dialog" id="fieldNoteShareDialog" aria-labelledby="shareDialogTitle" data-note-title="XAI for Dummies" data-note-category="Articles" data-note-number="001" data-note-url="https://academyofscience.in/notes/xai-for-dummies.html">
     <div class="share-dialog-frame">
-      <header class="share-dialog-head"><div><p>FIELD NOTES / SHARE STUDIO</p><h2 id="shareDialogTitle">Shape your post</h2></div><button type="button" class="share-close" data-close-share aria-label="Close share studio">×</button></header>
+      <header class="share-dialog-head"><div><p>PORTFOLIO / SHARE STUDIO</p><h2 id="shareDialogTitle">Shape your post</h2></div><button type="button" class="share-close" data-close-share aria-label="Close share studio">×</button></header>
       <div class="share-dialog-content">
-        <section class="share-card-preview" aria-label="Live preview of your downloadable LinkedIn card">
-          <div class="share-card" data-share-card>
-            <div class="share-card-top"><span>ACADEMY OF SCIENCE</span><span>FIELD NOTE / Knowledge Blog</span></div>
-            <p class="share-card-number">001 / Knowledge Blog</p>
+        <section class="share-card-preview" aria-label="Live preview of your downloadable social card">
+          <div class="share-card" data-share-card data-format="linkedin">
+            <div class="share-card-top"><span>ACADEMY OF SCIENCE</span><span>PORTFOLIO / Articles</span></div>
+            <p class="share-card-number">001 / Articles</p>
             <h3 data-share-title>XAI for Dummies</h3>
             <p class="share-card-summary" data-share-summary>A plain-language guide to what Explainable AI is, what an explanation can reveal, and where explanations can mislead us.</p>
             <div class="share-card-orbit" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
             <div class="share-card-bottom"><span>INDEPENDENT AI RESEARCH &amp; DEVELOPMENT</span><span>ACADEMYOFSCIENCE.IN</span></div>
           </div>
-          <p class="share-card-hint">A visual card for a LinkedIn image post. The link will be included in your caption.</p>
+          <p class="share-card-hint">Download the image and upload it to LinkedIn or Instagram. Instagram sharing is completed in the Instagram app.</p>
         </section>
-        <section class="share-editor" aria-label="Edit your LinkedIn caption">
+        <section class="share-editor" aria-label="Edit a social caption">
           <label for="shareSummary">Your personal summary</label>
           <p>Say what stood out to you or why you are sharing this note.</p>
           <textarea id="shareSummary" maxlength="260" rows="5" data-share-input placeholder="Write the thought you want to share…"></textarea>
           <div class="share-editor-meta"><span data-share-count>0 / 260</span><span>It updates the card and caption.</span></div>
-          <div class="share-actions"><button class="share-action-primary" type="button" data-share-linkedin><span>Prepare image post for LinkedIn</span><b aria-hidden="true">↗</b></button><button class="share-action-secondary" type="button" data-download-card>Download card image only</button><button class="share-action-copy" type="button" data-copy-caption>Copy caption and article link</button></div>
+          <label class="share-format-label" for="shareFormat">Image format</label><select id="shareFormat" data-share-format><option value="linkedin">LinkedIn post · 1200 × 627</option><option value="instagram-post">Instagram post · 1080 × 1350</option><option value="instagram-story">Instagram story · 1080 × 1920</option></select>
+          <div class="share-actions"><button class="share-action-primary" type="button" data-download-card><span>Download image</span><b aria-hidden="true">↓</b></button><button class="share-action-secondary" type="button" data-copy-caption>Copy caption and article URL</button></div>
           <p class="share-status" role="status" aria-live="polite" data-share-status></p>
-          <p class="share-note">This prepares the custom card as a LinkedIn image post. When LinkedIn opens, add the downloaded PNG; the copied caption includes the article link. LinkedIn’s link preview uses its own thumbnail instead.</p>
+          <p class="share-note">Instagram does not let websites publish directly to the feed. Download the post or story image, then upload it in Instagram and paste the caption if you want one.</p>
         </section>
       </div>
     </div>
   </dialog>
-  <footer class="site-footer"><div><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div><p>Ideas being tested.<br>Knowledge worth sharing.</p><div class="footer-meta"><a href="../notes.html">More field notes ↑</a></div></footer>
-  <script src="../page-mode.js?v=1"></script><script src="../theme-assets.js?v=8"></script><script src="../note-sharing.js?v=1"></script>
+  <footer class="site-footer"><div><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div><p>Ideas being tested.<br>Knowledge worth sharing.</p><div class="footer-meta"><a href="../notes.html">More from the portfolio ↑</a></div></footer>
+  <script src="../page-mode.js?v=1"></script><script src="../theme-assets.js?v=8"></script><script src="../note-sharing.js?v=2"></script><script src="../site-nav.js?v=1"></script><script src="../video-summary.js?v=2"></script>
 </body>
 </html>

@@ -2,35 +2,33 @@
 
 ## Direction
 
-The site deliberately has two visual identities sharing one content model.
+The site has one shared content model with two visual modes.
 
 - **Normal Mode:** an editorial research publication — warm paper, black ink, restrained red, generous type, and analytical diagrams.
-- **Geek Mode:** a terminal-style research console influenced by the panel arrangement and pixel rendering in the supplied lukasstoll.com reference screenshot.
+- **Geek Mode:** the same pages, content, layout, and typography in a dark palette. On the homepage, the fluid particle emblem replaces the normal emblem in the existing right-side hero illustration area. The optional UFO companion remains available on eligible desktop devices.
 
-## Reference evidence
-
-The reference screenshot shows a compact command bar, large central visual panel, terminal output and prompt below, and a telemetry/project sidebar to the right. The site adopts that arrangement with its own red-accented palette and content. The logo is downsampled to a 90×90 source grid and enlarged with nearest-neighbour rendering for visible square pixels; the paired blades are separately drawn around the fixed hub for the touch/drag interaction.
+Geek Mode is the site’s night mode. It does not add a second homepage or rearrange page sections. Profiles, portfolio pages, and articles keep their Normal Mode structure and use the same HTML or Markdown source in both modes.
 
 ## Tokens
 
 | Role | Normal | Geek |
 |---|---|---|
-| Background | `#F2EFE8` | `#0D0D0E` |
-| Secondary background | `#E8E3D9` | `#111113` |
-| Text | `#171716` | `#F3F0EB` |
-| Muted | `#68665F` | `#777674` |
-| Accent | `#ED3326` | `#FF574C` |
-| Border | 18% ink | `#29292B` |
+| Background | `#F2EFE8` | `#090A0A` |
+| Secondary background | `#E8E3D9` | `#111313` |
+| Text | `#171716` | `#EFEDE6` |
+| Muted | `#68665F` | `#A2A49F` |
+| Accent | `#ED3326` or `#D4AA60` | Active theme accent |
+| Border | 18% ink | `rgba(239,237,230,.17)` |
 
 Typography uses system sans, monospace, and serif stacks to keep the page independent of external font services.
 
 ## Layout and responsiveness
 
 - Fluid side padding: `clamp(1.25rem, 4vw, 4.75rem)`.
-- Desktop: two-column hero, two specialization cards, two contributor cards.
+- Desktop: editorial hero, research areas, connected engagement flow, portfolio cards, and contributor cards.
 - Tablet: stacked hero, two-column research cards, single-column contributors.
-- Phone: single-column flow, compressed header, terminal telemetry hidden so the command interface remains usable.
-- Geek Mode uses a viewport-height console with the visualizer at left, telemetry and research links at right, terminal panel below the visual, then command chips and footer. On phones, these panels stack and the console can scroll vertically.
+- Phone: single-column flow and compressed header.
+- Geek Mode preserves these responsive layouts and changes the site palette; the homepage fluid logo replaces the normal emblem in the existing hero illustration area.
 
 ## Components
 
@@ -38,7 +36,7 @@ Typography uses system sans, monospace, and serif stacks to keep the page indepe
 - Editorial hero with animated orbital measurement graphic.
 - The page leads with the lab's broad independent AI R&D capability. Research cards establish Shankar's Explainable AI and Satwik's Physical AI as specializations rather than boundaries. Separate work-model and application-domain sections distinguish original research from commissioned R&D and show where the lab can apply its capabilities.
 - Markdown-generated Field Note previews, library cards, pre-rendered article pages, contributor cards, and high-contrast footer.
-- Pixel-rendered logo visualizer, terminal output and prompt with history/completion, telemetry/projects panel, render and palette controls, shortcut chips, and CRT toggle.
+- Fluid particle logo with pointer and keyboard controls in Geek Mode, theme-colored accents, keyboard focus indicators, and the optional UFO launcher. The UFO is hidden outside eligible Geek Mode sessions and ignores page input.
 
 ## Assets
 
@@ -49,4 +47,4 @@ Typography uses system sans, monospace, and serif stacks to keep the page indepe
 
 ## Content implementation
 
-The site is static and database-free. Field Notes use Markdown files in `content/notes/` as their single source of truth. `scripts/build_site.py` validates front matter and pre-renders the library, homepage previews, canonical metadata, and complete article HTML using templates in `templates/`. Generated article pages require no client-side JavaScript.
+The site is static and database-free. Portfolio items use Markdown files in `content/notes/` as their single source of truth. `scripts/build_site.py` validates front matter and pre-renders the library, homepage previews, canonical metadata, and complete article HTML using templates in `templates/`. The same output is themed by the saved Normal/Geek mode selection; no separate article content is maintained for Geek Mode.

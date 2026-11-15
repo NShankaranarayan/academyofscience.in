@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#000000">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self'; script-src-attr 'none'; style-src 'self'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self'; media-src 'self'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="description" content="Research profile of Satwik Ramsetti, specializing in Physical AI, reinforcement learning, optimization, and AI platform engineering.">
   <title>Satwik Ramsetti — Academy of Science</title>
   <link rel="icon" href="assets/logo.png">
   <script src="themes/active-theme.js?v=dcda7e55ac87"></script>
   <script src="mode-init.js?v=1"></script>
-  <link rel="stylesheet" href="styles.css?v=27">
+  <link rel="stylesheet" href="styles.css?v=44">
 </head>
 <body class="profile-page">
   <a class="skip-link" href="#profile-main">Skip to profile</a>
@@ -22,15 +22,14 @@
       <img src="assets/logo.png" data-theme-logo alt="" width="48" height="48">
       <span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span>
     </a>
-    <nav aria-label="Profile navigation">
-      <a href="index.html">Home</a>
-      <a href="index.html#people">People</a>
-      <a href="https://www.linkedin.com/in/rvsatwik/" rel="noopener noreferrer">LinkedIn ↗</a>
+    <nav class="primary-nav" id="primary-navigation" aria-label="Primary navigation" data-open="false">
+      <a href="index.html#top">Home</a><a href="notes.html?author=satwik">Portfolio</a><a href="index.html#capabilities">Capabilities</a><a href="index.html#people">People</a><a href="index.html#about">About</a><a href="index.html#contact">Contact</a>
     </nav>
+    <button class="site-nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><span class="site-nav-toggle-label">Menu</span><span class="site-nav-toggle-icon" aria-hidden="true"><i></i><i></i></span></button>
     <button class="page-mode-toggle" id="pageModeToggle" type="button" aria-pressed="false"><span></span> Geek mode</button>
   </header>
 
-  <main id="profile-main">
+  <main id="profile-main" tabindex="-1">
     <section class="profile-hero">
       <div class="profile-intro">
         <a class="back-link" href="index.html#people">← Back to the lab</a>
@@ -62,20 +61,23 @@
 
     <section class="profile-section profile-projects section-pad">
       <div class="profile-section-title"><p class="section-kicker">Capabilities in practice</p><h2>Learning and optimization for real-world systems.</h2></div>
-      <div class="profile-card-grid">
-        <article><div data-theme-art class="project-art pai-art art-1" role="img" aria-label="Technical illustration of an intelligent agent navigating a constrained physical network"></div><div class="project-card-copy"><span>01 / REINFORCEMENT LEARNING</span><h3>Decision-making under operational constraints</h3><p>Developed a reinforcement-learning framework for multi-objective railway timetabling—an applied example of agents learning to improve complex, constrained physical operations.</p></div></article>
-        <article><div data-theme-art class="project-art pai-art art-2" role="img" aria-label="Technical illustration of optimal resource matching across a network"></div><div class="project-card-copy"><span>02 / OPTIMIZATION</span><h3>Planning and resource assignment</h3><p>Studied algorithmic approaches to assignment and scheduling problems, building foundations for systems that must coordinate limited resources efficiently.</p></div></article>
-        <article><div data-theme-art class="project-art pai-art art-3" role="img" aria-label="Technical illustration of a layered digital twin for a large physical network"></div><div class="project-card-copy"><span>03 / SIMULATION</span><h3>Large-scale operational modelling</h3><p>Contributed research around simulation-led railway timetabling and network utilization, connecting computational models with the realities of a large physical system.</p></div></article>
-        <article><div data-theme-art class="project-art pai-art art-4" role="img" aria-label="Technical illustration of an orchestrated AI platform and deployment pipeline"></div><div class="project-card-copy"><span>04 / AI PLATFORMS</span><h3>Infrastructure for applied AI</h3><p>Brings platform engineering, Kubernetes, automated delivery, and systems integration to the path from research prototype to dependable operational capability.</p></div></article>
+      <div class="capability-list">
+        <article><span>01 / REINFORCEMENT LEARNING</span><div><h3>Decision-making under operational constraints</h3><p>Developed a reinforcement-learning framework for multi-objective railway timetabling—an applied example of agents learning to improve complex, constrained physical operations.</p></div></article>
+        <article><span>02 / OPTIMIZATION</span><div><h3>Planning and resource assignment</h3><p>Studied algorithmic approaches to assignment and scheduling problems, building foundations for systems that must coordinate limited resources efficiently.</p></div></article>
+        <article><span>03 / SIMULATION</span><div><h3>Large-scale operational modelling</h3><p>Contributed research around simulation-led railway timetabling and network utilization, connecting computational models with the realities of a large physical system.</p></div></article>
+        <article><span>04 / AI PLATFORMS</span><div><h3>Infrastructure for applied AI</h3><p>Brings platform engineering, Kubernetes, automated delivery, and systems integration to the path from research prototype to dependable operational capability.</p></div></article>
       </div>
     </section>
 
     <section class="profile-section section-pad">
-      <div class="profile-section-title"><p class="section-kicker">Research evidence</p><h2>Optimization in large physical networks.</h2></div>
-      <ol class="publication-list">
-        <li><span>WCTR · 2023</span><a href="https://www.linkedin.com/in/rvsatwik/" rel="noopener noreferrer">Clustering techniques to optimize railway daily path utilization for non-daily trains ↗</a></li>
-        <li><span>INFORMS · 2023</span><a href="https://www.linkedin.com/in/rvsatwik/" rel="noopener noreferrer">Rationalized Timetabling Using a Simulation Tool: A Paradigm Shift in Indian Railways ↗</a></li>
+      <div class="profile-section-title"><p class="section-kicker">Selected work &amp; contributions</p><h2>Optimization in large physical networks.</h2></div>
+      <!-- SELECTED_WORK:satwik:START -->
+      <ol class="publication-list selected-work-list">
+        <li><span>Co-author · R&amp;D</span><a href="notes/railway-nondaily-train-clustering.html">Clustering Techniques to Optimize Railway Daily Path Utilization for Non-Daily Trains ↗</a></li>
+        <li><span>Co-author · R&amp;D</span><a href="notes/rationalized-indian-railway-timetabling.html">Rationalized Timetabling Using a Simulation Tool: A Paradigm Shift in Indian Railways ↗</a></li>
       </ol>
+      <!-- SELECTED_WORK:satwik:END -->
+      <a class="selected-work-more" href="notes.html?author=satwik">Browse all work by Satwik <span>↗</span></a>
     </section>
 
     <section class="profile-section profile-details section-pad">
@@ -85,6 +87,6 @@
   </main>
 
   <footer class="site-footer profile-footer"><div><img src="assets/logo.png" data-theme-logo alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div><p>Research intelligence.<br>Build what matters.</p><div class="footer-meta"><a href="index.html">Return home ↑</a></div></footer>
-  <script src="page-mode.js?v=1"></script><script src="theme-assets.js?v=8"></script>
+  <script src="page-mode.js?v=1"></script><script src="theme-assets.js?v=8"></script><script src="site-nav.js?v=1"></script>
 </body>
 </html>

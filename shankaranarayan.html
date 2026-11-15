@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#000000">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self'; script-src-attr 'none'; style-src 'self'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self'; media-src 'self'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="description" content="Research profile of Shankaranarayan N, specializing in Explainable AI, reliable AI, computer vision, and multimodal learning.">
   <title>Shankaranarayan N — Academy of Science</title>
   <link rel="icon" href="assets/logo.png">
   <script src="themes/active-theme.js?v=dcda7e55ac87"></script>
   <script src="mode-init.js?v=1"></script>
-  <link rel="stylesheet" href="styles.css?v=27">
+  <link rel="stylesheet" href="styles.css?v=44">
 </head>
 <body class="profile-page">
   <a class="skip-link" href="#profile-main">Skip to profile</a>
@@ -22,15 +22,14 @@
       <img src="assets/logo.png" data-theme-logo alt="" width="48" height="48">
       <span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span>
     </a>
-    <nav aria-label="Profile navigation">
-      <a href="index.html">Home</a>
-      <a href="index.html#people">People</a>
-      <a href="https://www.linkedin.com/in/shankaranarayan-n/" rel="noopener noreferrer">LinkedIn ↗</a>
+    <nav class="primary-nav" id="primary-navigation" aria-label="Primary navigation" data-open="false">
+      <a href="index.html#top">Home</a><a href="notes.html?author=shankaranarayan">Portfolio</a><a href="index.html#capabilities">Capabilities</a><a href="index.html#people">People</a><a href="index.html#about">About</a><a href="index.html#contact">Contact</a>
     </nav>
+    <button class="site-nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><span class="site-nav-toggle-label">Menu</span><span class="site-nav-toggle-icon" aria-hidden="true"><i></i><i></i></span></button>
     <button class="page-mode-toggle" id="pageModeToggle" type="button" aria-pressed="false"><span></span> Geek mode</button>
   </header>
 
-  <main id="profile-main">
+  <main id="profile-main" tabindex="-1">
     <section class="profile-hero">
       <div class="profile-intro">
         <a class="back-link" href="index.html#people">← Back to the lab</a>
@@ -62,21 +61,26 @@
 
     <section class="profile-section profile-projects section-pad">
       <div class="profile-section-title"><p class="section-kicker">Capabilities in practice</p><h2>Explainable, multimodal, and reliable AI systems.</h2></div>
-      <div class="profile-card-grid">
-        <article><div data-theme-art class="project-art xai-art art-1" role="img" aria-label="Technical illustration of multimodal evidence flowing into an explainable decision"></div><div class="project-card-copy"><span>01 / EXPLAINABLE AI</span><h3>Explanations for multimodal decisions</h3><p>Built classification systems that combine time-series, visual, map, and environmental evidence, then expose contributing factors through contextual explanations, SHAP, and feature attribution.</p></div></article>
-        <article><div data-theme-art class="project-art xai-art art-2" role="img" aria-label="Technical illustration of visual and language representations aligned in an embedding space"></div><div class="project-card-copy"><span>02 / MULTIMODAL AI</span><h3>Cross-modal retrieval and representation</h3><p>Developed vision-language architectures that align images and natural language, enabling complex scenarios to be found, compared, and understood across large datasets.</p></div></article>
-        <article><div data-theme-art class="project-art xai-art art-3" role="img" aria-label="Technical illustration of scenario coverage and verified AI checkpoints"></div><div class="project-card-copy"><span>03 / AI ASSURANCE</span><h3>Safety-critical evaluation</h3><p>Designed scenario discovery, coverage analysis, and validation workflows to examine operating conditions, model behaviour, performance gaps, and failure modes.</p></div></article>
-        <article><div data-theme-art class="project-art xai-art art-4" role="img" aria-label="Technical illustration of probability contours and uncertainty boundaries"></div><div class="project-card-copy"><span>04 / RELIABLE AI</span><h3>Uncertainty and competence estimation</h3><p>Investigates probabilistic methods for understanding when AI systems are reliable, how competence changes with context, and where additional evidence or human review is needed.</p></div></article>
+      <div class="capability-list">
+        <article><span>01 / EXPLAINABLE AI</span><div><h3>Explanations for multimodal decisions</h3><p>Built classification systems combining time-series, visual, map, and environmental evidence, then exposed contributing factors through contextual explanations, SHAP, and feature attribution.</p></div></article>
+        <article><span>02 / MULTIMODAL AI</span><div><h3>Cross-modal retrieval and representation</h3><p>Developed vision-language architectures that align images and natural language, enabling complex scenarios to be found, compared, and understood across large datasets.</p></div></article>
+        <article><span>03 / AI ASSURANCE</span><div><h3>Safety-critical evaluation</h3><p>Designed scenario discovery, coverage analysis, and validation workflows to examine operating conditions, model behaviour, performance gaps, and failure modes.</p></div></article>
+        <article><span>04 / RELIABLE AI</span><div><h3>Uncertainty and competence estimation</h3><p>Investigates probabilistic methods for understanding when AI systems are reliable, how competence changes with context, and where additional evidence or human review is needed.</p></div></article>
       </div>
     </section>
 
     <section class="profile-section section-pad">
-      <div class="profile-section-title"><p class="section-kicker">Research evidence</p><h2>Multimodal learning for intelligent systems.</h2></div>
-      <ol class="publication-list">
-        <li><span>Springer</span><a href="https://doi.org/10.1007/978-3-031-15175-0_16" rel="noopener noreferrer">A Novel Approach for Real-time Vehicle Re-identification using Content-based Image Retrieval with Relevance Feedback ↗</a></li>
-        <li><span>IEEE</span><a href="https://doi.org/10.1109/ICCAKM54721.2022.9990209" rel="noopener noreferrer">Deep Vision-Based Vehicle Retrieval for Automated Smart Traffic Surveillance Systems ↗</a></li>
-        <li><span>Springer</span><a href="https://doi.org/10.1007/978-981-19-7867-8_48" rel="noopener noreferrer">Multi-branch Deep Neural Model for Natural Language-based Vehicle Retrieval ↗</a></li>
+      <div class="profile-section-title"><p class="section-kicker">Selected work &amp; contributions</p><h2>Multimodal learning for intelligent systems.</h2></div>
+      <!-- SELECTED_WORK:shankaranarayan:START -->
+      <ol class="publication-list selected-work-list">
+        <li><span>Author · Articles</span><a href="notes/why-explainability-matters.html">Why explainability matters when AI acts ↗</a></li>
+        <li><span>Author · Articles</span><a href="notes/xai-for-dummies.html">XAI for Dummies ↗</a></li>
+        <li><span>Lead author · R&amp;D</span><a href="notes/multibranch-language-vehicle-retrieval.html">Multi-Branch Deep Neural Model for Natural Language-Based Vehicle Retrieval ↗</a></li>
+        <li><span>Lead author · R&amp;D</span><a href="notes/vehicle-reidentification-relevance-feedback.html">A Novel Approach for Real-Time Vehicle Re-Identification Using Content-Based Image Retrieval with Relevance Feedback ↗</a></li>
+        <li><span>Lead author · R&amp;D</span><a href="notes/deep-vision-vehicle-retrieval.html">Deep Vision-Based Vehicle Retrieval for Automated Smart Traffic Surveillance Systems ↗</a></li>
       </ol>
+      <!-- SELECTED_WORK:shankaranarayan:END -->
+      <a class="selected-work-more" href="notes.html?author=shankaranarayan">Browse all work by Shankaranarayan <span>↗</span></a>
     </section>
 
     <section class="profile-section profile-details section-pad">
@@ -86,6 +90,6 @@
   </main>
 
   <footer class="site-footer profile-footer"><div><img src="assets/logo.png" data-theme-logo alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div><p>Research intelligence.<br>Build what matters.</p><div class="footer-meta"><a href="index.html">Return home ↑</a></div></footer>
-  <script src="page-mode.js?v=1"></script><script src="theme-assets.js?v=8"></script>
+  <script src="page-mode.js?v=1"></script><script src="theme-assets.js?v=8"></script><script src="site-nav.js?v=1"></script>
 </body>
 </html>

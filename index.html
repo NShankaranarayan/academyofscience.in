@@ -11,30 +11,64 @@
   <link rel="icon" href="assets/logo.png">
   <script src="mode-init.js?v=1"></script>
   <script src="themes/active-theme.js?v=dcda7e55ac87"></script>
-  <link rel="stylesheet" href="styles.css?v=27">
+  <link rel="stylesheet" href="styles.css?v=44">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="noise" aria-hidden="true"></div>
+  <svg id="cursorUfo" class="cursor-ufo" aria-hidden="true" focusable="false" hidden>
+    <defs>
+      <linearGradient id="ufoHull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f1e9"/><stop offset=".55" stop-color="#aeb5b4"/><stop offset="1" stop-color="#515b5d"/></linearGradient>
+      <linearGradient id="ufoBeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".32"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient>
+      <linearGradient id="ufoDome" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d7f5f0" stop-opacity=".88"/><stop offset="1" stop-color="#438d94" stop-opacity=".45"/></linearGradient>
+      <filter id="ufoGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>
+    </defs>
+    <g id="cursorUfoMotion" transform="translate(-160 -120)">
+      <path class="ufo-beam" d="M43 40 L53 76 Q60 82 67 76 L77 40 Z" fill="url(#ufoBeam)"/>
+      <ellipse class="ufo-beam-glow" cx="60" cy="46" rx="15" ry="4" fill="var(--accent)" filter="url(#ufoGlow)"/>
+      <g class="ufo-craft">
+        <path d="M43 35 C45 20 52 15 60 15 C68 15 75 20 77 35 Z" fill="url(#ufoDome)" stroke="#e3f5f2" stroke-opacity=".72" stroke-width="1.2"/>
+        <path d="M52 21 Q58 16 64 18 L57 32 L49 33 Z" fill="#fff" opacity=".3"/>
+        <ellipse cx="60" cy="37" rx="39" ry="11" fill="url(#ufoHull)" stroke="#f7f2df" stroke-width="1.2"/>
+        <path d="M23 37 Q27 49 60 50 Q93 49 97 37" fill="#667073" stroke="#d3d6ce" stroke-width="1"/>
+        <path d="M28 40 Q60 54 92 40" fill="none" stroke="var(--accent)" stroke-width="2.3" stroke-linecap="round"/>
+        <circle cx="39" cy="41" r="1.6" fill="#f9f1cf"/><circle cx="50" cy="45" r="1.6" fill="#f9f1cf"/><circle cx="70" cy="45" r="1.6" fill="#f9f1cf"/><circle cx="81" cy="41" r="1.6" fill="#f9f1cf"/>
+        <ellipse cx="60" cy="37" rx="39" ry="11" fill="none" stroke="#fff" stroke-opacity=".38" stroke-width=".7"/>
+      </g>
+      <circle class="ufo-beam-particle beam-particle-one" cx="55" cy="61" r="1.2" fill="#f4d48a"/>
+      <circle class="ufo-beam-particle beam-particle-two" cx="66" cy="70" r=".9" fill="#f4d48a"/>
+    </g>
+    <g id="ufoShots" aria-hidden="true"></g>
+  </svg>
   <header class="site-header">
     <a class="brand" href="#top" aria-label="Academy of Science, home">
       <img src="assets/logo.png" data-theme-logo alt="" width="46" height="46">
       <span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span>
     </a>
-    <nav aria-label="Primary navigation">
+    <nav class="primary-nav" id="primary-navigation" aria-label="Primary navigation" data-open="false">
+      <a href="#top">Home</a>
+      <a href="notes.html">Portfolio</a>
       <a href="#capabilities">Capabilities</a>
-      <a href="#work">Work with us</a>
-      <a href="notes.html">Field notes</a>
       <a href="#people">People</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
     </nav>
+    <button class="site-nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><span class="site-nav-toggle-label">Menu</span><span class="site-nav-toggle-icon" aria-hidden="true"><i></i><i></i></span></button>
+    <div class="ufo-control-cell" id="ufoControlCell">
+      <button class="ufo-trigger" id="ufoLaunch" type="button"><span id="ufoLaunchLabel">DO NOT CLICK</span><b>LAUNCH SAUCER ↗</b></button>
+      <div class="ufo-split-controls" id="ufoSplitControls" hidden>
+        <button class="ufo-surrender" id="ufoSurrender" type="button"><span>I SURRENDER</span><b>RETURN SAUCER</b></button>
+        <button class="ufo-weapon" id="ufoWeapon" type="button" aria-pressed="false"><span id="ufoWeaponLabel">GIVE IT ABILITY TO SHOOT</span><b id="ufoWeaponState">WEAPON DISARMED</b></button>
+      </div>
+    </div>
     <button class="mode-switch" id="modeSwitch" type="button" aria-pressed="false">
       <span class="switch-track"><span></span></span>
-      <span class="mode-label"><span class="normal-label">Normal</span><span class="geek-label">Geek</span> mode</span>
+      <span class="mode-label"><span class="normal-label">Geek</span><span class="geek-label">Normal</span> mode</span>
     </button>
   </header>
 
-  <main id="main">
+  <main id="main" tabindex="-1">
     <section class="hero" id="top">
       <div class="hero-copy reveal">
         <p class="eyebrow"><span>00 / THE LAB</span> Independent AI research &amp; development</p>
@@ -53,6 +87,8 @@
           <canvas id="heroLogoBase" width="1280" height="1280" aria-hidden="true"><img src="assets/logo.png" alt="Academy of Science"></canvas>
           <canvas id="heroLogoFan" width="1280" height="1280" aria-hidden="true"></canvas>
         </div>
+        <canvas id="digitalLogo" width="720" height="720" role="img" tabindex="0" aria-label="Interactive particle rendering of the Academy of Science logo. Move a pointer to scatter particles, use left and right arrows to rotate, and press Space or Enter to pause or resume."></canvas>
+        <div class="object-instruction" aria-hidden="true"><span id="visualState">LIVE PARTICLE FIELD</span><b>Move to scatter · arrows rotate · Space pauses</b></div>
         <button class="logo-motion-toggle" id="heroLogoToggle" type="button" aria-controls="heroLogo" aria-pressed="false">Pause emblem</button>
         <span class="datum d1">EXPLANATION / 01</span>
         <span class="datum d2">PHYSICAL AI / 02</span>
@@ -71,8 +107,8 @@
         <p>We work across machine learning and intelligent systems. Explainable AI and Physical AI are our core specializations—not the boundaries of what we can investigate or build.</p>
       </div>
       <div class="research-grid">
-        <article class="research-card reveal"><span class="card-no">01 / SHANKAR</span><img class="research-image" data-theme-art src="assets/research/explainable-ai.png" alt="A visual explanation path connecting a neural network to an interpretable decision and uncertainty bands" loading="lazy"><div class="research-card-body"><h3>Explainable AI <span>(XAI)</span></h3><p>Methods that make model behaviour, evidence, uncertainty, and failure modes open to inspection—especially in high-stakes settings such as medicine.</p><a href="#notes">Explore XAI <span>→</span></a></div></article>
-        <article class="research-card reveal"><span class="card-no">02 / SATWIK</span><img class="research-image" data-theme-art src="assets/research/embodied-physical-ai.png" alt="A robotic arm interacting with objects on a laboratory workbench" loading="lazy"><div class="research-card-body"><h3>Physical AI</h3><p>Intelligent agents that reason, learn, and act through bodies, sensors, and environments—beyond the controlled conditions of the lab.</p><a href="#convergence">Explore Physical AI <span>→</span></a></div></article>
+        <article class="research-card reveal"><span class="card-no">01 / SHANKAR</span><div class="research-card-body"><h3>Explainable AI <span>(XAI)</span></h3><p>Methods that make model behaviour, evidence, uncertainty, and failure modes open to inspection—especially in high-stakes settings such as medicine.</p><a href="#notes">Explore XAI <span>→</span></a></div></article>
+        <article class="research-card reveal"><span class="card-no">02 / SATWIK</span><div class="research-card-body"><h3>Physical AI</h3><p>Intelligent agents that reason, learn, and act through bodies, sensors, and environments—beyond the controlled conditions of the lab.</p><a href="#convergence">Explore Physical AI <span>→</span></a></div></article>
       </div>
       <div class="specialization reveal" id="convergence">
         <div><p class="section-kicker">Shared capability</p><h3>Integrated AI systems</h3></div>
@@ -83,15 +119,46 @@
 
     <section class="work section-pad" id="work">
       <div class="section-heading reveal">
-        <div><p class="section-kicker">How we work</p><h2>Original research.<br>Applied for organizations.</h2></div>
-        <p>We pursue independent questions and collaborate with companies, laboratories, universities, and domain specialists on difficult AI problems.</p>
+        <div><p class="section-kicker">Ways to engage us</p><h2>From research question<br>to engineered system.</h2></div>
+        <p>Bring us an open technical question, a model that needs scrutiny, or an idea for a new AI capability. We provide studies that support decisions, develop new approaches, and engineer systems through to operational integration.</p>
       </div>
       <div class="work-grid">
-        <article class="work-card reveal"><span>01</span><h3>Independent Research</h3><p>Questions we choose and pursue to develop new knowledge, methods, and technical directions.</p></article>
-        <article class="work-card reveal"><span>02</span><h3>Commissioned R&amp;D</h3><p>Technical investigation for organizations when a problem requires research before product development.</p></article>
-        <article class="work-card reveal"><span>03</span><h3>Prototypes &amp; Demonstrators</h3><p>Working systems that turn research ideas into something stakeholders can test, evaluate, and develop further.</p></article>
-        <article class="work-card reveal"><span>04</span><h3>Evaluation &amp; Assurance</h3><p>Study model behaviour, explanations, uncertainty, reliability, and deployment risks.</p></article>
+        <article class="work-card reveal"><span>01 / STUDY</span><h3>Research feasibility &amp; backing studies</h3><p>Assess a proposed AI idea, its data and methods, technical risks, and evidence base before significant investment.</p><small>Typical output: feasibility report, research plan, or technical recommendation.</small></article>
+        <article class="work-card reveal"><span>02 / EVALUATE</span><h3>AI model evaluation</h3><p>Measure performance, robustness, uncertainty, and failure modes against relevant benchmarks and operating conditions.</p><small>Typical output: evaluation protocol, metrics, and findings.</small></article>
+        <article class="work-card reveal"><span>03 / EXPLAIN</span><h3>Explainable AI analysis</h3><p>Investigate what influences model decisions, how explanations behave, and where evidence or explanations may mislead.</p><small>Typical output: explanation analysis, diagnostics, and limitations.</small></article>
+        <article class="work-card reveal"><span>04 / PROTOTYPE</span><h3>Applied ML engineering</h3><p>Design and develop machine-learning approaches around real data and constraints, from initial experiments to a working prototype.</p><small>Typical output: prototype, model, and implementation notes.</small></article>
+        <article class="work-card reveal"><span>05 / SIMULATE</span><h3>Simulation &amp; proof of concept</h3><p>Model scenarios, test assumptions, and demonstrate whether a proposed intelligent system or approach can work.</p><small>Typical output: simulation, demonstrator, or proof of concept.</small></article>
+        <article class="work-card reveal"><span>06 / INTEGRATE</span><h3>Deployment &amp; operational integration</h3><p>Engineer model services and system integrations, then support deployment into the intended cloud, edge, or operational environment.</p><small>Typical output: integrated deployment and technical handoff.</small></article>
       </div>
+      <section class="engagement-process reveal" aria-labelledby="process-title">
+        <div class="process-heading">
+          <div><p class="section-kicker">How an engagement works</p><h3 id="process-title">A clear path from question to handover.</h3></div>
+          <p>We agree the scope, stages, responsibilities, and deliverables for each project together. The process is tailored to the problem; not every engagement needs every stage.</p>
+        </div>
+        <div class="process-flow" role="group" aria-label="Engagement flow from framing through development to validation and handover">
+          <section class="flow-phase">
+            <header class="flow-phase-header"><span>PHASE 01</span><h4>Frame the problem</h4><p>Establish whether there is a sound problem to solve and a credible path forward.</p></header>
+            <div class="flow-phase-steps">
+              <article class="flow-step"><span class="flow-step-no">01</span><div><h5>Discover</h5><p>Clarify the decision or system, users, operating context, constraints, and what success means.</p><small>Problem brief · success criteria</small></div></article>
+              <article class="flow-step"><span class="flow-step-no">02</span><div><h5>Assess feasibility</h5><p>Review available data, evidence, methods, risks, and dependencies to recommend a useful path.</p><small>Feasibility assessment · recommendation</small></div></article>
+            </div>
+          </section>
+          <section class="flow-phase">
+            <header class="flow-phase-header"><span>PHASE 02</span><h4>Research and build</h4><p>Agree the method, then investigate and engineer what the project needs.</p></header>
+            <div class="flow-phase-steps">
+              <article class="flow-step"><span class="flow-step-no">03</span><div><h5>Plan the work</h5><p>Define questions, methods, experiments, measures, resources, and decision points.</p><small>Research plan · agreed scope</small></div></article>
+              <article class="flow-step"><span class="flow-step-no">04</span><div><h5>Implement and investigate</h5><p>Run studies and develop the required models, prototypes, simulations, or integrations.</p><small>Evidence · code · prototype or system</small></div></article>
+            </div>
+          </section>
+          <section class="flow-phase">
+            <header class="flow-phase-header"><span>PHASE 03</span><h4>Validate and hand over</h4><p>Make the results understandable and useful to the team taking them forward.</p></header>
+            <div class="flow-phase-steps">
+              <article class="flow-step"><span class="flow-step-no">05</span><div><h5>Evaluate</h5><p>Test against agreed criteria and interpret results, limitations, risks, and next steps.</p><small>Results · metrics · limitations</small></div></article>
+              <article class="flow-step"><span class="flow-step-no">06</span><div><h5>Report and hand over</h5><p>Present the evidence and transfer the agreed deliverables so your team can decide what comes next.</p><small>Technical report · agreed materials · walkthrough if scoped</small></div></article>
+            </div>
+          </section>
+        </div>
+      </section>
       <div class="domains reveal">
         <div><p class="section-kicker">Application domains</p><h3>Domain-independent capability, applied where the problem matters.</h3></div>
         <div class="domain-list" aria-label="Application domains"><span>Medical AI</span><span>Sports &amp; Performance</span><span>Defence &amp; Security</span><span>Automated Driving</span><span>Robotics</span><span>Industrial &amp; Scientific AI</span></div>
@@ -101,16 +168,16 @@
 
     <section class="notes section-pad" id="notes">
       <div class="section-heading reveal">
-        <div><p class="section-kicker">Field notes</p><h2>Ideas in progress.<br>Knowledge in public.</h2></div>
+        <div><p class="section-kicker">Portfolio</p><h2>Ideas in progress.<br>Knowledge in public.</h2></div>
         <p>Working research premises alongside clear, useful guides to the ideas behind our work.</p>
       </div>
       <!-- FIELD_NOTES:START -->
       <div class="home-note-grid">
-        <a class="home-note reveal" href="notes/why-explainability-matters.html"><span>Ideas in Progress / 001</span><div><h3>Why explainability matters when AI acts</h3><p>A working premise for interpretable decisions, accountable systems, and AI that acts in the physical world.</p></div><b aria-hidden="true">↗</b></a>
-        <a class="home-note reveal knowledge" href="notes/xai-for-dummies.html"><span>Knowledge Blog / 001</span><div><h3>XAI for Dummies</h3><p>A plain-language guide to what Explainable AI is, what an explanation can reveal, and where explanations can mislead us.</p></div><b aria-hidden="true">↗</b></a>
+        <article class="home-note reveal knowledge"><span>Articles / 001</span><div><h3><a href="notes/why-explainability-matters.html">Why explainability matters when AI acts</a></h3><p>A working premise for interpretable decisions, accountable systems, and AI that acts in the physical world.</p><small class="note-contributors">Shankaranarayan N</small></div><a class="note-card-arrow" href="notes/why-explainability-matters.html" aria-label="Open Why explainability matters when AI acts">↗</a></article>
+        <article class="home-note reveal knowledge"><span>Articles / 001</span><div><h3><a href="notes/xai-for-dummies.html">XAI for Dummies</a></h3><p>A plain-language guide to what Explainable AI is, what an explanation can reveal, and where explanations can mislead us.</p><small class="note-contributors">Shankaranarayan N</small></div><a class="note-card-arrow" href="notes/xai-for-dummies.html" aria-label="Open XAI for Dummies">↗</a></article>
       </div>
       <!-- FIELD_NOTES:END -->
-      <a class="notes-all-link" href="notes.html">Browse all field notes <span>→</span></a>
+      <a class="notes-all-link" href="notes.html">Browse the portfolio <span>→</span></a>
     </section>
 
     <section class="people section-pad" id="people">
@@ -124,42 +191,29 @@
       </div>
     </section>
 
-    <section class="geek-console constellation" aria-label="Academy of Science research constellation">
-      <header class="constellation-bar">
-        <a href="#top" class="constellation-brand"><img src="assets/logo-mark.svg" data-theme-logo-mark alt="" width="40" height="40"><b>Academy of Science</b></a>
-        <p>Independent AI research<br>India · 2026</p>
-        <button id="geekExit" type="button">Return to normal <span>↗</span></button>
-      </header>
-      <div class="constellation-grid">
-        <section class="constellation-intro">
-          <p class="constellation-index">00 / THE LAB</p>
-          <h2>Intelligence,<br><em>made legible.</em></h2>
-          <p>We explore ambitious AI questions and turn them into systems that can explain, learn and act in the real world.</p>
-          <div class="constellation-signal"><i></i><span>Two researchers<br>One shared laboratory</span></div>
-        </section>
-
-        <section class="constellation-object" aria-label="Interactive dot-rendered lab emblem">
-          <div class="object-orbit orbit-a" aria-hidden="true"></div><div class="object-orbit orbit-b" aria-hidden="true"></div>
-          <span class="coordinate coordinate-x">X · 19.0760</span><span class="coordinate coordinate-y">Y · 72.8777</span>
-          <canvas id="digitalLogo" width="720" height="720" role="img" tabindex="0" aria-label="Interactive particle rendering of the Academy of Science logo. Move a pointer to scatter and gather particles; drag the fan blades to spin them."></canvas>
-          <div class="object-instruction"><span id="visualState">LIVE PARTICLE FIELD</span><b>Move to scatter · drag blades to steer</b></div>
-        </section>
-
-        <aside class="constellation-directions" aria-label="Research directions">
-          <p class="constellation-index">01 / COORDINATES</p>
-          <a href="#capabilities"><span>General AI capacity</span><b>Research without artificial boundaries.</b><i>01</i></a>
-          <a href="shankaranarayan.html"><span>Explainable AI</span><b>Understand evidence, uncertainty and failure.</b><i>02</i></a>
-          <a href="satwik.html"><span>Physical AI</span><b>Intelligence that learns and acts in the world.</b><i>03</i></a>
-        </aside>
-
-        <nav class="constellation-dock" aria-label="Geek mode navigation">
-          <a href="#work"><small>Collaborate</small><b>Build with us</b><span>↗</span></a>
-          <a href="notes.html"><small>Read</small><b>Field notes</b><span>↗</span></a>
-          <a href="#people"><small>Meet</small><b>The researchers</b><span>↗</span></a>
-          <p><span>MODE / GEEK</span><b>DOT_01</b></p>
-        </nav>
+    <section class="about section-pad" id="about" aria-labelledby="about-title">
+      <div class="section-heading reveal">
+        <div><p class="section-kicker">About the lab</p><h2 id="about-title">Research with engineering behind it.</h2></div>
+        <p>Academy of Science is an independent AI research and development lab. We conduct original research and work with organizations to investigate, prototype, evaluate, and build intelligent systems.</p>
+      </div>
+      <div class="about-details reveal">
+        <p>Our capabilities span AI and machine learning, with deep specialization in Explainable AI and Physical AI. We apply these independently or together, from supporting studies and early feasibility through engineered systems and deployment.</p>
+        <a href="#people">Meet the researchers <span>↗</span></a>
       </div>
     </section>
+
+    <section class="contact section-pad" id="contact" aria-labelledby="contact-title">
+      <div class="contact-copy reveal">
+        <p class="section-kicker">Contact</p>
+        <h2 id="contact-title">Have a research or engineering question?</h2>
+        <p>Start a conversation with the researchers about feasibility, evaluation, applied AI development, or deployment.</p>
+      </div>
+      <div class="contact-links reveal">
+        <a href="https://www.linkedin.com/in/shankaranarayan-n/" rel="noopener noreferrer"><span>Explainable &amp; reliable AI</span><b>Contact Shankaranarayan on LinkedIn <i>↗</i></b></a>
+        <a href="https://www.linkedin.com/in/rvsatwik/" rel="noopener noreferrer"><span>Physical AI &amp; optimization</span><b>Contact Satwik on LinkedIn <i>↗</i></b></a>
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-footer">
@@ -167,7 +221,8 @@
     <p>Research intelligence.<br>Build what matters.</p>
     <div class="footer-meta"><p>Built in public<br>India · 2026</p><a href="#top">Back to top ↑</a></div>
   </footer>
-  <script src="script.js?v=16"></script>
+  <script src="script.js?v=22"></script>
   <script src="theme-assets.js?v=8"></script>
+  <script src="site-nav.js?v=1"></script>
 </body>
 </html>

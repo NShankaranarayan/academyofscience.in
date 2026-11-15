@@ -1,11 +1,12 @@
 const root = document.documentElement;
 const modeSwitch = document.querySelector('#modeSwitch');
 const themeMeta = document.querySelector('meta[name="theme-color"]');
+const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 
 function setMode(mode) {
   root.dataset.mode = mode;
   modeSwitch.setAttribute('aria-pressed', String(mode === 'geek'));
-  themeMeta.content = mode === 'geek' ? '#0d0d0e' : '#f2efe8';
+  themeMeta.content = mode === 'geek' ? '#090a0a' : '#f2efe8';
   try { localStorage.setItem('aos-mode', mode); } catch {}
 }
 
@@ -15,11 +16,23 @@ setMode(savedMode);
 modeSwitch.addEventListener('click', () => {
   const mode = root.dataset.mode === 'geek' ? 'normal' : 'geek';
   setMode(mode);
-  if (mode === 'geek') startLogoMotion();
-  else { logoState.paused = true; drawLogo(); startHeroMotion(); }
+  if (mode === 'geek') {
+    if (heroFrame) cancelAnimationFrame(heroFrame);
+    heroFrame = 0;
+    heroMotion.paused = true;
+    drawHeroLogo();
+    ensureLogoParticles();
+    startLogoMotion();
+  } else {
+    if (logoFrame) cancelAnimationFrame(logoFrame);
+    logoFrame = 0;
+    logoState.paused = true;
+    heroMotion.paused = false;
+    drawLogo();
+    drawHeroLogo();
+    startHeroMotion();
+  }
 });
-document.querySelector('#geekExit').addEventListener('click', () => setMode('normal'));
-
 const observer = new IntersectionObserver(entries => entries.forEach(entry => {
   if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
 }), { threshold: .12 });
@@ -47,14 +60,18 @@ const heroFan = {
 const heroMotion = { angle: 0, speed: 0.2, paused: false, dragging: false, moved: false, lastPointerAngle: 0, lastPointerTime: 0 };
 let heroFrame = 0;
 let heroLastFrameTime = 0;
+let heroLogoVisible = false;
 const particleSource = document.createElement('canvas');
 const particleContext = particleSource.getContext('2d', { willReadFrequently: true });
 const logoParticles = [];
+let logoParticlesReady = false;
 const particleLayers = [];
 const ambientParticles = [];
 const logoPointer = { x: -1000, y: -1000, active: false };
 const logoState = { angle: 0, speed: .012, yaw: 0, pitch: 0, paused: false, dragging: false, lastPointerAngle: 0, moved: false, lastFrame: 0, width: 0, height: 0, dpr: 1 };
 let logoFrame = 0;
+let logoCanvasVisible = false;
+let logoUserPaused = false;
 const fan = { centerX: heroFan.centerX / 1254, centerY: heroFan.centerY / 1254 };
 const particleAccent = getComputedStyle(root).getPropertyValue('--accent').trim() || '#D4AA60';
 
@@ -115,18 +132,19 @@ function drawHeroLogo() {
   heroContext.arc(heroFan.centerX, heroFan.centerY, heroFan.hubRadius, 0, Math.PI * 2);
   heroContext.fill();
   heroContext.globalCompositeOperation = 'source-over';
-  const paused = String(heroMotion.paused);
+  const paused = String(heroMotion.paused || motionPreference.matches);
   if (heroContainer.dataset.paused !== paused) {
     heroContainer.dataset.paused = paused;
-    heroContainer.setAttribute('aria-label', `Animated Academy of Science logo. Fans ${heroMotion.paused ? 'paused' : 'spinning'}. Drag around the hub to redirect them. Use the adjacent control or Space to pause or resume.`);
-    heroToggle.textContent = heroMotion.paused ? 'Start emblem' : 'Pause emblem';
-    heroToggle.setAttribute('aria-pressed', String(!heroMotion.paused));
+    heroContainer.setAttribute('aria-label', `Animated Academy of Science logo. Fans ${paused === 'true' ? 'paused' : 'spinning'}. Drag around the hub to redirect them. Use the adjacent control or Space to pause or resume.`);
+    heroToggle.textContent = motionPreference.matches ? 'Motion reduced' : (heroMotion.paused ? 'Start emblem' : 'Pause emblem');
+    heroToggle.disabled = motionPreference.matches;
+    heroToggle.setAttribute('aria-pressed', String(!heroMotion.paused && !motionPreference.matches));
   }
 }
 
 function animateHeroLogo(timestamp) {
   heroFrame = 0;
-  if (root.dataset.mode !== 'normal' || heroMotion.paused || document.hidden) return;
+  if (root.dataset.mode !== 'normal' || heroMotion.paused || motionPreference.matches || document.hidden) return;
   const elapsed = heroLastFrameTime ? Math.min((timestamp - heroLastFrameTime) / 1000, 0.05) : 0;
   heroLastFrameTime = timestamp;
   heroMotion.angle += heroMotion.speed * elapsed;
@@ -137,7 +155,7 @@ function animateHeroLogo(timestamp) {
 }
 
 function startHeroMotion() {
-  if (!heroFrame && root.dataset.mode === 'normal' && !heroMotion.paused && !document.hidden) {
+  if (!heroFrame && heroLogoVisible && root.dataset.mode === 'normal' && !heroMotion.paused && !motionPreference.matches && !document.hidden) {
     heroFrame = requestAnimationFrame(animateHeroLogo);
   }
 }
@@ -348,7 +366,10 @@ function drawLogo() {
   }
   ctx.globalAlpha = 1;
   document.querySelector('#visualState').textContent = `${logoState.dragging ? 'INTERACTING' : 'LIVE'} PARTICLE VOLUME · ${logoParticles.length.toLocaleString()}`;
-  logoCanvas.setAttribute('aria-label', `Interactive particle rendering of the Academy of Science logo with ${logoParticles.length} particles. Move a pointer to scatter and gather particles; drag the fan blades to spin them.`);
+  const motionHint = motionPreference.matches
+    ? 'Animation is paused by your reduced motion setting.'
+    : 'Move a pointer to scatter particles, use left and right arrows to rotate, and press Space or Enter to pause or resume.';
+  logoCanvas.setAttribute('aria-label', `Interactive particle rendering of the Academy of Science logo with ${logoParticles.length} particles. ${motionHint}`);
 }
 
 function resizeLogoCanvas() {
@@ -423,9 +444,15 @@ function buildLogoParticles() {
   if (root.dataset.mode === 'geek') startLogoMotion();
 }
 
+function ensureLogoParticles() {
+  if (logoParticlesReady || !logoImage.complete || !logoImage.naturalWidth) return;
+  logoParticlesReady = true;
+  buildLogoParticles();
+}
+
 function animateLogo(timestamp) {
   logoFrame = 0;
-  if (root.dataset.mode !== 'geek' || document.hidden) return;
+  if (root.dataset.mode !== 'geek' || logoState.paused || motionPreference.matches || document.hidden) return;
   const elapsed = logoState.lastFrame ? Math.min((timestamp - logoState.lastFrame) / 1000, .05) : 0;
   logoState.lastFrame = timestamp;
   const targetYaw = logoPointer.active ? (logoPointer.x / logoState.width - .5) * .54 : 0;
@@ -438,18 +465,62 @@ function animateLogo(timestamp) {
 }
 
 function startLogoMotion() {
+  if (motionPreference.matches) { logoState.paused = true; return; }
+  if (logoUserPaused) { logoState.paused = true; return; }
+  if (!logoCanvasVisible) return;
   logoState.paused = false;
-  if (!logoFrame && root.dataset.mode === 'geek') logoFrame = requestAnimationFrame(animateLogo);
+  if (!logoFrame && root.dataset.mode === 'geek' && !motionPreference.matches && !document.hidden) logoFrame = requestAnimationFrame(animateLogo);
 }
+
+const onMotionPreferenceChange = () => {
+  if (motionPreference.matches) {
+    if (heroFrame) cancelAnimationFrame(heroFrame);
+    if (logoFrame) cancelAnimationFrame(logoFrame);
+    heroFrame = logoFrame = 0;
+    heroMotion.paused = true;
+    logoState.paused = true;
+  } else if (root.dataset.mode === 'normal') {
+    heroMotion.paused = false;
+    startHeroMotion();
+  } else {
+    logoState.paused = logoUserPaused;
+    startLogoMotion();
+  }
+  drawHeroLogo();
+  drawLogo();
+};
+if (motionPreference.addEventListener) motionPreference.addEventListener('change', onMotionPreferenceChange);
+else motionPreference.addListener(onMotionPreferenceChange);
 
 logoImage.addEventListener('load', () => {
   prepareHeroLogo();
-  buildLogoParticles();
+  if (root.dataset.mode === 'geek') ensureLogoParticles();
 });
 logoImage.src = activeTheme.logo;
 new ResizeObserver(resizeLogoCanvas).observe(logoCanvas);
 
+new IntersectionObserver(([entry]) => {
+  heroLogoVisible = entry.isIntersecting;
+  if (heroLogoVisible) startHeroMotion();
+  else {
+    if (heroFrame) cancelAnimationFrame(heroFrame);
+    heroFrame = 0;
+    heroLastFrameTime = 0;
+  }
+}, { threshold: .05 }).observe(heroContainer);
+
+new IntersectionObserver(([entry]) => {
+  logoCanvasVisible = entry.isIntersecting;
+  if (logoCanvasVisible) startLogoMotion();
+  else {
+    if (logoFrame) cancelAnimationFrame(logoFrame);
+    logoFrame = 0;
+    logoState.lastFrame = 0;
+  }
+}, { threshold: .05 }).observe(logoCanvas);
+
 logoCanvas.addEventListener('pointerdown', event => {
+  if (motionPreference.matches) return;
   const rect = logoCanvas.getBoundingClientRect();
   const rx = (event.clientX - rect.left) / rect.width, ry = (event.clientY - rect.top) / rect.height;
   logoPointer.x = event.clientX - rect.left;
@@ -469,6 +540,7 @@ logoCanvas.addEventListener('pointerdown', event => {
   drawLogo();
 });
 logoCanvas.addEventListener('pointermove', event => {
+  if (motionPreference.matches) return;
   const rect = logoCanvas.getBoundingClientRect();
   const rx = (event.clientX - rect.left) / rect.width, ry = (event.clientY - rect.top) / rect.height;
   logoPointer.x = event.clientX - rect.left;
@@ -500,10 +572,300 @@ logoCanvas.addEventListener('pointercancel', () => {
   startLogoMotion();
 });
 logoCanvas.addEventListener('keydown', event => {
+  if (motionPreference.matches) return;
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
+    logoUserPaused = false;
     logoState.speed = event.key === 'ArrowLeft' ? -.018 : .018;
     startLogoMotion();
   }
-  if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); }
+  if (event.key === ' ' || event.key === 'Enter') {
+    event.preventDefault();
+    logoUserPaused = !logoUserPaused;
+    logoState.paused = logoUserPaused;
+    if (logoState.paused) {
+      if (logoFrame) cancelAnimationFrame(logoFrame);
+      logoFrame = 0;
+    } else startLogoMotion();
+    drawLogo();
+  }
 });
+
+// The UFO companion runs only in Geek Mode on a touch-free desktop with motion enabled.
+const cursorUfo = document.querySelector('#cursorUfo');
+const cursorUfoMotion = document.querySelector('#cursorUfoMotion');
+const ufoShots = document.querySelector('#ufoShots');
+const ufoControlCell = document.querySelector('#ufoControlCell');
+const ufoTrigger = document.querySelector('#ufoLaunch');
+const ufoSplitControls = document.querySelector('#ufoSplitControls');
+const ufoSurrender = document.querySelector('#ufoSurrender');
+const ufoWeapon = document.querySelector('#ufoWeapon');
+if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && ufoSplitControls && ufoSurrender && ufoWeapon) {
+  const ufoDesktop = matchMedia('(min-width: 681px) and (hover: hover) and (pointer: fine)');
+  const ufoReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const ufoTouchFirst = navigator.maxTouchPoints > 0
+    || navigator.userAgentData?.mobile === true
+    || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const ufoTriggerLabel = document.querySelector('#ufoLaunchLabel');
+  const ufoWeaponLabel = document.querySelector('#ufoWeaponLabel');
+  const ufoWeaponState = document.querySelector('#ufoWeaponState');
+  let ufoEnabled = false, ufoDeployed = false, ufoLaunching = false, ufoReturning = false, ufoFollowing = false;
+  let ufoFrame = 0, ufoHasPointer = false, ufoCombat = false, ufoFireTimer = 0, ufoStageTimer = 0;
+  let ufoStageDeadline = 0, ufoStageRemaining = 0, ufoStageCallback = null;
+  let pointerX = 0, pointerY = 0;
+  let ufoX = 0, ufoY = 0, ufoTargetX = 0, ufoTargetY = 0, ufoVelocityX = 0, ufoVelocityY = 0;
+  let ufoLastFrame = 0;
+
+  function updateUfoTrigger() {
+    ufoTrigger.disabled = !ufoEnabled || ufoDeployed;
+    ufoTrigger.hidden = ufoDeployed && !ufoLaunching && !ufoReturning;
+    ufoTriggerLabel.textContent = ufoReducedMotion.matches
+      ? 'REDUCED MOTION ENABLED'
+      : (!ufoDesktop.matches || ufoTouchFirst ? 'DESKTOP MOUSE REQUIRED' : (ufoLaunching ? 'LAUNCHING...' : (ufoReturning ? 'RETURNING...' : 'DO NOT CLICK')));
+    ufoSplitControls.hidden = !ufoDeployed || ufoLaunching || ufoReturning;
+    ufoWeapon.setAttribute('aria-pressed', String(ufoCombat));
+    ufoWeaponLabel.textContent = ufoCombat ? 'TAKE AWAY WEAPON' : 'GIVE IT ABILITY TO SHOOT';
+    ufoWeaponState.textContent = ufoCombat ? 'WEAPON ARMED' : 'WEAPON DISARMED';
+  }
+
+  function clearUfoShots() {
+    while (ufoShots.firstChild) ufoShots.firstChild.remove();
+  }
+
+  function clearUfoStage() {
+    if (ufoStageTimer) clearTimeout(ufoStageTimer);
+    ufoStageTimer = 0;
+    ufoStageDeadline = 0;
+    ufoStageRemaining = 0;
+    ufoStageCallback = null;
+  }
+
+  function startUfoStageTimer() {
+    if (document.hidden || !ufoStageCallback || ufoStageTimer) return;
+    ufoStageDeadline = performance.now() + ufoStageRemaining;
+    ufoStageTimer = setTimeout(() => {
+      const callback = ufoStageCallback;
+      clearUfoStage();
+      if (callback) callback();
+    }, ufoStageRemaining);
+  }
+
+  function scheduleUfoStage(callback, delay) {
+    clearUfoStage();
+    ufoStageCallback = callback;
+    ufoStageRemaining = delay;
+    startUfoStageTimer();
+  }
+
+  function pauseUfoStage() {
+    if (!ufoStageTimer) return;
+    clearTimeout(ufoStageTimer);
+    ufoStageTimer = 0;
+    ufoStageRemaining = Math.max(0, ufoStageDeadline - performance.now());
+    ufoStageDeadline = 0;
+  }
+
+  function stopUfoFrame() {
+    if (ufoFrame) cancelAnimationFrame(ufoFrame);
+    ufoFrame = 0;
+    ufoLastFrame = 0;
+  }
+
+  function startUfoFireTimer() {
+    if (ufoFireTimer || !ufoCombat || !ufoEnabled || document.hidden || !ufoHasPointer) return;
+    fireUfoShot();
+    ufoFireTimer = setInterval(fireUfoShot, 900);
+  }
+
+  function placeAtPointer() {
+    ufoTargetX = Math.max(0, Math.min(innerWidth - 120, pointerX - 104));
+    ufoTargetY = Math.max(0, Math.min(innerHeight - 82, pointerY - 48));
+  }
+
+  function setUfoCombat(active) {
+    ufoCombat = active && ufoEnabled && ufoDeployed && ufoFollowing;
+    if (ufoFireTimer) clearInterval(ufoFireTimer);
+    ufoFireTimer = 0;
+    updateUfoTrigger();
+    if (ufoCombat) startUfoFireTimer();
+    else clearUfoShots();
+  }
+
+  function syncUfoMode() {
+    ufoEnabled = root.dataset.mode === 'geek' && ufoDesktop.matches && !ufoTouchFirst && !ufoReducedMotion.matches;
+    root.toggleAttribute('data-ufo-eligible', ufoEnabled);
+    if (!ufoEnabled) {
+      clearUfoStage();
+      setUfoCombat(false);
+      stopUfoFrame();
+      ufoDeployed = false;
+      ufoLaunching = false;
+      ufoReturning = false;
+      ufoFollowing = false;
+      cursorUfo.setAttribute('hidden', '');
+      cursorUfo.removeAttribute('data-launch-state');
+    }
+    updateUfoTrigger();
+  }
+
+  function fireUfoShot() {
+    if (!ufoEnabled || !ufoCombat || !ufoFollowing || !ufoHasPointer || document.hidden) return;
+    const startX = ufoX + 60;
+    const startY = ufoY + 45;
+    const namespace = 'http://www.w3.org/2000/svg';
+    for (const className of ['ufo-shot-glow', 'ufo-shot-core']) {
+      const shot = document.createElementNS(namespace, 'line');
+      shot.setAttribute('class', `ufo-shot ${className}`);
+      shot.setAttribute('x1', String(startX));
+      shot.setAttribute('y1', String(startY));
+      shot.setAttribute('x2', String(pointerX));
+      shot.setAttribute('y2', String(pointerY));
+      ufoShots.append(shot);
+      window.setTimeout(() => shot.remove(), 240);
+    }
+  }
+
+  function animateUfo(timestamp) {
+    ufoFrame = 0;
+    if (!ufoEnabled || !ufoDeployed || document.hidden) return;
+    const elapsed = ufoLastFrame ? Math.min((timestamp - ufoLastFrame) / 1000, .032) : 1 / 60;
+    ufoLastFrame = timestamp;
+    const spring = 94, damping = 15;
+    ufoVelocityX += ((ufoTargetX - ufoX) * spring - ufoVelocityX * damping) * elapsed;
+    ufoVelocityY += ((ufoTargetY - ufoY) * spring - ufoVelocityY * damping) * elapsed;
+    ufoX += ufoVelocityX * elapsed;
+    ufoY += ufoVelocityY * elapsed;
+    cursorUfoMotion.setAttribute('transform', `translate(${Math.round(ufoX)} ${Math.round(ufoY)})`);
+    if (Math.abs(ufoTargetX - ufoX) > .35 || Math.abs(ufoTargetY - ufoY) > .35 || Math.abs(ufoVelocityX) > 1 || Math.abs(ufoVelocityY) > 1) {
+      ufoFrame = requestAnimationFrame(animateUfo);
+    } else { ufoX = ufoTargetX; ufoY = ufoTargetY; ufoVelocityX = 0; ufoVelocityY = 0; ufoLastFrame = 0; }
+  }
+
+  function launchUfo() {
+    if (!ufoEnabled || ufoDeployed) return;
+    clearUfoStage();
+    const rect = ufoTrigger.getBoundingClientRect();
+    ufoX = rect.left + rect.width / 2 - 60;
+    ufoY = rect.top + rect.height / 2 - 36;
+    if (!ufoHasPointer) {
+      pointerX = rect.left + rect.width / 2;
+      pointerY = rect.top + rect.height / 2;
+      ufoHasPointer = true;
+    }
+    ufoTargetX = Math.max(0, ufoX - 48);
+    ufoTargetY = Math.max(0, ufoY - 132);
+    ufoVelocityX = 0;
+    ufoVelocityY = 0;
+    ufoLastFrame = 0;
+    ufoDeployed = true;
+    ufoLaunching = true;
+    ufoReturning = false;
+    ufoFollowing = false;
+    cursorUfo.removeAttribute('hidden');
+    cursorUfo.setAttribute('data-launch-state', 'launching');
+    cursorUfoMotion.setAttribute('transform', `translate(${Math.round(ufoX)} ${Math.round(ufoY)})`);
+    updateUfoTrigger();
+    if (!ufoFrame && !document.hidden) ufoFrame = requestAnimationFrame(animateUfo);
+    scheduleUfoStage(() => {
+      if (!ufoEnabled || !ufoDeployed) return;
+      ufoLaunching = false;
+      ufoFollowing = true;
+      cursorUfo.removeAttribute('data-launch-state');
+      placeAtPointer();
+      if (!ufoHasPointer) cursorUfo.setAttribute('hidden', '');
+      updateUfoTrigger();
+      if (ufoHasPointer && !ufoFrame && !document.hidden) ufoFrame = requestAnimationFrame(animateUfo);
+    }, 680);
+  }
+
+  function returnUfo() {
+    if (!ufoEnabled || !ufoDeployed || ufoLaunching || ufoReturning) return;
+    clearUfoStage();
+    setUfoCombat(false);
+    const rect = ufoControlCell.getBoundingClientRect();
+    ufoTargetX = rect.left + rect.width / 2 - 60;
+    ufoTargetY = rect.top + rect.height / 2 - 36;
+    ufoFollowing = false;
+    ufoReturning = true;
+    cursorUfo.setAttribute('data-launch-state', 'returning');
+    updateUfoTrigger();
+    if (!ufoFrame && !document.hidden) ufoFrame = requestAnimationFrame(animateUfo);
+    scheduleUfoStage(() => {
+      ufoDeployed = false;
+      ufoReturning = false;
+      ufoFollowing = false;
+      cursorUfo.setAttribute('hidden', '');
+      cursorUfo.removeAttribute('data-launch-state');
+      clearUfoShots();
+      updateUfoTrigger();
+      clearUfoStage();
+    }, 620);
+  }
+
+  window.addEventListener('pointermove', event => {
+    if (!ufoEnabled || event.pointerType !== 'mouse') return;
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    ufoHasPointer = true;
+    if (ufoCombat) startUfoFireTimer();
+    if (ufoDeployed && ufoFollowing) {
+      placeAtPointer();
+      cursorUfo.removeAttribute('hidden');
+      if (!ufoFrame) ufoFrame = requestAnimationFrame(animateUfo);
+    }
+  }, { passive: true });
+
+  ufoTrigger.addEventListener('click', launchUfo);
+  ufoSurrender.addEventListener('click', returnUfo);
+  ufoWeapon.addEventListener('click', () => setUfoCombat(!ufoCombat));
+
+  window.addEventListener('pointerout', event => {
+    if (event.relatedTarget === null) {
+      ufoHasPointer = false;
+      if (ufoFireTimer) clearInterval(ufoFireTimer);
+      ufoFireTimer = 0;
+      if (ufoFollowing) {
+        cursorUfo.setAttribute('hidden', '');
+        stopUfoFrame();
+      }
+    }
+  });
+  window.addEventListener('blur', () => {
+    ufoHasPointer = false;
+    if (ufoFireTimer) clearInterval(ufoFireTimer);
+    ufoFireTimer = 0;
+    if (ufoFollowing) {
+      cursorUfo.setAttribute('hidden', '');
+      stopUfoFrame();
+    }
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      ufoHasPointer = false;
+      stopUfoFrame();
+      pauseUfoStage();
+      if (ufoFireTimer) clearInterval(ufoFireTimer);
+      ufoFireTimer = 0;
+      clearUfoShots();
+      if (ufoDeployed) cursorUfo.setAttribute('hidden', '');
+    } else {
+      startUfoStageTimer();
+      if (ufoDeployed && (ufoLaunching || ufoReturning)) {
+        cursorUfo.removeAttribute('hidden');
+        ufoFrame = requestAnimationFrame(animateUfo);
+      } else if (ufoFollowing && ufoHasPointer) {
+        placeAtPointer();
+        cursorUfo.removeAttribute('hidden');
+        ufoFrame = requestAnimationFrame(animateUfo);
+      }
+      if (ufoCombat) startUfoFireTimer();
+    }
+  });
+  new MutationObserver(syncUfoMode).observe(root, { attributes: true, attributeFilter: ['data-mode'] });
+  if (ufoDesktop.addEventListener) ufoDesktop.addEventListener('change', syncUfoMode);
+  else ufoDesktop.addListener(syncUfoMode);
+  if (ufoReducedMotion.addEventListener) ufoReducedMotion.addEventListener('change', syncUfoMode);
+  else ufoReducedMotion.addListener(syncUfoMode);
+  syncUfoMode();
+}

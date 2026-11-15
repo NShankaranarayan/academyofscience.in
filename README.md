@@ -2,7 +2,7 @@
 
 Static website for [academyofscience.in](https://academyofscience.in), an independent AI research and development lab. The site is designed for GitHub Pages and has no runtime framework, package manager, database, or third-party JavaScript dependency.
 
-The homepage and profile pages are hand-authored HTML. Field Notes are authored in Markdown and converted into complete static HTML by a dependency-free Python build script.
+The homepage and profile pages are hand-authored HTML. Portfolio articles are authored in Markdown and converted into static HTML by a dependency-free Python build script. Normal and Geek modes share the same page content; Geek Mode is a visual theme, not a parallel copy of each page.
 
 ## Requirements
 
@@ -72,7 +72,11 @@ Always run the build before committing changes to Field Notes. The generated HTM
 
 Edit `themes/active.json` to select `red` or `gold`, then run `python3 scripts/build_theme.py`. This generates `themes/active-theme.js` and the selected vector logo variant from `assets/logo.svg`. The homepage animation and Geek mode dot logo both render from that same SVG. Edit the SVG artwork itself to change the emblem; change the accent value in a theme JSON file to recolor it.
 
-## Writing a Field Note
+### Normal and Geek modes
+
+Each page has one content source. The mode control stores the selected appearance and applies it across the homepage, contributor profiles, Portfolio library, and article pages. To publish a Portfolio item, add one Markdown file under `content/notes/` and build the site; the generated article and library entry automatically support both modes through the shared templates and stylesheet. Do not create a separate Geek version of the same content.
+
+## Adding a Portfolio Item
 
 Create a Markdown file under `content/notes/` with this front matter:
 
@@ -81,7 +85,11 @@ Create a Markdown file under `content/notes/` with this front matter:
 title: Example note title
 slug: example-note-title
 date: 2026-11-13
-category: Knowledge Blog
+type: Articles
+category: Articles
+format: article
+contributors: shankaranarayan|Author
+tags: Explainable AI, AI fundamentals
 status: published
 readTime: 5 min read
 number: 002
@@ -96,6 +104,24 @@ Then write the article in Markdown below the front matter and run:
 python3 scripts/build_site.py
 ```
 
+### Optional video summary
+
+An item can include a 30–90-second video summary near the start of its article, hosted on YouTube or in a public, embed-enabled Instagram post or Reel. The page loads the player only after a reader chooses Play/Load. YouTube uses its privacy-enhanced embed and requests host captions; Instagram uses Meta's embed script after the reader chooses Load. Include an accurate transcript in the item metadata as well. YouTube posters default to the host thumbnail. `videoThumbnail` can point to a local file under `assets/`; YouTube also accepts an `i.ytimg.com` image. Instagram thumbnails must be local assets.
+
+```yaml
+videoUrl: https://www.youtube.com/watch?v=VIDEO_ID
+videoDuration: 60
+videoThumbnail: assets/research/video-summary.jpg # optional
+videoCaption: A concise description of the video.
+videoTranscript: |
+  [00:00] Transcript text begins here.
+  [00:30] Continue with the spoken words and timestamps.
+```
+
+For Instagram, use a public post or Reel URL instead, such as `https://www.instagram.com/reel/SHORTCODE/`. A local `videoThumbnail` is optional; without one, the article shows a branded load poster. Private posts and posts whose owner has disabled embedding cannot be embedded.
+
+Keep these optional fields inside the item's front matter. The video block includes a visible “Read full work” link to the written report.
+
 ### Metadata fields
 
 | Field | Purpose |
@@ -103,19 +129,33 @@ python3 scripts/build_site.py
 | `title` | Article title and social-preview title |
 | `slug` | Output filename under `notes/` |
 | `date` | Publication date in ISO `YYYY-MM-DD` form |
-| `category` | `Ideas in Progress` or `Knowledge Blog` |
+| `type` | `R&D` or `Articles` |
+| `category` | `Research and Development` or `Articles`; used by the Portfolio filters |
+| `format` | `research` or `article`; selects the required content outline |
+| `contributors` | Ordered credits in `person-id|role` form, separated by semicolons. Use `shankaranarayan` or `satwik`; each credit links to that contributor's profile. |
 | `status` | Only `published` notes are built |
 | `readTime` | Reader-facing estimate such as `5 min read` |
-| `number` | Sequence number within the category |
+| `number` | Sequence number within the content type |
 | `home` | Set to `true` to include the note on the homepage |
 | `excerpt` | Library card, article introduction, and meta description |
 | `shareImage` | Optional image under `assets/` used for LinkedIn and social link previews; defaults to the XAI research illustration |
+| `tags` | Comma-separated topics used by Portfolio topic filters |
+| `sourceUrl` | Optional canonical publication or project link shown on the Portfolio card |
+
+### Standard content outlines
+
+Keep the same generated article page. The `format` field validates the matching Markdown headings before publishing:
+
+- `research` (category `Research and Development`): `Problem`, `Approach`, `Findings`, `Citations and publications`.
+- `article` (category `Articles`): `Explanation`, `Visuals`, `References`, `Related work`. Add images with Markdown image syntax; the generator renders them safely.
+
+Every published item uses the same Portfolio card and article template. The build stops with a clear error if a required section is missing.
 
 The generator supports headings, paragraphs, emphasis, inline code, safe Markdown links, unordered and ordered lists, blockquotes, horizontal rules, and fenced code blocks. Raw HTML is escaped rather than executed.
 
-### Sharing a Field Note
+### Sharing a Portfolio entry
 
-Open any published article and choose **Prepare a share card**. The share studio lets you write a short personal summary, preview the theme-colored card, and download it as a PNG. **Prepare image post for LinkedIn** downloads the personalized card, copies a caption with the article URL, and opens LinkedIn's composer. Add the downloaded PNG there and paste the caption. LinkedIn's link preview uses its own thumbnail; the article also includes Open Graph metadata and the note's `shareImage` for link previews.
+Detail pages provide a LinkedIn share link and a copy-URL action. Browsers with the Web Share API also show a device share action. **Create social image** opens the Share Kit, where visitors can personalize a caption and download a PNG sized for a LinkedIn post (1200 × 627), Instagram post (1080 × 1350), or Instagram story (1080 × 1920). Visitors upload Instagram images in the Instagram app; the website does not claim to publish directly to Instagram. The article's `shareImage` and Open Graph metadata provide the thumbnail for link previews.
 
 ## Selecting the site theme
 
@@ -168,7 +208,7 @@ Preview these representative routes:
 ## Content and design
 
 - Normal Mode is an editorial research-lab presentation.
-- Geek Mode is an interactive terminal-style presentation available on the homepage.
+- Geek Mode is the site-wide night theme. It keeps the same page structure and content, with the homepage fluid logo and optional UFO companion.
 - The site uses system fonts and local assets only.
 - Styles and scripts are governed by restrictive per-page Content Security Policies.
 - Article HTML is pre-rendered for accessibility, search indexing, link previews, and operation without JavaScript.
