@@ -4,6 +4,7 @@ slug: deep-vision-vehicle-retrieval
 date: 2022-11-01
 type: R&D
 category: Research and Development
+format: research
 contributors: shankaranarayan|Lead author
 tags: Vehicle retrieval, Computer vision, Traffic systems
 shareImage: assets/research/computer-vision-ads.png
@@ -15,19 +16,19 @@ home: false
 excerpt: A computer-vision study of vehicle retrieval for smart traffic surveillance, published at ICCAKM 2022.
 ---
 
-## Abstract
+## Problem
 
 This conference paper investigates deep-vision methods for vehicle retrieval in automated smart traffic surveillance systems. Its focus is retrieving a target vehicle from surveillance imagery for intelligent traffic monitoring.
 
-## Contribution
+## Approach
 
 Shankaranarayan N. and S. Sowmya Kamath are listed as authors. The available bibliographic record identifies the work and venue but does not expose a full abstract or enough methodological detail to attribute individual components of the study.
 
-## Results
+## Findings
 
 The public records consulted confirm the conference publication and DOI, but do not provide verifiable quantitative results. This entry therefore makes no performance or accuracy claim.
 
-## Sources
+## Citations and publications
 
 - [IEEE publication record](https://doi.org/10.1109/ICCAKM54721.2022.9990209)
 - [ICCAKM 2022 proceedings table of contents](https://www.proceedings.com/content/066/066911webtoc.pdf)

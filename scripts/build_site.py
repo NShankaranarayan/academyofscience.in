@@ -43,6 +43,7 @@ class Note:
     slug: str
     content_type: str
     category: str
+    format: str
     published: str
     read_time: str
     excerpt: str
@@ -86,7 +87,11 @@ def parse_front_matter(path: Path) -> tuple[dict[str, str], str]:
 
 
 def load_notes() -> list[Note]:
-    required = {"title", "slug", "date", "type", "category", "readTime", "excerpt", "number", "contributors", "tags"}
+    required = {"title", "slug", "date", "type", "category", "format", "readTime", "excerpt", "number", "contributors", "tags"}
+    required_sections = {
+        "research": {"Problem", "Approach", "Findings", "Citations and publications"},
+        "article": {"Explanation", "Visuals", "References", "Related work"},
+    }
     notes: list[Note] = []
     for path in sorted(CONTENT_DIR.glob("*.md")):
         metadata, body = parse_front_matter(path)
@@ -103,6 +108,16 @@ def load_notes() -> list[Note]:
             raise ValueError(f"{path}: category must be Research and Development or Articles")
         if (metadata["type"] == "Articles") != (metadata["category"] == "Articles"):
             raise ValueError(f"{path}: Articles type and category must match")
+        entry_format = metadata["format"].lower()
+        if entry_format not in required_sections:
+            raise ValueError(f"{path}: format must be research or article")
+        expected_category = "Articles" if entry_format == "article" else "Research and Development"
+        if metadata["category"] != expected_category:
+            raise ValueError(f"{path}: {entry_format} entries must use category {expected_category}")
+        headings = set(re.findall(r"^##\s+(.+?)\s*$", body, re.MULTILINE))
+        missing_sections = required_sections[entry_format] - headings
+        if missing_sections:
+            raise ValueError(f"{path}: {entry_format} entry missing sections: {', '.join(sorted(missing_sections))}")
         contributors = []
         for credit in metadata["contributors"].split(";"):
             person_id, separator, role = credit.strip().partition("|")
@@ -123,7 +138,7 @@ def load_notes() -> list[Note]:
         if not share_image.startswith("assets/") or not share_image_path.is_file() or ROOT not in share_image_path.parents:
             raise ValueError(f"{path}: shareImage must point to an existing file under assets/")
         notes.append(Note(
-            title=metadata["title"], slug=metadata["slug"], content_type=metadata["type"], category=metadata["category"],
+            title=metadata["title"], slug=metadata["slug"], content_type=metadata["type"], category=metadata["category"], format=entry_format,
             published=metadata["date"], read_time=metadata["readTime"],
             excerpt=metadata["excerpt"], number=metadata["number"],
             home=metadata.get("home", "false").lower() == "true", body=body,
@@ -156,6 +171,15 @@ def render_inline(raw: str) -> str:
         return f"\x00CODE{len(code_tokens) - 1}\x00"
 
     escaped = re.sub(r"`([^`]+)`", preserve_code, escaped)
+
+    def replace_image(match: re.Match[str]) -> str:
+        target = safe_url(match.group(2))
+        if target is None:
+            return match.group(1)
+        return (f'<img class="article-inline-visual" src="{html.escape(target, quote=True)}" '
+                f'alt="{match.group(1)}" loading="lazy">')
+
+    escaped = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", replace_image, escaped)
 
     def replace_link(match: re.Match[str]) -> str:
         target = safe_url(match.group(2))
@@ -297,6 +321,7 @@ def build_articles(notes: list[Note]) -> None:
             "TITLE": html.escape(note.title, quote=True), "DESCRIPTION": html.escape(note.excerpt, quote=True),
             "SHARE_IMAGE_URL": html.escape(f"https://academyofscience.in/{note.share_image}", quote=True),
             "CATEGORY": html.escape(note.content_type, quote=True), "READ_TIME": html.escape(note.read_time),
+            "FORMAT": html.escape(note.format, quote=True),
             "EXCERPT": html.escape(note.excerpt), "DATE": html.escape(note.published, quote=True),
             "DISPLAY_DATE": html.escape(note.display_date), "SLUG": html.escape(note.slug, quote=True),
             "NUMBER": html.escape(note.number, quote=True),

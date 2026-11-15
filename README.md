@@ -82,7 +82,10 @@ title: Example note title
 slug: example-note-title
 date: 2026-11-13
 type: Articles
+category: Articles
+format: article
 contributors: shankaranarayan|Author
+tags: Explainable AI, AI fundamentals
 status: published
 readTime: 5 min read
 number: 002
@@ -105,6 +108,8 @@ python3 scripts/build_site.py
 | `slug` | Output filename under `notes/` |
 | `date` | Publication date in ISO `YYYY-MM-DD` form |
 | `type` | `R&D` or `Articles` |
+| `category` | `Research and Development` or `Articles`; used by the Portfolio filters |
+| `format` | `research` or `article`; selects the required content outline |
 | `contributors` | Ordered credits in `person-id|role` form, separated by semicolons. Use `shankaranarayan` or `satwik`; each credit links to that contributor's profile. |
 | `status` | Only `published` notes are built |
 | `readTime` | Reader-facing estimate such as `5 min read` |
@@ -112,6 +117,17 @@ python3 scripts/build_site.py
 | `home` | Set to `true` to include the note on the homepage |
 | `excerpt` | Library card, article introduction, and meta description |
 | `shareImage` | Optional image under `assets/` used for LinkedIn and social link previews; defaults to the XAI research illustration |
+| `tags` | Comma-separated topics used by Portfolio topic filters |
+| `sourceUrl` | Optional canonical publication or project link shown on the Portfolio card |
+
+### Standard content outlines
+
+Keep the same generated article page. The `format` field validates the matching Markdown headings before publishing:
+
+- `research` (category `Research and Development`): `Problem`, `Approach`, `Findings`, `Citations and publications`.
+- `article` (category `Articles`): `Explanation`, `Visuals`, `References`, `Related work`. Add images with Markdown image syntax; the generator renders them safely.
+
+Every published item uses the same Portfolio card and article template. The build stops with a clear error if a required section is missing.
 
 The generator supports headings, paragraphs, emphasis, inline code, safe Markdown links, unordered and ordered lists, blockquotes, horizontal rules, and fenced code blocks. Raw HTML is escaped rather than executed.
 
