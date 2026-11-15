@@ -320,6 +320,29 @@ def update_homepage(notes: list[Note]) -> None:
     INDEX_PATH.write_text(re.sub(pattern, replacement, source, flags=re.DOTALL), encoding="utf-8")
 
 
+def update_contributor_profiles(notes: list[Note]) -> None:
+    for person_id, (_, profile) in PEOPLE.items():
+        profile_path = ROOT / profile
+        source = profile_path.read_text(encoding="utf-8")
+        start = f"<!-- SELECTED_WORK:{person_id}:START -->"
+        end = f"<!-- SELECTED_WORK:{person_id}:END -->"
+        if source.count(start) != 1 or source.count(end) != 1:
+            raise ValueError(f"{profile}: expected exactly one selected-work marker pair")
+        items = []
+        for note in notes:
+            for credit in note.contributors:
+                if credit.profile == profile:
+                    items.append(
+                        f'<li><span>{html.escape(credit.role)} · {html.escape(note.content_type)}</span>'
+                        f'<a href="notes/{html.escape(note.slug)}.html">{html.escape(note.title)} ↗</a></li>'
+                    )
+                    break
+        generated = '<ol class="publication-list selected-work-list">\n        ' + "\n        ".join(items) + "\n      </ol>"
+        pattern = re.escape(start) + r".*?" + re.escape(end)
+        replacement = f"{start}\n      {generated}\n      {end}"
+        profile_path.write_text(re.sub(pattern, replacement, source, flags=re.DOTALL), encoding="utf-8")
+
+
 def main() -> None:
     import subprocess
     subprocess.run(["python3", str(ROOT / "scripts" / "build_theme.py")], check=True)
@@ -329,6 +352,7 @@ def main() -> None:
     build_articles(notes)
     build_notes_index(notes)
     update_homepage(notes)
+    update_contributor_profiles(notes)
     print(f"Built {len(notes)} field notes, notes.html, and homepage previews")
 
 
