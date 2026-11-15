@@ -137,6 +137,12 @@ def load_notes() -> list[Note]:
         share_image_path = (ROOT / share_image).resolve()
         if not share_image.startswith("assets/") or not share_image_path.is_file() or ROOT not in share_image_path.parents:
             raise ValueError(f"{path}: shareImage must point to an existing file under assets/")
+        source_url = metadata.get("sourceUrl", "")
+        if source_url:
+            safe_source_url = safe_url(source_url)
+            parsed_source_url = urlparse(safe_source_url) if safe_source_url else None
+            if not parsed_source_url or parsed_source_url.scheme not in {"http", "https"} or not parsed_source_url.hostname:
+                raise ValueError(f"{path}: sourceUrl must be a valid HTTP(S) URL")
         notes.append(Note(
             title=metadata["title"], slug=metadata["slug"], content_type=metadata["type"], category=metadata["category"], format=entry_format,
             published=metadata["date"], read_time=metadata["readTime"],
@@ -144,7 +150,7 @@ def load_notes() -> list[Note]:
             home=metadata.get("home", "false").lower() == "true", body=body,
             share_image=share_image, contributors=contributors,
             tags=[tag.strip() for tag in metadata["tags"].split(",") if tag.strip()],
-            source_url=metadata.get("sourceUrl", ""),
+            source_url=source_url,
         ))
     slugs = [note.slug for note in notes]
     if len(slugs) != len(set(slugs)):
@@ -154,10 +160,22 @@ def load_notes() -> list[Note]:
 
 def safe_url(raw: str) -> str | None:
     value = html.unescape(raw).strip()
-    parsed = urlparse(value)
-    if parsed.scheme and parsed.scheme not in {"http", "https", "mailto"}:
+    if not value or "\\" in value or any(ord(character) < 0x20 or ord(character) == 0x7f for character in value):
         return None
-    if value.startswith(("//", "javascript:", "data:")):
+    parsed = urlparse(value)
+    if parsed.scheme:
+        if parsed.scheme in {"http", "https"}:
+            try:
+                if not parsed.hostname or parsed.username or parsed.password:
+                    return None
+            except ValueError:
+                return None
+        elif parsed.scheme == "mailto":
+            if not parsed.path or parsed.netloc:
+                return None
+        else:
+            return None
+    elif parsed.netloc or value.startswith("//"):
         return None
     return value
 
@@ -300,8 +318,9 @@ def note_card(note: Note, *, home: bool = False) -> str:
     author_ids = " ".join(person.profile.removesuffix(".html") for person in note.contributors)
     category = html.escape(note.category, quote=True)
     tags = "".join(f'<span>{html.escape(tag)}</span>' for tag in note.tags)
-    source_link = (f'<a href="{html.escape(note.source_url, quote=True)}" rel="noopener noreferrer">Source ↗</a>'
-                   if note.source_url else "")
+    safe_source_url = safe_url(note.source_url) if note.source_url else None
+    source_link = (f'<a href="{html.escape(safe_source_url, quote=True)}" rel="noopener noreferrer">Source ↗</a>'
+                   if safe_source_url else "")
     return (f'<article class="library-note{extra}" data-category="{category}" data-authors="{html.escape(author_ids, quote=True)}" '
             f'data-tags="{html.escape("|".join(tag.casefold() for tag in note.tags), quote=True)}">'
             f'<a class="library-cover" href="{href}" aria-label="Open {title}"><img src="{html.escape(note.share_image, quote=True)}" alt="" loading="lazy"></a>'

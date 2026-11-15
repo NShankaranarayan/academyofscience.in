@@ -179,8 +179,7 @@
 
   dialog.querySelector("[data-share-linkedin]").addEventListener("click", async () => {
     const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(articleUrl)}`;
-    const shareWindow = window.open(linkedInUrl, "_blank");
-    if (shareWindow) shareWindow.opener = null;
+    window.open(linkedInUrl, "_blank", "noopener,noreferrer");
     const downloaded = downloadCard();
     const copied = await copyCaption();
     status.textContent = copied && downloaded
