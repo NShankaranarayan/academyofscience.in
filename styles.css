@@ -82,6 +82,30 @@ html[data-mode="geek"] .geek-console.light-palette .visual-stage{background:#101
 @media(max-width:1000px){.work-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.work-grid{grid-template-columns:1fr}.work-card{min-height:220px}.domains{grid-template-columns:1fr}.domains>p{grid-column:1}}
 
+/* Engagement process flows through three connected phases and six milestones. */
+.engagement-process{margin:clamp(3.5rem,7vw,6rem) 0 2rem;padding-top:2rem;border-top:1px solid var(--line)}
+.process-heading{display:grid;grid-template-columns:1.15fr 1fr;gap:3rem;align-items:end;margin-bottom:2rem}
+.process-heading .section-kicker{color:var(--red);margin:0 0 .8rem}
+.process-heading h3{font-size:clamp(1.7rem,3.2vw,2.7rem);line-height:1.05;letter-spacing:-.045em;margin:0;max-width:650px}
+.process-heading>p{font-size:.82rem;line-height:1.7;color:var(--muted);max-width:490px;margin:0}
+.process-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.7rem;align-items:stretch}
+.flow-phase{position:relative;min-width:0}
+.flow-phase:not(:last-child)::after{content:"→";position:absolute;z-index:2;top:7.1rem;right:-1.43rem;width:1.2rem;text-align:center;color:var(--red);font-size:1.3rem}
+.flow-phase-header{min-height:185px;padding:1.35rem;background:var(--ink);color:white;position:relative;overflow:hidden}
+.flow-phase-header::after{content:"";position:absolute;width:95px;height:95px;right:-34px;bottom:-48px;border:1px solid rgba(255,255,255,.2);border-radius:50%;box-shadow:0 0 0 14px rgba(255,255,255,.035),0 0 0 29px rgba(255,255,255,.025)}
+.flow-phase-header>span{font:500 .62rem var(--mono);letter-spacing:.1em;color:var(--red)}
+.flow-phase-header h4{font-size:1.18rem;line-height:1.15;letter-spacing:-.025em;margin:1.35rem 0 .55rem;max-width:250px}
+.flow-phase-header p{font-size:.74rem;line-height:1.55;color:#b9b7b1;max-width:310px;margin:0}
+.flow-phase-steps{position:relative;margin:0 0 0 1.2rem;padding:.55rem 0 0 1.45rem;border-left:1px solid var(--line)}
+.flow-step{position:relative;display:grid;grid-template-columns:1fr;gap:.5rem;padding:1.05rem 0 1.15rem;border-bottom:1px solid var(--line)}
+.flow-step:last-child{border-bottom:0;padding-bottom:.2rem}
+.flow-step-no{position:absolute;left:-2.05rem;top:1.08rem;width:1.2rem;height:1.2rem;border:1px solid var(--red);border-radius:50%;display:grid;place-items:center;background:var(--paper-2);color:var(--red);font:500 .53rem var(--mono)}
+.flow-step h5{font-size:.88rem;line-height:1.3;margin:0;font-weight:650}
+.flow-step p{font-size:.74rem;line-height:1.6;color:var(--muted);margin:.4rem 0 .65rem}
+.flow-step small{display:block;font-size:.62rem;line-height:1.5;color:var(--red)}
+@media(max-width:1000px){.process-heading{grid-template-columns:1fr;gap:1rem}.process-flow{grid-template-columns:1fr;gap:2rem}.flow-phase{display:grid;grid-template-columns:minmax(190px,.8fr) minmax(0,1.2fr);gap:1.3rem;align-items:stretch}.flow-phase:not(:last-child)::after{content:"↓";top:auto;bottom:-1.8rem;left:50%;right:auto;transform:translateX(-50%)}.flow-phase-header{min-height:100%;display:flex;flex-direction:column;justify-content:center}.flow-phase-header h4{margin-top:1rem}.flow-phase-steps{align-self:center;width:100%}}
+@media(max-width:600px){.engagement-process{margin-top:3rem;padding-top:1.5rem}.process-flow{gap:2rem}.flow-phase{grid-template-columns:1fr;gap:.6rem}.flow-phase-header{min-height:0;padding:1.15rem}.flow-phase-header h4{margin:.75rem 0 .45rem}.flow-phase-steps{margin-left:1rem;padding-top:0}.flow-step{padding:.85rem 0}.flow-step-no{top:.9rem}}
+
 /* Research areas: compact text cards with a separate ADS application callout. */
 .research-grid{align-items:stretch}
 .research-card{min-height:0;padding:0;overflow:hidden}
