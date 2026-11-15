@@ -13,6 +13,12 @@ readTime: 2 min read
 number: 001
 home: true
 excerpt: A working premise for interpretable decisions, accountable systems, and AI that acts in the physical world.
+videoUrl: https://www.youtube.com/watch?v=aqz-KE-bpKQ
+videoDuration: 60
+videoCaption: Manual-test placeholder: a one-minute sample to verify the video summary player, captions setting, thumbnail, transcript, and Read full work action. Replace before publication.
+videoTranscript: |
+  [00:00] Placeholder transcript for testing the video summary layout and playback controls.
+  [00:30] This sample is not a transcript of the research article or a research result. Replace it with an accurate transcript before publication.
 ---
 
 # Why explainability matters when AI acts

@@ -104,6 +104,24 @@ Then write the article in Markdown below the front matter and run:
 python3 scripts/build_site.py
 ```
 
+### Optional video summary
+
+An item can include a 30–90-second video summary near the start of its article, hosted on YouTube or in a public, embed-enabled Instagram post or Reel. The page loads the player only after a reader chooses Play/Load. YouTube uses its privacy-enhanced embed and requests host captions; Instagram uses Meta's embed script after the reader chooses Load. Include an accurate transcript in the item metadata as well. YouTube posters default to the host thumbnail. `videoThumbnail` can point to a local file under `assets/`; YouTube also accepts an `i.ytimg.com` image. Instagram thumbnails must be local assets.
+
+```yaml
+videoUrl: https://www.youtube.com/watch?v=VIDEO_ID
+videoDuration: 60
+videoThumbnail: assets/research/video-summary.jpg # optional
+videoCaption: A concise description of the video.
+videoTranscript: |
+  [00:00] Transcript text begins here.
+  [00:30] Continue with the spoken words and timestamps.
+```
+
+For Instagram, use a public post or Reel URL instead, such as `https://www.instagram.com/reel/SHORTCODE/`. A local `videoThumbnail` is optional; without one, the article shows a branded load poster. Private posts and posts whose owner has disabled embedding cannot be embedded.
+
+Keep these optional fields inside the item's front matter. The video block includes a visible “Read full work” link to the written report.
+
 ### Metadata fields
 
 | Field | Purpose |
