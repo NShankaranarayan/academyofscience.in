@@ -74,9 +74,6 @@ const logoState = { angle: 0, speed: .012, yaw: 0, pitch: 0, paused: false, drag
 let logoFrame = 0;
 let logoCanvasVisible = false;
 let logoUserPaused = false;
-let logoMotionOverride = false;
-const logoMotionToggle = document.querySelector('#logoMotionToggle');
-const logoMotionIsReduced = () => motionPreference.matches && !logoMotionOverride;
 const fan = { centerX: heroFan.centerX / 1254, centerY: heroFan.centerY / 1254 };
 const particleAccent = getComputedStyle(root).getPropertyValue('--accent').trim() || '#D4AA60';
 
@@ -440,31 +437,17 @@ function drawLogo() {
     }
   }
   ctx.globalAlpha = 1;
-  const motionStatus = logoMotionIsReduced()
-    ? 'MOTION REDUCED · START ON REQUEST'
-    : logoUserPaused
-      ? 'PAUSED · TAP TO RESUME'
-      : document.hidden
-        ? 'PAUSED · TAB HIDDEN'
-        : root.dataset.mode !== 'geek'
-          ? 'READY · ENABLE NIGHT MODE'
-          : (logoState.lastFrame ? 'SPINNING' : 'STARTING');
-  document.querySelector('#visualState').textContent = `${logoState.dragging ? 'INTERACTING' : motionStatus} · ${logoParticles.length.toLocaleString()}`;
-  const touchHint = logoMotionIsReduced()
-    ? 'Motion reduced · use Animate emblem to start'
+  document.querySelector('#visualState').textContent = `${logoState.dragging ? 'INTERACTING' : 'LIVE'} PARTICLE VOLUME · ${logoParticles.length.toLocaleString()}`;
+  const touchHint = motionPreference.matches
+    ? 'Motion reduced · animation paused'
     : 'Swipe sideways to spin · tap to pause or resume';
-  const motionHint = logoMotionIsReduced()
-    ? 'Animation is paused by your reduced motion setting. Use the Animate emblem button to start it.'
+  const motionHint = motionPreference.matches
+    ? 'Animation is paused by your reduced motion setting.'
     : (touchInputPreference.matches
       ? 'Swipe horizontally across the logo to spin it. Tap the logo to pause or resume.'
       : 'Move a pointer to scatter particles, use left and right arrows to rotate, and press Space or Enter to pause or resume.');
   if (logoInteractionHint && touchInputPreference.matches && logoInteractionHint.textContent !== touchHint) {
     logoInteractionHint.textContent = touchHint;
-  }
-  if (logoMotionToggle) {
-    logoMotionToggle.hidden = !motionPreference.matches;
-    logoMotionToggle.textContent = logoMotionOverride ? 'Pause emblem' : 'Animate emblem';
-    logoMotionToggle.setAttribute('aria-pressed', String(logoMotionOverride));
   }
   logoCanvas.setAttribute('aria-label', `Interactive particle rendering of the Academy of Science logo with ${logoParticles.length} particles. ${motionHint}`);
 }
@@ -472,8 +455,7 @@ function drawLogo() {
 function resizeLogoCanvas() {
   const rect = logoCanvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return;
-  const compactLogo = touchInputPreference.matches || matchMedia('(max-width: 680px)').matches;
-  const dpr = Math.min(window.devicePixelRatio || 1, compactLogo ? 1.5 : 2);
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
   logoState.width = rect.width;
   logoState.height = rect.height;
   logoState.dpr = dpr;
@@ -487,13 +469,12 @@ function resizeLogoCanvas() {
 }
 
 function buildLogoParticles() {
-  // Phones were still producing around 24k particles at an 8 px stride, which
-  // can starve requestAnimationFrame on real devices even when emulation looks
-  // smooth. A 14 px stride keeps the emblem detailed at phone display sizes
-  // while reducing per-frame geometry and draw work by roughly 70%.
+  // Use a lighter field on touch-first/small screens. At phone display sizes,
+  // an 8 px source stride still gives a dense silhouette while keeping each
+  // animation frame practical on mobile hardware.
   const compactLogo = matchMedia('(pointer: coarse)').matches || matchMedia('(max-width: 680px)').matches;
   const sampleSize = 1254;
-  const sampleStep = compactLogo ? 14 : 4;
+  const sampleStep = compactLogo ? 8 : 4;
   const samples = [];
   logoParticles.length = 0;
   particleLayers.length = 0;
@@ -560,7 +541,7 @@ function ensureLogoParticles() {
 
 function animateLogo(timestamp) {
   logoFrame = 0;
-  if (root.dataset.mode !== 'geek' || logoState.paused || logoMotionIsReduced() || document.hidden) return;
+  if (root.dataset.mode !== 'geek' || logoState.paused || motionPreference.matches || document.hidden) return;
   const elapsed = logoState.lastFrame ? Math.min((timestamp - logoState.lastFrame) / 1000, .05) : 0;
   logoState.lastFrame = timestamp;
   const targetYaw = logoPointer.active ? (logoPointer.x / logoState.width - .5) * .54 : 0;
@@ -573,28 +554,15 @@ function animateLogo(timestamp) {
 }
 
 function startLogoMotion() {
-  if (logoMotionIsReduced()) { logoState.paused = true; return; }
+  if (motionPreference.matches) { logoState.paused = true; return; }
   if (logoUserPaused) { logoState.paused = true; return; }
-  // A canvas revealed from display:none can reach this call before its
-  // IntersectionObserver callback runs (notably during the mobile mode swap).
-  // Check its actual layout visibility so that callback timing cannot strand
-  // the animation in a stopped state.
-  const rect = logoCanvas.getBoundingClientRect();
-  const rendered = rect.width > 0 && rect.height > 0;
-  const inViewport = rendered && rect.bottom > 0 && rect.right > 0
-    && rect.top < window.innerHeight && rect.left < window.innerWidth;
-  if (!logoCanvasVisible && !inViewport) return;
-  logoCanvasVisible = true;
+  if (!logoCanvasVisible) return;
   logoState.paused = false;
-  if (!logoFrame && root.dataset.mode === 'geek' && !document.hidden) {
-    logoState.lastFrame = 0;
-    logoFrame = requestAnimationFrame(animateLogo);
-  }
+  if (!logoFrame && root.dataset.mode === 'geek' && !motionPreference.matches && !document.hidden) logoFrame = requestAnimationFrame(animateLogo);
 }
 
 const onMotionPreferenceChange = () => {
-  if (!motionPreference.matches) logoMotionOverride = false;
-  if (logoMotionIsReduced()) {
+  if (motionPreference.matches) {
     if (heroFrame) cancelAnimationFrame(heroFrame);
     if (logoFrame) cancelAnimationFrame(logoFrame);
     heroFrame = logoFrame = 0;
@@ -612,18 +580,6 @@ const onMotionPreferenceChange = () => {
 };
 if (motionPreference.addEventListener) motionPreference.addEventListener('change', onMotionPreferenceChange);
 else motionPreference.addListener(onMotionPreferenceChange);
-
-logoMotionToggle?.addEventListener('click', () => {
-  logoMotionOverride = !logoMotionOverride;
-  logoUserPaused = false;
-  logoState.paused = !logoMotionOverride;
-  if (logoMotionOverride) startLogoMotion();
-  else {
-    if (logoFrame) cancelAnimationFrame(logoFrame);
-    logoFrame = 0;
-  }
-  drawLogo();
-});
 
 logoImage.addEventListener('load', () => {
   prepareHeroLogo();
@@ -653,7 +609,7 @@ new IntersectionObserver(([entry]) => {
 }, { threshold: .05 }).observe(logoCanvas);
 
 logoCanvas.addEventListener('pointerdown', event => {
-  if (logoMotionIsReduced()) return;
+  if (motionPreference.matches) return;
   if (event.pointerType === 'touch') {
     const rect = logoCanvas.getBoundingClientRect();
     logoState.touchGesture = true;
@@ -690,7 +646,7 @@ logoCanvas.addEventListener('pointerdown', event => {
   drawLogo();
 });
 logoCanvas.addEventListener('pointermove', event => {
-  if (logoMotionIsReduced()) return;
+  if (motionPreference.matches) return;
   const rect = logoCanvas.getBoundingClientRect();
   const rx = (event.clientX - rect.left) / rect.width, ry = (event.clientY - rect.top) / rect.height;
   logoPointer.x = event.clientX - rect.left;
@@ -761,7 +717,7 @@ logoCanvas.addEventListener('pointercancel', () => {
   drawLogo();
 });
 logoCanvas.addEventListener('keydown', event => {
-  if (logoMotionIsReduced()) return;
+  if (motionPreference.matches) return;
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
     logoUserPaused = false;
