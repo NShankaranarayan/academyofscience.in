@@ -585,6 +585,7 @@ html[data-mode="geek"] .share-dialog-content input,html[data-mode="geek"] .share
 @media(max-height:720px) and (min-width:681px){
   html[data-mode="geek"] .constellation-grid{min-height:0;grid-template-rows:minmax(360px,auto) auto 96px}
 }
+
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto!important}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -750,3 +751,13 @@ html[data-mode="geek"] .site-header .primary-nav{margin-left:auto}
 .video-transcript p{margin:0;padding:0 0 1rem;color:var(--muted);font-size:.82rem;line-height:1.75;white-space:pre-line}
 #article-content{scroll-margin-top:1rem}
 @media(max-width:600px){.article-video-heading{align-items:flex-start;flex-direction:column}.video-play-button{font-size:.58rem;padding:.65rem .8rem}}
+
+/* The emblem owns touch drags so mobile browsers don't turn blade gestures
+   into page scrolling. Scroll from outside the emblem. */
+@media(pointer:coarse){
+  .hero-logo-motion,.hero-logo-motion canvas,.hero-mark #digitalLogo{touch-action:none}
+  html[data-mode="geek"] .hero-mark #digitalLogo{touch-action:none}
+  html[data-mode="normal"] .hero-mark .object-instruction{display:grid;position:absolute;left:50%;bottom:4%;z-index:3;transform:translateX(-50%);text-align:center;pointer-events:none}
+  html[data-mode="normal"] .hero-mark .object-instruction span{display:none}
+  html[data-mode="normal"] .hero-mark .object-instruction b{color:var(--muted);font-size:.56rem;font-weight:500}
+}
