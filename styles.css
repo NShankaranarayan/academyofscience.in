@@ -590,6 +590,13 @@ html[data-mode="geek"] .share-dialog-content input,html[data-mode="geek"] .share
   .reveal{opacity:1;transform:none;transition:none}
 }
 
+/* Keep the two slow hero orbit markers moving; the site-wide reduced-motion
+   rule otherwise removes these decorative rotations entirely. */
+@media(prefers-reduced-motion:reduce){
+  .hero-mark .orbit-one{animation:spin 25s linear infinite!important}
+  .hero-mark .orbit-two{animation:spin 18s linear reverse infinite!important}
+}
+
 /* Geek Mode preserves the Normal layout and replaces only the hero emblem. */
 /* The active brand theme installs light palette tokens inline; night tokens must win. */
 html[data-mode="geek"]{
