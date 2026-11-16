@@ -13,10 +13,9 @@ html[data-mode="geek"]{background:#0d0d0e;color:#f3f0eb}html[data-mode="geek"] b
 .hero-logo-motion:active{cursor:grabbing}
 .hero-logo-motion:focus-visible{outline:2px solid var(--red);outline-offset:5px}
 .hero-logo-motion canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-#heroLogoFan{pointer-events:auto}
+#heroLogoBase{z-index:0;pointer-events:none}#heroLogoFan{z-index:1;pointer-events:auto;touch-action:none}
 .logo-motion-toggle{position:absolute;z-index:4;right:5%;bottom:7%;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--muted);padding:.45rem .7rem;font:500 .55rem var(--mono);text-transform:uppercase;letter-spacing:.06em;cursor:pointer}
 .logo-motion-toggle:hover,.logo-motion-toggle:focus-visible{color:var(--ink);border-color:var(--red)}
-@media(pointer:coarse){.hero-logo-motion,.hero-logo-motion canvas{touch-action:pan-y}}
 @media(max-width:600px){.hero-logo-motion{width:58%}.logo-motion-toggle{right:2%;bottom:4%;font-size:.5rem}}
 
 .ascii-logo{position:relative;overflow:hidden}.ascii-logo canvas{display:block;width:min(100%,300px);height:auto;max-height:calc(100% - 1.2rem);touch-action:none;cursor:grab;outline:none}.ascii-logo canvas:active{cursor:grabbing}.ascii-logo canvas:focus-visible{outline:1px solid var(--accent-bright);outline-offset:3px}.logo-hint{position:absolute;bottom:.45rem;left:0;right:0;text-align:center;color:#777674;font:400 .52rem var(--mono);letter-spacing:.025em;pointer-events:none}
@@ -483,7 +482,6 @@ html[data-mode="normal"] .hero{background-image:linear-gradient(rgba(23,23,22,.0
   .object-instruction{left:1rem;bottom:.8rem;pointer-events:none}.object-instruction b{display:block;max-width:13rem;color:#a2a49f;font-size:.49rem;line-height:1.35;white-space:normal}
   .constellation-directions{padding:2.2rem 1.1rem}.constellation-directions>a,.constellation-directions>a:first-of-type{min-height:112px}
   .constellation-dock>a{min-height:72px;padding:1rem 1.1rem}
-  .hero-logo-motion,.hero-logo-motion canvas{touch-action:pan-y}
 }
 
 .site-header .ufo-control-cell{display:none}
@@ -615,9 +613,9 @@ html[data-mode="geek"] .mode-label{display:inline}
 html[data-mode="geek"] .hero{min-height:calc(100vh - 76px);background-color:var(--paper);border-color:var(--line)}
 html[data-mode="geek"] .hero-logo-motion,
 html[data-mode="geek"] .logo-motion-toggle{display:none}
-.hero-mark #digitalLogo{display:none;width:55%;height:auto;aspect-ratio:1;position:relative;z-index:2;cursor:grab;touch-action:pan-y}
+.hero-mark #digitalLogo{display:none;width:55%;height:auto;aspect-ratio:1;position:relative;z-index:2;cursor:grab;touch-action:none}
 .hero-mark #digitalLogo:active{cursor:grabbing}
-html[data-mode="geek"] .hero-mark #digitalLogo{display:block;width:55%;max-width:none;max-height:none;image-rendering:auto;touch-action:pan-y;filter:drop-shadow(0 0 34px color-mix(in srgb,var(--accent) 15%,transparent))}
+html[data-mode="geek"] .hero-mark #digitalLogo{display:block;width:55%;max-width:none;max-height:none;image-rendering:auto;touch-action:none;filter:drop-shadow(0 0 34px color-mix(in srgb,var(--accent) 15%,transparent))}
 .hero-mark .object-instruction{display:none}
 html[data-mode="geek"] .hero-mark .object-instruction{display:grid;position:absolute;left:50%;bottom:4%;z-index:3;gap:.35rem;transform:translateX(-50%);text-align:center;white-space:nowrap}
 html[data-mode="geek"] .hero-mark .object-instruction span{color:var(--accent);font:600 .53rem var(--mono);letter-spacing:.12em}
@@ -754,9 +752,7 @@ html[data-mode="geek"] .site-header .primary-nav{margin-left:auto}
 
 /* The emblem owns touch drags so mobile browsers don't turn blade gestures
    into page scrolling. Scroll from outside the emblem. */
-@media(pointer:coarse){
-  .hero-logo-motion,.hero-logo-motion canvas,.hero-mark #digitalLogo{touch-action:none}
-  html[data-mode="geek"] .hero-mark #digitalLogo{touch-action:none}
+@media(pointer:coarse),(max-width:680px){
   html[data-mode="normal"] .hero-mark .object-instruction{display:grid;position:absolute;left:50%;bottom:4%;z-index:3;transform:translateX(-50%);text-align:center;pointer-events:none}
   html[data-mode="normal"] .hero-mark .object-instruction span{display:none}
   html[data-mode="normal"] .hero-mark .object-instruction b{color:var(--muted);font-size:.56rem;font-weight:500}
