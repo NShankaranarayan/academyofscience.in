@@ -34,7 +34,26 @@ modeSwitch.addEventListener('click', () => {
     startHeroMotion();
   }
 });
-const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+
+function createIntersectionObserver(callback, options) {
+  if (typeof window.IntersectionObserver === 'function') return new window.IntersectionObserver(callback, options);
+  const targets = new Set();
+  const check = () => {
+    callback(Array.from(targets, target => {
+      const rect = target.getBoundingClientRect();
+      return { target, isIntersecting: rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0
+        && rect.top < window.innerHeight && rect.left < window.innerWidth };
+    }));
+  };
+  document.addEventListener('scroll', check, { passive: true });
+  window.addEventListener('resize', check, { passive: true });
+  return {
+    observe(target) { targets.add(target); check(); },
+    unobserve(target) { targets.delete(target); }
+  };
+}
+
+const observer = createIntersectionObserver(entries => entries.forEach(entry => {
   if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
 }), { threshold: .12 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
@@ -264,7 +283,7 @@ heroCanvas.addEventListener('touchmove', event => {
   heroMotion.speed = Math.max(-12, Math.min(12, delta / elapsed));
   heroMotion.lastPointerAngle = angle;
   heroMotion.lastPointerTime = event.timeStamp;
-  heroMotion.touchDidSpin ||= Math.abs(delta) > 0.01;
+  heroMotion.touchDidSpin = heroMotion.touchDidSpin || Math.abs(delta) > 0.01;
   drawHeroLogo();
 }, { passive: false });
 
@@ -324,7 +343,7 @@ heroCanvas.addEventListener('pointermove', event => {
   heroMotion.speed = Math.max(-12, Math.min(12, delta / elapsed));
   heroMotion.lastPointerAngle = angle;
   heroMotion.lastPointerTime = event.timeStamp;
-  heroMotion.moved ||= Math.abs(delta) > 0.01;
+  heroMotion.moved = heroMotion.moved || Math.abs(delta) > 0.01;
   drawHeroLogo();
 });
 
@@ -634,9 +653,10 @@ logoImage.addEventListener('load', () => {
   if (root.dataset.mode === 'geek') ensureLogoParticles();
 });
 logoImage.src = activeTheme.logo;
-new ResizeObserver(resizeLogoCanvas).observe(logoCanvas);
+if (typeof window.ResizeObserver === 'function') new window.ResizeObserver(resizeLogoCanvas).observe(logoCanvas);
+else window.addEventListener('resize', resizeLogoCanvas, { passive: true });
 
-new IntersectionObserver(([entry]) => {
+createIntersectionObserver(([entry]) => {
   heroLogoVisible = entry.isIntersecting;
   if (heroLogoVisible) startHeroMotion();
   else {
@@ -646,7 +666,7 @@ new IntersectionObserver(([entry]) => {
   }
 }, { threshold: .05 }).observe(heroContainer);
 
-new IntersectionObserver(([entry]) => {
+createIntersectionObserver(([entry]) => {
   logoCanvasVisible = entry.isIntersecting;
   if (logoCanvasVisible) startLogoMotion();
   else {
@@ -702,7 +722,7 @@ logoCanvas.addEventListener('touchmove', event => {
   logoState.speed = Math.max(-.045, Math.min(.045, delta / elapsed / 60));
   logoState.lastPointerAngle = angle;
   logoState.touchLastPointerTime = event.timeStamp;
-  logoState.touchDidSpin ||= Math.abs(delta) > 0.01;
+  logoState.touchDidSpin = logoState.touchDidSpin || Math.abs(delta) > 0.01;
   drawLogo();
 }, { passive: false });
 
@@ -777,7 +797,7 @@ logoCanvas.addEventListener('pointermove', event => {
   logoState.angle += delta;
   logoState.speed = Math.max(-.08, Math.min(.08, delta * 1.8));
   logoState.lastPointerAngle = angle;
-  logoState.moved ||= Math.abs(delta) > .012;
+  logoState.moved = logoState.moved || Math.abs(delta) > .012;
   drawLogo();
 });
 logoCanvas.addEventListener('pointerleave', () => { if (!logoState.dragging) logoPointer.active = false; });
@@ -831,7 +851,7 @@ if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && 
   const ufoDesktop = matchMedia('(min-width: 681px) and (hover: hover) and (pointer: fine)');
   const ufoReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const ufoTouchFirst = navigator.maxTouchPoints > 0
-    || navigator.userAgentData?.mobile === true
+    || (navigator.userAgentData && navigator.userAgentData.mobile === true)
     || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
     || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const ufoTriggerLabel = document.querySelector('#ufoLaunchLabel');
