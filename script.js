@@ -1,7 +1,6 @@
 const root = document.documentElement;
 const modeSwitch = document.querySelector('#modeSwitch');
 const themeMeta = document.querySelector('meta[name="theme-color"]');
-const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 const touchInputPreference = matchMedia('(pointer: coarse)');
 
 function setMode(mode) {
@@ -34,7 +33,26 @@ modeSwitch.addEventListener('click', () => {
     startHeroMotion();
   }
 });
-const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+
+function createIntersectionObserver(callback, options) {
+  if (typeof window.IntersectionObserver === 'function') return new window.IntersectionObserver(callback, options);
+  const targets = new Set();
+  const check = () => {
+    callback(Array.from(targets, target => {
+      const rect = target.getBoundingClientRect();
+      return { target, isIntersecting: rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0
+        && rect.top < window.innerHeight && rect.left < window.innerWidth };
+    }));
+  };
+  document.addEventListener('scroll', check, { passive: true });
+  window.addEventListener('resize', check, { passive: true });
+  return {
+    observe(target) { targets.add(target); check(); },
+    unobserve(target) { targets.delete(target); }
+  };
+}
+
+const observer = createIntersectionObserver(entries => entries.forEach(entry => {
   if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
 }), { threshold: .12 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
@@ -59,7 +77,7 @@ const heroFan = {
     [[703, 406], [764, 377], [1007, 385], [1053, 409], [781, 462], [718, 450]]
   ]
 };
-const heroMotion = { angle: 0, speed: 0.2, paused: false, dragging: false, moved: false, lastPointerAngle: 0, lastPointerTime: 0, touchGesture: false, touchDidSpin: false, touchWasPaused: false, touchStartX: 0, touchStartY: 0, touchLastX: 0 };
+const heroMotion = { angle: 0, speed: 0.2, paused: false, dragging: false, moved: false, lastPointerAngle: 0, lastPointerTime: 0, touchGesture: false, touchIdentifier: null, touchDidSpin: false, touchWasPaused: false, touchStartX: 0, touchStartY: 0 };
 let heroFrame = 0;
 let heroLastFrameTime = 0;
 let heroLogoVisible = false;
@@ -70,8 +88,9 @@ let logoParticlesReady = false;
 const particleLayers = [];
 const ambientParticles = [];
 const logoPointer = { x: -1000, y: -1000, active: false };
-const logoState = { angle: 0, speed: .012, yaw: 0, pitch: 0, paused: false, dragging: false, lastPointerAngle: 0, moved: false, lastFrame: 0, width: 0, height: 0, dpr: 1, touchGesture: false, touchDidSpin: false, touchWasPaused: false, touchStartX: 0, touchStartY: 0, touchLastX: 0 };
+const logoState = { angle: 0, speed: .012, yaw: 0, pitch: 0, paused: false, dragging: false, lastPointerAngle: 0, moved: false, lastFrame: 0, width: 0, height: 0, dpr: 1, touchGesture: false, touchIdentifier: null, touchDidSpin: false, touchWasPaused: false, touchStartX: 0, touchStartY: 0, touchLastPointerTime: 0 };
 let logoFrame = 0;
+let logoInteractionFrame = 0;
 let logoCanvasVisible = false;
 let logoUserPaused = false;
 const fan = { centerX: heroFan.centerX / 1254, centerY: heroFan.centerY / 1254 };
@@ -134,22 +153,21 @@ function drawHeroLogo() {
   heroContext.arc(heroFan.centerX, heroFan.centerY, heroFan.hubRadius, 0, Math.PI * 2);
   heroContext.fill();
   heroContext.globalCompositeOperation = 'source-over';
-  const paused = String(heroMotion.paused || motionPreference.matches);
+  const paused = String(heroMotion.paused);
   if (heroContainer.dataset.paused !== paused) {
     heroContainer.dataset.paused = paused;
     const interactionHint = touchInputPreference.matches
-      ? 'Tap the emblem to pause or resume. Swipe horizontally to spin it.'
+      ? 'Tap to pause or resume. Drag around the hub to spin the fans.'
       : 'Drag around the hub to redirect the fans. Use the adjacent control or Space to pause or resume.';
     heroContainer.setAttribute('aria-label', `Animated Academy of Science logo. Fans ${paused === 'true' ? 'paused' : 'spinning'}. ${interactionHint}`);
-    heroToggle.textContent = motionPreference.matches ? 'Motion reduced' : (heroMotion.paused ? 'Start emblem' : 'Pause emblem');
-    heroToggle.disabled = motionPreference.matches;
-    heroToggle.setAttribute('aria-pressed', String(!heroMotion.paused && !motionPreference.matches));
+    heroToggle.textContent = heroMotion.paused ? 'Start emblem' : 'Pause emblem';
+    heroToggle.setAttribute('aria-pressed', String(!heroMotion.paused));
   }
 }
 
 function animateHeroLogo(timestamp) {
   heroFrame = 0;
-  if (root.dataset.mode !== 'normal' || heroMotion.paused || motionPreference.matches || document.hidden) return;
+  if (root.dataset.mode !== 'normal' || heroMotion.paused || document.hidden) return;
   const elapsed = heroLastFrameTime ? Math.min((timestamp - heroLastFrameTime) / 1000, 0.05) : 0;
   heroLastFrameTime = timestamp;
   heroMotion.angle += heroMotion.speed * elapsed;
@@ -159,8 +177,17 @@ function animateHeroLogo(timestamp) {
   heroFrame = requestAnimationFrame(animateHeroLogo);
 }
 
+function elementIsInViewport(element) {
+  const rect = element.getBoundingClientRect();
+  return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0
+    && rect.top < window.innerHeight && rect.left < window.innerWidth;
+}
+
 function startHeroMotion() {
-  if (!heroFrame && heroLogoVisible && root.dataset.mode === 'normal' && !heroMotion.paused && !motionPreference.matches && !document.hidden) {
+  if (!elementIsInViewport(heroContainer)) return;
+  heroLogoVisible = true;
+  if (!heroFrame && root.dataset.mode === 'normal' && !heroMotion.paused && !document.hidden) {
+    heroLastFrameTime = 0;
     heroFrame = requestAnimationFrame(animateHeroLogo);
   }
 }
@@ -199,20 +226,93 @@ function pointerOnHeroBlade(event) {
   return heroFan.blades.some(points => pointInPolygon(localX, localY, points));
 }
 
+function capturePointer(target, event) {
+  try { target.setPointerCapture(event.pointerId); } catch {}
+}
+
+function findTouch(touches, identifier) {
+  return Array.from(touches).find(touch => touch.identifier === identifier) || null;
+}
+
+function angleDifference(current, previous) {
+  let delta = current - previous;
+  if (delta > Math.PI) delta -= Math.PI * 2;
+  if (delta < -Math.PI) delta += Math.PI * 2;
+  return delta;
+}
+
+heroCanvas.addEventListener('touchstart', event => {
+  const touch = event.changedTouches[0];
+  if (!touch) return;
+  const rect = heroCanvas.getBoundingClientRect();
+  const x = (touch.clientX - rect.left) / rect.width * heroCanvas.width;
+  const y = (touch.clientY - rect.top) / rect.height * heroCanvas.height;
+  heroMotion.touchGesture = true;
+  heroMotion.touchIdentifier = touch.identifier;
+  heroMotion.touchDidSpin = false;
+  heroMotion.touchWasPaused = heroMotion.paused;
+  heroMotion.touchStartX = touch.clientX;
+  heroMotion.touchStartY = touch.clientY;
+  heroMotion.lastPointerAngle = Math.atan2(y - heroFan.centerY, x - heroFan.centerX);
+  heroMotion.lastPointerTime = event.timeStamp;
+  heroMotion.paused = true;
+  heroMotion.speed = 0;
+  heroMotion.dragging = true;
+  heroMotion.moved = false;
+  event.preventDefault();
+  drawHeroLogo();
+}, { passive: false });
+
+heroCanvas.addEventListener('touchmove', event => {
+  if (!heroMotion.touchGesture) return;
+  const touch = findTouch(event.changedTouches, heroMotion.touchIdentifier);
+  if (!touch) return;
+  event.preventDefault();
+  const totalX = touch.clientX - heroMotion.touchStartX;
+  const totalY = touch.clientY - heroMotion.touchStartY;
+  if (Math.hypot(totalX, totalY) > 8) heroMotion.moved = true;
+  if (!heroMotion.moved) return;
+  const rect = heroCanvas.getBoundingClientRect();
+  const x = (touch.clientX - rect.left) / rect.width * heroCanvas.width;
+  const y = (touch.clientY - rect.top) / rect.height * heroCanvas.height;
+  const angle = Math.atan2(y - heroFan.centerY, x - heroFan.centerX);
+  const delta = angleDifference(angle, heroMotion.lastPointerAngle);
+  const elapsed = Math.max((event.timeStamp - heroMotion.lastPointerTime) / 1000, 1 / 240);
+  heroMotion.angle += delta;
+  heroMotion.speed = Math.max(-12, Math.min(12, delta / elapsed));
+  heroMotion.lastPointerAngle = angle;
+  heroMotion.lastPointerTime = event.timeStamp;
+  heroMotion.touchDidSpin = heroMotion.touchDidSpin || Math.abs(delta) > 0.01;
+  drawHeroLogo();
+}, { passive: false });
+
+heroCanvas.addEventListener('touchend', event => {
+  if (!heroMotion.touchGesture || !findTouch(event.changedTouches, heroMotion.touchIdentifier)) return;
+  heroMotion.touchGesture = false;
+  heroMotion.touchIdentifier = null;
+  heroMotion.dragging = false;
+  if (!heroMotion.moved) heroMotion.paused = !heroMotion.touchWasPaused;
+  else heroMotion.paused = heroMotion.touchDidSpin ? false : heroMotion.touchWasPaused;
+  if (!heroMotion.paused && (!heroMotion.touchDidSpin || Math.abs(heroMotion.speed) < .02)) {
+    heroMotion.speed = .2;
+  }
+  heroLastFrameTime = 0;
+  if (!heroMotion.paused) startHeroMotion();
+  drawHeroLogo();
+}, { passive: true });
+
+heroCanvas.addEventListener('touchcancel', () => {
+  if (!heroMotion.touchGesture) return;
+  heroMotion.touchGesture = false;
+  heroMotion.touchIdentifier = null;
+  heroMotion.dragging = false;
+  heroMotion.paused = heroMotion.touchWasPaused;
+  if (!heroMotion.paused) startHeroMotion();
+  drawHeroLogo();
+}, { passive: true });
+
 heroCanvas.addEventListener('pointerdown', event => {
   if (event.pointerType === 'touch') {
-    heroMotion.touchGesture = true;
-    heroMotion.touchDidSpin = false;
-    heroMotion.touchWasPaused = heroMotion.paused;
-    heroMotion.touchStartX = heroMotion.touchLastX = event.clientX;
-    heroMotion.touchStartY = event.clientY;
-    heroMotion.lastPointerTime = event.timeStamp;
-    heroMotion.paused = true;
-    heroMotion.speed = 0;
-    heroMotion.dragging = true;
-    heroMotion.moved = false;
-    heroCanvas.setPointerCapture(event.pointerId);
-    drawHeroLogo();
     return;
   }
   if (!pointerOnHeroBlade(event)) return;
@@ -225,26 +325,12 @@ heroCanvas.addEventListener('pointerdown', event => {
   const y = (event.clientY - rect.top) / rect.height * heroCanvas.height;
   heroMotion.lastPointerAngle = Math.atan2(y - heroFan.centerY, x - heroFan.centerX);
   heroMotion.lastPointerTime = event.timeStamp;
-  heroCanvas.setPointerCapture(event.pointerId);
+  capturePointer(heroCanvas, event);
   drawHeroLogo();
 });
 
 heroCanvas.addEventListener('pointermove', event => {
-  if (heroMotion.touchGesture && event.pointerType === 'touch') {
-    const totalX = event.clientX - heroMotion.touchStartX;
-    const totalY = event.clientY - heroMotion.touchStartY;
-    if (Math.hypot(totalX, totalY) > 8) heroMotion.moved = true;
-    if (Math.abs(totalX) > 6 && Math.abs(totalX) > Math.abs(totalY) * 1.1) {
-      const deltaX = event.clientX - heroMotion.touchLastX;
-      heroMotion.angle += deltaX * .012;
-      heroMotion.speed = Math.max(-6, Math.min(6, deltaX / Math.max((event.timeStamp - heroMotion.lastPointerTime) / 1000, 1 / 240) * .012));
-      heroMotion.lastPointerTime = event.timeStamp;
-      heroMotion.touchLastX = event.clientX;
-      heroMotion.touchDidSpin = true;
-      drawHeroLogo();
-    }
-    return;
-  }
+  if (event.pointerType === 'touch') return;
   if (!heroMotion.dragging) return;
   const rect = heroCanvas.getBoundingClientRect();
   const x = (event.clientX - rect.left) / rect.width * heroCanvas.width;
@@ -258,22 +344,12 @@ heroCanvas.addEventListener('pointermove', event => {
   heroMotion.speed = Math.max(-12, Math.min(12, delta / elapsed));
   heroMotion.lastPointerAngle = angle;
   heroMotion.lastPointerTime = event.timeStamp;
-  heroMotion.moved ||= Math.abs(delta) > 0.01;
+  heroMotion.moved = heroMotion.moved || Math.abs(delta) > 0.01;
   drawHeroLogo();
 });
 
 heroCanvas.addEventListener('pointerup', event => {
-  if (heroMotion.touchGesture && event.pointerType === 'touch') {
-    heroMotion.touchGesture = false;
-    heroMotion.dragging = false;
-    if (!heroMotion.moved) heroMotion.paused = !heroMotion.touchWasPaused;
-    else heroMotion.paused = heroMotion.touchDidSpin ? false : heroMotion.touchWasPaused;
-    if (!heroMotion.paused && (!heroMotion.touchDidSpin || Math.abs(heroMotion.speed) < .02)) heroMotion.speed = .2;
-    heroLastFrameTime = 0;
-    if (!heroMotion.paused) startHeroMotion();
-    drawHeroLogo();
-    return;
-  }
+  if (event.pointerType === 'touch') return;
   if (!heroMotion.dragging) return;
   heroMotion.dragging = false;
   if (!heroMotion.moved || Math.abs(heroMotion.speed) < .02) heroMotion.speed = .2;
@@ -282,15 +358,8 @@ heroCanvas.addEventListener('pointerup', event => {
   startHeroMotion();
   drawHeroLogo();
 });
-heroCanvas.addEventListener('pointercancel', () => {
-  if (heroMotion.touchGesture) {
-    heroMotion.touchGesture = false;
-    heroMotion.dragging = false;
-    heroMotion.paused = heroMotion.touchWasPaused;
-    if (!heroMotion.paused) startHeroMotion();
-    drawHeroLogo();
-    return;
-  }
+heroCanvas.addEventListener('pointercancel', event => {
+  if (event.pointerType === 'touch') return;
   heroMotion.dragging = false;
   if (Math.abs(heroMotion.speed) < .02) heroMotion.speed = .2;
   heroMotion.paused = false;
@@ -316,9 +385,16 @@ heroContainer.addEventListener('keydown', event => {
 });
 
 heroToggle.addEventListener('click', () => {
-  heroMotion.paused = !heroMotion.paused;
-  if (!heroMotion.paused) { heroLastFrameTime = 0; startHeroMotion(); }
-  drawHeroLogo();
+  if (root.dataset.mode === 'geek') {
+    logoUserPaused = !logoUserPaused;
+    logoState.paused = logoUserPaused;
+    if (!logoState.paused) startLogoMotion();
+    drawLogo();
+  } else {
+    heroMotion.paused = !heroMotion.paused;
+    if (!heroMotion.paused) { heroLastFrameTime = 0; startHeroMotion(); }
+    drawHeroLogo();
+  }
 });
 
 document.addEventListener('visibilitychange', () => {
@@ -438,24 +514,37 @@ function drawLogo() {
   }
   ctx.globalAlpha = 1;
   document.querySelector('#visualState').textContent = `${logoState.dragging ? 'INTERACTING' : 'LIVE'} PARTICLE VOLUME · ${logoParticles.length.toLocaleString()}`;
-  const touchHint = motionPreference.matches
-    ? 'Motion reduced · animation paused'
-    : 'Swipe sideways to spin · tap to pause or resume';
-  const motionHint = motionPreference.matches
-    ? 'Animation is paused by your reduced motion setting.'
-    : (touchInputPreference.matches
-      ? 'Swipe horizontally across the logo to spin it. Tap the logo to pause or resume.'
-      : 'Move a pointer to scatter particles, use left and right arrows to rotate, and press Space or Enter to pause or resume.');
+  const touchHint = 'Drag around the hub to spin · tap to pause or resume';
+  const motionHint = touchInputPreference.matches
+    ? 'Drag around the logo hub to spin it. Tap the logo to pause or resume.'
+    : 'Move a pointer to scatter particles, use left and right arrows to rotate, and press Space or Enter to pause or resume.';
   if (logoInteractionHint && touchInputPreference.matches && logoInteractionHint.textContent !== touchHint) {
     logoInteractionHint.textContent = touchHint;
   }
+  const toggleText = logoState.paused ? 'Start emblem' : 'Pause emblem';
+  if (heroToggle.textContent !== toggleText) heroToggle.textContent = toggleText;
+  heroToggle.setAttribute('aria-pressed', String(!logoState.paused));
   logoCanvas.setAttribute('aria-label', `Interactive particle rendering of the Academy of Science logo with ${logoParticles.length} particles. ${motionHint}`);
+}
+
+function scheduleLogoInteractionDraw() {
+  if (logoInteractionFrame) return;
+  logoInteractionFrame = requestAnimationFrame(() => {
+    logoInteractionFrame = 0;
+    drawLogo();
+  });
+}
+
+function flushLogoInteractionDraw() {
+  if (logoInteractionFrame) cancelAnimationFrame(logoInteractionFrame);
+  logoInteractionFrame = 0;
+  drawLogo();
 }
 
 function resizeLogoCanvas() {
   const rect = logoCanvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return;
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr = Math.min(window.devicePixelRatio || 1, touchInputPreference.matches ? 1.5 : 2);
   logoState.width = rect.width;
   logoState.height = rect.height;
   logoState.dpr = dpr;
@@ -472,7 +561,7 @@ function buildLogoParticles() {
   // Sample the master SVG at native resolution; a uniform 4 px grid gives
   // crisp letterforms without multiplying the animation cost excessively.
   const sampleSize = 1254;
-  const sampleStep = 4;
+  const sampleStep = touchInputPreference.matches ? 6 : 4;
   const samples = [];
   logoParticles.length = 0;
   particleLayers.length = 0;
@@ -539,7 +628,7 @@ function ensureLogoParticles() {
 
 function animateLogo(timestamp) {
   logoFrame = 0;
-  if (root.dataset.mode !== 'geek' || logoState.paused || motionPreference.matches || document.hidden) return;
+  if (root.dataset.mode !== 'geek' || logoState.paused || document.hidden) return;
   const elapsed = logoState.lastFrame ? Math.min((timestamp - logoState.lastFrame) / 1000, .05) : 0;
   logoState.lastFrame = timestamp;
   const targetYaw = logoPointer.active ? (logoPointer.x / logoState.width - .5) * .54 : 0;
@@ -552,41 +641,22 @@ function animateLogo(timestamp) {
 }
 
 function startLogoMotion() {
-  if (motionPreference.matches) { logoState.paused = true; return; }
   if (logoUserPaused) { logoState.paused = true; return; }
-  if (!logoCanvasVisible) return;
+  if (!elementIsInViewport(logoCanvas)) return;
+  logoCanvasVisible = true;
   logoState.paused = false;
-  if (!logoFrame && root.dataset.mode === 'geek' && !motionPreference.matches && !document.hidden) logoFrame = requestAnimationFrame(animateLogo);
+  if (!logoFrame && root.dataset.mode === 'geek' && !document.hidden) logoFrame = requestAnimationFrame(animateLogo);
 }
-
-const onMotionPreferenceChange = () => {
-  if (motionPreference.matches) {
-    if (heroFrame) cancelAnimationFrame(heroFrame);
-    if (logoFrame) cancelAnimationFrame(logoFrame);
-    heroFrame = logoFrame = 0;
-    heroMotion.paused = true;
-    logoState.paused = true;
-  } else if (root.dataset.mode === 'normal') {
-    heroMotion.paused = false;
-    startHeroMotion();
-  } else {
-    logoState.paused = logoUserPaused;
-    startLogoMotion();
-  }
-  drawHeroLogo();
-  drawLogo();
-};
-if (motionPreference.addEventListener) motionPreference.addEventListener('change', onMotionPreferenceChange);
-else motionPreference.addListener(onMotionPreferenceChange);
 
 logoImage.addEventListener('load', () => {
   prepareHeroLogo();
   if (root.dataset.mode === 'geek') ensureLogoParticles();
 });
 logoImage.src = activeTheme.logo;
-new ResizeObserver(resizeLogoCanvas).observe(logoCanvas);
+if (typeof window.ResizeObserver === 'function') new window.ResizeObserver(resizeLogoCanvas).observe(logoCanvas);
+else window.addEventListener('resize', resizeLogoCanvas, { passive: true });
 
-new IntersectionObserver(([entry]) => {
+createIntersectionObserver(([entry]) => {
   heroLogoVisible = entry.isIntersecting;
   if (heroLogoVisible) startHeroMotion();
   else {
@@ -596,7 +666,7 @@ new IntersectionObserver(([entry]) => {
   }
 }, { threshold: .05 }).observe(heroContainer);
 
-new IntersectionObserver(([entry]) => {
+createIntersectionObserver(([entry]) => {
   logoCanvasVisible = entry.isIntersecting;
   if (logoCanvasVisible) startLogoMotion();
   else {
@@ -606,23 +676,89 @@ new IntersectionObserver(([entry]) => {
   }
 }, { threshold: .05 }).observe(logoCanvas);
 
+logoCanvas.addEventListener('touchstart', event => {
+  const touch = event.changedTouches[0];
+  if (!touch) return;
+  const rect = logoCanvas.getBoundingClientRect();
+  const rx = (touch.clientX - rect.left) / rect.width;
+  const ry = (touch.clientY - rect.top) / rect.height;
+  logoState.touchGesture = true;
+  logoState.touchIdentifier = touch.identifier;
+  logoState.touchDidSpin = false;
+  logoState.touchWasPaused = logoUserPaused;
+  logoState.touchStartX = touch.clientX;
+  logoState.touchStartY = touch.clientY;
+  logoState.touchLastPointerTime = event.timeStamp;
+  logoState.lastPointerAngle = Math.atan2(ry - fan.centerY, rx - fan.centerX);
+  logoState.moved = false;
+  logoState.dragging = true;
+  logoState.paused = true;
+  logoPointer.x = touch.clientX - rect.left;
+  logoPointer.y = touch.clientY - rect.top;
+  logoPointer.active = true;
+  event.preventDefault();
+  scheduleLogoInteractionDraw();
+}, { passive: false });
+
+logoCanvas.addEventListener('touchmove', event => {
+  if (!logoState.touchGesture) return;
+  const touch = findTouch(event.changedTouches, logoState.touchIdentifier);
+  if (!touch) return;
+  event.preventDefault();
+  const rect = logoCanvas.getBoundingClientRect();
+  const rx = (touch.clientX - rect.left) / rect.width;
+  const ry = (touch.clientY - rect.top) / rect.height;
+  logoPointer.x = touch.clientX - rect.left;
+  logoPointer.y = touch.clientY - rect.top;
+  const totalX = touch.clientX - logoState.touchStartX;
+  const totalY = touch.clientY - logoState.touchStartY;
+  if (Math.hypot(totalX, totalY) > 8) logoState.moved = true;
+  if (!logoState.moved) return;
+  const angle = Math.atan2(ry - fan.centerY, rx - fan.centerX);
+  const delta = angleDifference(angle, logoState.lastPointerAngle);
+  const elapsed = Math.max((event.timeStamp - logoState.touchLastPointerTime) / 1000, 1 / 240);
+  logoState.angle += delta;
+  logoState.speed = Math.max(-.045, Math.min(.045, delta / elapsed / 60));
+  logoState.lastPointerAngle = angle;
+  logoState.touchLastPointerTime = event.timeStamp;
+  logoState.touchDidSpin = logoState.touchDidSpin || Math.abs(delta) > 0.01;
+  scheduleLogoInteractionDraw();
+}, { passive: false });
+
+logoCanvas.addEventListener('touchend', event => {
+  if (!logoState.touchGesture || !findTouch(event.changedTouches, logoState.touchIdentifier)) return;
+  logoState.touchGesture = false;
+  logoState.touchIdentifier = null;
+  logoState.dragging = false;
+  logoPointer.active = false;
+  if (!logoState.moved) {
+    logoUserPaused = !logoState.touchWasPaused;
+    logoState.paused = logoUserPaused;
+  } else if (logoState.touchDidSpin) {
+    logoUserPaused = false;
+    logoState.paused = false;
+    if (Math.abs(logoState.speed) < .008) logoState.speed = .012;
+  } else {
+    logoUserPaused = logoState.touchWasPaused;
+    logoState.paused = logoUserPaused;
+  }
+  if (!logoState.paused) startLogoMotion();
+  flushLogoInteractionDraw();
+}, { passive: true });
+
+logoCanvas.addEventListener('touchcancel', () => {
+  if (!logoState.touchGesture) return;
+  logoState.touchGesture = false;
+  logoState.touchIdentifier = null;
+  logoState.dragging = false;
+  logoState.paused = logoUserPaused;
+  logoPointer.active = false;
+  if (!logoState.paused) startLogoMotion();
+  flushLogoInteractionDraw();
+}, { passive: true });
+
 logoCanvas.addEventListener('pointerdown', event => {
-  if (motionPreference.matches) return;
   if (event.pointerType === 'touch') {
-    const rect = logoCanvas.getBoundingClientRect();
-    logoState.touchGesture = true;
-    logoState.touchDidSpin = false;
-    logoState.touchWasPaused = logoUserPaused;
-    logoState.touchStartX = logoState.touchLastX = event.clientX;
-    logoState.touchStartY = event.clientY;
-    logoState.moved = false;
-    logoState.dragging = true;
-    logoState.paused = true;
-    logoPointer.x = event.clientX - rect.left;
-    logoPointer.y = event.clientY - rect.top;
-    logoPointer.active = true;
-    logoCanvas.setPointerCapture(event.pointerId);
-    drawLogo();
     return;
   }
   const rect = logoCanvas.getBoundingClientRect();
@@ -639,31 +775,17 @@ logoCanvas.addEventListener('pointerdown', event => {
   if (onBlade) {
     logoState.paused = true;
     logoState.lastPointerAngle = Math.atan2(ry - fan.centerY, rx - fan.centerX);
-    logoCanvas.setPointerCapture(event.pointerId);
+    capturePointer(logoCanvas, event);
   }
   drawLogo();
 });
 logoCanvas.addEventListener('pointermove', event => {
-  if (motionPreference.matches) return;
+  if (event.pointerType === 'touch') return;
   const rect = logoCanvas.getBoundingClientRect();
   const rx = (event.clientX - rect.left) / rect.width, ry = (event.clientY - rect.top) / rect.height;
   logoPointer.x = event.clientX - rect.left;
   logoPointer.y = event.clientY - rect.top;
   logoPointer.active = true;
-  if (logoState.touchGesture && event.pointerType === 'touch') {
-    const totalX = event.clientX - logoState.touchStartX;
-    const totalY = event.clientY - logoState.touchStartY;
-    if (Math.hypot(totalX, totalY) > 8) logoState.moved = true;
-    if (Math.abs(totalX) > 6 && Math.abs(totalX) > Math.abs(totalY) * 1.1) {
-      const deltaX = event.clientX - logoState.touchLastX;
-      logoState.angle += deltaX * .012;
-      logoState.speed = Math.max(-.045, Math.min(.045, deltaX * .0025));
-      logoState.touchLastX = event.clientX;
-      logoState.touchDidSpin = true;
-      drawLogo();
-    }
-    return;
-  }
   if (!logoState.dragging) { drawLogo(); return; }
   const angle = Math.atan2(ry - fan.centerY, rx - fan.centerX);
   let delta = angle - logoState.lastPointerAngle;
@@ -672,30 +794,12 @@ logoCanvas.addEventListener('pointermove', event => {
   logoState.angle += delta;
   logoState.speed = Math.max(-.08, Math.min(.08, delta * 1.8));
   logoState.lastPointerAngle = angle;
-  logoState.moved ||= Math.abs(delta) > .012;
+  logoState.moved = logoState.moved || Math.abs(delta) > .012;
   drawLogo();
 });
 logoCanvas.addEventListener('pointerleave', () => { if (!logoState.dragging) logoPointer.active = false; });
 logoCanvas.addEventListener('pointerup', event => {
-  if (logoState.touchGesture && event.pointerType === 'touch') {
-    logoState.touchGesture = false;
-    logoState.dragging = false;
-    logoPointer.active = false;
-    if (!logoState.moved) {
-      logoUserPaused = !logoState.touchWasPaused;
-      logoState.paused = logoUserPaused;
-    } else if (logoState.touchDidSpin) {
-      logoUserPaused = false;
-      logoState.paused = false;
-      if (Math.abs(logoState.speed) < .008) logoState.speed = .012;
-    } else {
-      logoUserPaused = logoState.touchWasPaused;
-      logoState.paused = logoUserPaused;
-    }
-    if (!logoState.paused) startLogoMotion();
-    drawLogo();
-    return;
-  }
+  if (event.pointerType === 'touch') return;
   if (event.pointerType !== 'mouse') logoPointer.active = false;
   if (logoState.dragging) {
     logoState.dragging = false;
@@ -703,11 +807,8 @@ logoCanvas.addEventListener('pointerup', event => {
     startLogoMotion();
   }
 });
-logoCanvas.addEventListener('pointercancel', () => {
-  if (logoState.touchGesture) {
-    logoState.touchGesture = false;
-    logoState.dragging = false;
-  }
+logoCanvas.addEventListener('pointercancel', event => {
+  if (event.pointerType === 'touch') return;
   logoState.dragging = false;
   logoState.paused = logoUserPaused;
   logoPointer.active = false;
@@ -715,7 +816,6 @@ logoCanvas.addEventListener('pointercancel', () => {
   drawLogo();
 });
 logoCanvas.addEventListener('keydown', event => {
-  if (motionPreference.matches) return;
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
     logoUserPaused = false;
@@ -747,7 +847,7 @@ if (cursorUfo && cursorUfoMotion && ufoShots && ufoControlCell && ufoTrigger && 
   const ufoDesktop = matchMedia('(min-width: 681px) and (hover: hover) and (pointer: fine)');
   const ufoReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const ufoTouchFirst = navigator.maxTouchPoints > 0
-    || navigator.userAgentData?.mobile === true
+    || (navigator.userAgentData && navigator.userAgentData.mobile === true)
     || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
     || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const ufoTriggerLabel = document.querySelector('#ufoLaunchLabel');
