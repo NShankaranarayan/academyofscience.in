@@ -17,6 +17,7 @@ html[data-mode="geek"]{background:#0d0d0e;color:#f3f0eb}html[data-mode="geek"] b
 .logo-motion-toggle{position:absolute;z-index:4;right:5%;bottom:7%;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--muted);padding:.45rem .7rem;font:500 .55rem var(--mono);text-transform:uppercase;letter-spacing:.06em;cursor:pointer}
 .logo-motion-toggle:hover,.logo-motion-toggle:focus-visible{color:var(--ink);border-color:var(--red)}
 @media(max-width:600px){.hero-logo-motion{width:58%}.logo-motion-toggle{right:2%;bottom:4%;font-size:.5rem}}
+@media(max-width:600px){html[data-mode="normal"] .hero-mark .orbit-two{inset:13%}}
 
 .ascii-logo{position:relative;overflow:hidden}.ascii-logo canvas{display:block;width:min(100%,300px);height:auto;max-height:calc(100% - 1.2rem);touch-action:none;cursor:grab;outline:none}.ascii-logo canvas:active{cursor:grabbing}.ascii-logo canvas:focus-visible{outline:1px solid var(--accent-bright);outline-offset:3px}.logo-hint{position:absolute;bottom:.45rem;left:0;right:0;text-align:center;color:#777674;font:400 .52rem var(--mono);letter-spacing:.025em;pointer-events:none}
 
@@ -588,6 +589,13 @@ html[data-mode="geek"] .share-dialog-content input,html[data-mode="geek"] .share
   html{scroll-behavior:auto!important}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .reveal{opacity:1;transform:none;transition:none}
+}
+
+/* Keep the two slow hero orbit markers moving; the site-wide reduced-motion
+   rule otherwise removes these decorative rotations entirely. */
+@media(prefers-reduced-motion:reduce){
+  .hero-mark .orbit-one{animation:spin 25s linear infinite!important}
+  .hero-mark .orbit-two{animation:spin 18s linear reverse infinite!important}
 }
 
 /* Geek Mode preserves the Normal layout and replaces only the hero emblem. */
