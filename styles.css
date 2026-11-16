@@ -613,6 +613,7 @@ html[data-mode="geek"] .mode-label{display:inline}
 html[data-mode="geek"] .hero{min-height:calc(100vh - 76px);background-color:var(--paper);border-color:var(--line)}
 html[data-mode="geek"] .hero-logo-motion,
 html[data-mode="geek"] .logo-motion-toggle{display:none}
+html[data-mode="geek"] .hero-mark .logo-motion-toggle{display:block}
 .hero-mark #digitalLogo{display:none;width:55%;height:auto;aspect-ratio:1;position:relative;z-index:2;cursor:grab;touch-action:none}
 .hero-mark #digitalLogo:active{cursor:grabbing}
 html[data-mode="geek"] .hero-mark #digitalLogo{display:block;width:55%;max-width:none;max-height:none;image-rendering:auto;touch-action:none;filter:drop-shadow(0 0 34px color-mix(in srgb,var(--accent) 15%,transparent))}

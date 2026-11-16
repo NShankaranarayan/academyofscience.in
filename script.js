@@ -1,7 +1,6 @@
 const root = document.documentElement;
 const modeSwitch = document.querySelector('#modeSwitch');
 const themeMeta = document.querySelector('meta[name="theme-color"]');
-const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 const touchInputPreference = matchMedia('(pointer: coarse)');
 
 function setMode(mode) {
@@ -153,22 +152,21 @@ function drawHeroLogo() {
   heroContext.arc(heroFan.centerX, heroFan.centerY, heroFan.hubRadius, 0, Math.PI * 2);
   heroContext.fill();
   heroContext.globalCompositeOperation = 'source-over';
-  const paused = String(heroMotion.paused || motionPreference.matches);
+  const paused = String(heroMotion.paused);
   if (heroContainer.dataset.paused !== paused) {
     heroContainer.dataset.paused = paused;
     const interactionHint = touchInputPreference.matches
       ? 'Tap to pause or resume. Drag around the hub to spin the fans.'
       : 'Drag around the hub to redirect the fans. Use the adjacent control or Space to pause or resume.';
     heroContainer.setAttribute('aria-label', `Animated Academy of Science logo. Fans ${paused === 'true' ? 'paused' : 'spinning'}. ${interactionHint}`);
-    heroToggle.textContent = motionPreference.matches ? 'Motion reduced' : (heroMotion.paused ? 'Start emblem' : 'Pause emblem');
-    heroToggle.disabled = motionPreference.matches;
-    heroToggle.setAttribute('aria-pressed', String(!heroMotion.paused && !motionPreference.matches));
+    heroToggle.textContent = heroMotion.paused ? 'Start emblem' : 'Pause emblem';
+    heroToggle.setAttribute('aria-pressed', String(!heroMotion.paused));
   }
 }
 
 function animateHeroLogo(timestamp) {
   heroFrame = 0;
-  if (root.dataset.mode !== 'normal' || heroMotion.paused || motionPreference.matches || document.hidden) return;
+  if (root.dataset.mode !== 'normal' || heroMotion.paused || document.hidden) return;
   const elapsed = heroLastFrameTime ? Math.min((timestamp - heroLastFrameTime) / 1000, 0.05) : 0;
   heroLastFrameTime = timestamp;
   heroMotion.angle += heroMotion.speed * elapsed;
@@ -187,7 +185,7 @@ function elementIsInViewport(element) {
 function startHeroMotion() {
   if (!elementIsInViewport(heroContainer)) return;
   heroLogoVisible = true;
-  if (!heroFrame && root.dataset.mode === 'normal' && !heroMotion.paused && !motionPreference.matches && !document.hidden) {
+  if (!heroFrame && root.dataset.mode === 'normal' && !heroMotion.paused && !document.hidden) {
     heroLastFrameTime = 0;
     heroFrame = requestAnimationFrame(animateHeroLogo);
   }
@@ -294,7 +292,9 @@ heroCanvas.addEventListener('touchend', event => {
   heroMotion.dragging = false;
   if (!heroMotion.moved) heroMotion.paused = !heroMotion.touchWasPaused;
   else heroMotion.paused = heroMotion.touchDidSpin ? false : heroMotion.touchWasPaused;
-  if (!heroMotion.paused && (!heroMotion.touchDidSpin || Math.abs(heroMotion.speed) < .02)) heroMotion.speed = .2;
+  if (!heroMotion.paused && (!heroMotion.touchDidSpin || Math.abs(heroMotion.speed) < .02)) {
+    heroMotion.speed = .2;
+  }
   heroLastFrameTime = 0;
   if (!heroMotion.paused) startHeroMotion();
   drawHeroLogo();
@@ -384,9 +384,16 @@ heroContainer.addEventListener('keydown', event => {
 });
 
 heroToggle.addEventListener('click', () => {
-  heroMotion.paused = !heroMotion.paused;
-  if (!heroMotion.paused) { heroLastFrameTime = 0; startHeroMotion(); }
-  drawHeroLogo();
+  if (root.dataset.mode === 'geek') {
+    logoUserPaused = !logoUserPaused;
+    logoState.paused = logoUserPaused;
+    if (!logoState.paused) startLogoMotion();
+    drawLogo();
+  } else {
+    heroMotion.paused = !heroMotion.paused;
+    if (!heroMotion.paused) { heroLastFrameTime = 0; startHeroMotion(); }
+    drawHeroLogo();
+  }
 });
 
 document.addEventListener('visibilitychange', () => {
@@ -506,17 +513,16 @@ function drawLogo() {
   }
   ctx.globalAlpha = 1;
   document.querySelector('#visualState').textContent = `${logoState.dragging ? 'INTERACTING' : 'LIVE'} PARTICLE VOLUME · ${logoParticles.length.toLocaleString()}`;
-  const touchHint = motionPreference.matches
-    ? 'Motion reduced · animation paused'
-    : 'Drag around the hub to spin · tap to pause or resume';
-  const motionHint = motionPreference.matches
-    ? 'Animation is paused by your reduced motion setting.'
-    : (touchInputPreference.matches
-      ? 'Drag around the logo hub to spin it. Tap the logo to pause or resume.'
-      : 'Move a pointer to scatter particles, use left and right arrows to rotate, and press Space or Enter to pause or resume.');
+  const touchHint = 'Drag around the hub to spin · tap to pause or resume';
+  const motionHint = touchInputPreference.matches
+    ? 'Drag around the logo hub to spin it. Tap the logo to pause or resume.'
+    : 'Move a pointer to scatter particles, use left and right arrows to rotate, and press Space or Enter to pause or resume.';
   if (logoInteractionHint && touchInputPreference.matches && logoInteractionHint.textContent !== touchHint) {
     logoInteractionHint.textContent = touchHint;
   }
+  const toggleText = logoState.paused ? 'Start emblem' : 'Pause emblem';
+  if (heroToggle.textContent !== toggleText) heroToggle.textContent = toggleText;
+  heroToggle.setAttribute('aria-pressed', String(!logoState.paused));
   logoCanvas.setAttribute('aria-label', `Interactive particle rendering of the Academy of Science logo with ${logoParticles.length} particles. ${motionHint}`);
 }
 
@@ -607,7 +613,7 @@ function ensureLogoParticles() {
 
 function animateLogo(timestamp) {
   logoFrame = 0;
-  if (root.dataset.mode !== 'geek' || logoState.paused || motionPreference.matches || document.hidden) return;
+  if (root.dataset.mode !== 'geek' || logoState.paused || document.hidden) return;
   const elapsed = logoState.lastFrame ? Math.min((timestamp - logoState.lastFrame) / 1000, .05) : 0;
   logoState.lastFrame = timestamp;
   const targetYaw = logoPointer.active ? (logoPointer.x / logoState.width - .5) * .54 : 0;
@@ -620,33 +626,12 @@ function animateLogo(timestamp) {
 }
 
 function startLogoMotion() {
-  if (motionPreference.matches) { logoState.paused = true; return; }
   if (logoUserPaused) { logoState.paused = true; return; }
   if (!elementIsInViewport(logoCanvas)) return;
   logoCanvasVisible = true;
   logoState.paused = false;
-  if (!logoFrame && root.dataset.mode === 'geek' && !motionPreference.matches && !document.hidden) logoFrame = requestAnimationFrame(animateLogo);
+  if (!logoFrame && root.dataset.mode === 'geek' && !document.hidden) logoFrame = requestAnimationFrame(animateLogo);
 }
-
-const onMotionPreferenceChange = () => {
-  if (motionPreference.matches) {
-    if (heroFrame) cancelAnimationFrame(heroFrame);
-    if (logoFrame) cancelAnimationFrame(logoFrame);
-    heroFrame = logoFrame = 0;
-    heroMotion.paused = true;
-    logoState.paused = true;
-  } else if (root.dataset.mode === 'normal') {
-    heroMotion.paused = false;
-    startHeroMotion();
-  } else {
-    logoState.paused = logoUserPaused;
-    startLogoMotion();
-  }
-  drawHeroLogo();
-  drawLogo();
-};
-if (motionPreference.addEventListener) motionPreference.addEventListener('change', onMotionPreferenceChange);
-else motionPreference.addListener(onMotionPreferenceChange);
 
 logoImage.addEventListener('load', () => {
   prepareHeroLogo();
@@ -677,7 +662,6 @@ createIntersectionObserver(([entry]) => {
 }, { threshold: .05 }).observe(logoCanvas);
 
 logoCanvas.addEventListener('touchstart', event => {
-  if (motionPreference.matches) return;
   const touch = event.changedTouches[0];
   if (!touch) return;
   const rect = logoCanvas.getBoundingClientRect();
@@ -702,7 +686,7 @@ logoCanvas.addEventListener('touchstart', event => {
 }, { passive: false });
 
 logoCanvas.addEventListener('touchmove', event => {
-  if (motionPreference.matches || !logoState.touchGesture) return;
+  if (!logoState.touchGesture) return;
   const touch = findTouch(event.changedTouches, logoState.touchIdentifier);
   if (!touch) return;
   event.preventDefault();
@@ -759,7 +743,6 @@ logoCanvas.addEventListener('touchcancel', () => {
 }, { passive: true });
 
 logoCanvas.addEventListener('pointerdown', event => {
-  if (motionPreference.matches) return;
   if (event.pointerType === 'touch') {
     return;
   }
@@ -782,7 +765,6 @@ logoCanvas.addEventListener('pointerdown', event => {
   drawLogo();
 });
 logoCanvas.addEventListener('pointermove', event => {
-  if (motionPreference.matches) return;
   if (event.pointerType === 'touch') return;
   const rect = logoCanvas.getBoundingClientRect();
   const rx = (event.clientX - rect.left) / rect.width, ry = (event.clientY - rect.top) / rect.height;
@@ -819,7 +801,6 @@ logoCanvas.addEventListener('pointercancel', event => {
   drawLogo();
 });
 logoCanvas.addEventListener('keydown', event => {
-  if (motionPreference.matches) return;
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
     logoUserPaused = false;
