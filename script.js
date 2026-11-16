@@ -174,6 +174,20 @@ function pointInPolygon(x, y, points) {
   return inside;
 }
 
+function pointOnOrNearPolygon(x, y, points, padding = 8) {
+  if (pointInPolygon(x, y, points)) return true;
+  const paddingSquared = padding * padding;
+  for (let i = 0; i < points.length; i++) {
+    const [x1, y1] = points[i], [x2, y2] = points[(i + 1) % points.length];
+    const dx = x2 - x1, dy = y2 - y1;
+    const lengthSquared = dx * dx + dy * dy || 1;
+    const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / lengthSquared));
+    const nearestX = x1 + dx * t, nearestY = y1 + dy * t;
+    if ((x - nearestX) ** 2 + (y - nearestY) ** 2 <= paddingSquared) return true;
+  }
+  return false;
+}
+
 function pointerOnHeroBlade(event) {
   const rect = heroCanvas.getBoundingClientRect();
   const x = (event.clientX - rect.left) / rect.width * heroCanvas.width;
@@ -328,8 +342,12 @@ function drawLogo() {
   const accentDots = [], whiteDots = [];
 
   function repelAndFloat(p, tx, ty, radius = 118, strength = 20, rigid = false) {
-    tx += Math.sin(time * p.drift + p.phase) * p.float;
-    ty += Math.cos(time * p.drift * .83 + p.phase) * p.float;
+    // Keep the rotor edges clean; free-float on these samples leaves a faint
+    // horizontal echo around the moving blades.
+    if (!rigid) {
+      tx += Math.sin(time * p.drift + p.phase) * p.float;
+      ty += Math.cos(time * p.drift * .83 + p.phase) * p.float;
+    }
     if (rigid) {
       if (logoPointer.active) {
         const px = tx - logoPointer.x, py = ty - logoPointer.y;
@@ -380,10 +398,10 @@ function drawLogo() {
     ctx.globalAlpha = 1;
   }
 
-  drawDots(accentDots, particleAccent, true, .72);
-  drawDots(whiteDots, '#A7D6D4', true, .72);
-  drawDots(accentDots, '#A67B3F', false, .66);
-  drawDots(whiteDots, '#68A7A7', false, .66);
+  drawDots(accentDots, particleAccent, true, .48);
+  drawDots(whiteDots, '#F5E9CC', true, .42);
+  drawDots(accentDots, '#A67B3F', false, .38);
+  drawDots(whiteDots, '#D8D5CC', false, .34);
 
   for (const layer of particleLayers) {
     const layerAccent = [], layerWhite = [];
@@ -409,13 +427,13 @@ function drawLogo() {
       (p.accent ? layerAccent : layerWhite).push(p);
     }
     if (layer.front) {
-      drawDots(layerAccent, particleAccent, true, 1);
-      drawDots(layerWhite, '#F7F6F0', true, 1);
-      drawDots(layerAccent, particleAccent, false, 1);
-      drawDots(layerWhite, '#F7F6F0', false, 1);
+      drawDots(layerAccent, particleAccent, true, .38);
+      drawDots(layerWhite, '#FFFDF6', true, .34);
+      drawDots(layerAccent, particleAccent, false, 1.08);
+      drawDots(layerWhite, '#FFFDF6', false, 1.12);
     } else {
-      drawDots(layerAccent, '#9A7946', false, .35);
-      drawDots(layerWhite, '#538B8D', false, .34);
+      drawDots(layerAccent, '#B28E53', false, .24);
+      drawDots(layerWhite, '#D8D5CC', false, .2);
     }
   }
   ctx.globalAlpha = 1;
@@ -451,7 +469,10 @@ function resizeLogoCanvas() {
 }
 
 function buildLogoParticles() {
-  const sampleSize = 900;
+  // Sample the master SVG at native resolution; a uniform 4 px grid gives
+  // crisp letterforms without multiplying the animation cost excessively.
+  const sampleSize = 1254;
+  const sampleStep = 4;
   const samples = [];
   logoParticles.length = 0;
   particleLayers.length = 0;
@@ -460,30 +481,34 @@ function buildLogoParticles() {
   particleContext.clearRect(0, 0, sampleSize, sampleSize);
   particleContext.drawImage(logoImage, 0, 0, sampleSize, sampleSize);
   const { data } = particleContext.getImageData(0, 0, sampleSize, sampleSize);
-  for (let y = 0; y < sampleSize; y += 4) for (let x = 0; x < sampleSize; x += 4) {
-    const sx = Math.min(sampleSize - 1, x + Math.random() * 2);
-    const sy = Math.min(sampleSize - 1, y + Math.random() * 2);
+  for (let y = 0; y < sampleSize; y += sampleStep) for (let x = 0; x < sampleSize; x += sampleStep) {
+    const sx = Math.min(sampleSize - 1, x + Math.random() * sampleStep);
+    const sy = Math.min(sampleSize - 1, y + Math.random() * sampleStep);
     const i = (Math.floor(sy) * sampleSize + Math.floor(sx)) * 4;
     if (Math.max(data[i], data[i + 1], data[i + 2]) < 42) continue;
     const nx = sx / sampleSize, ny = sy / sampleSize;
     const sourceX = nx * 1254, sourceY = ny * 1254;
-    const blade = heroFan.blades.some(points => pointInPolygon(sourceX, sourceY, points));
+    // Include antialiased edge samples so the old blade position cannot linger
+    // as a faint trace after the rotor moves.
+    const blade = heroFan.blades.some(points => pointOnOrNearPolygon(sourceX, sourceY, points));
     samples.push({
       nx, ny, blade,
       accent: data[i] > data[i + 1] * 1.12 && data[i + 1] > data[i + 2] * 1.15,
-      size: .92 + Math.random() * .62,
+      size: .72 + Math.random() * .44,
       alpha: .74 + Math.random() * .26,
       phase: Math.random() * Math.PI * 2,
       drift: .22 + Math.random() * .62,
       float: .08 + Math.random() * .34
     });
   }
-  const layerCount = matchMedia('(max-width: 680px)').matches ? 3 : 4;
+  // Two depth planes are enough to retain the fluid feel while keeping the
+  // native-resolution particle field responsive on both desktop and phones.
+  const layerCount = 2;
   for (let layerIndex = 0; layerIndex < layerCount; layerIndex++) {
     const front = layerIndex === layerCount - 1;
     const particles = samples.map(sample => ({
       ...sample,
-      depth: (layerIndex - (layerCount - 1)) * .009,
+      depth: (layerIndex - (layerCount - 1)) * .004,
       front,
       size: front ? sample.size : sample.size * .78,
       alpha: front ? sample.alpha : sample.alpha * (.56 + layerIndex * .06),
@@ -492,12 +517,12 @@ function buildLogoParticles() {
     particleLayers.push({ particles, front });
     logoParticles.push(...particles);
   }
-  for (let i = 0; i < 240; i++) {
-    const angle = Math.random() * Math.PI * 2, radius = .42 + Math.random() * .31;
+  for (let i = 0; i < 112; i++) {
+    const angle = Math.random() * Math.PI * 2, radius = .48 + Math.random() * .24;
     ambientParticles.push({
       nx: Math.cos(angle) * radius, ny: Math.sin(angle) * radius,
       x: 0, y: 0, vx: 0, vy: 0,
-      size: .45 + Math.random() * .75, alpha: .12 + Math.random() * .38,
+      size: .4 + Math.random() * .42, alpha: .1 + Math.random() * .24,
       accent: Math.random() < .36, phase: Math.random() * Math.PI * 2, drift: .08 + Math.random() * .22,
       float: 2 + Math.random() * 4
     });

@@ -37,7 +37,7 @@ html[data-mode="geek"] .visual-caption,html[data-mode="geek"] .visual-coordinate
 html[data-mode="geek"] .visual-caption{border-bottom:1px solid #1d1d1f}
 html[data-mode="geek"] .visual-coordinates{border-top:1px solid #1d1d1f}
 html[data-mode="geek"] #visualState{color:var(--accent-bright)}
-html[data-mode="geek"] #digitalLogo{display:block;width:min(100%,min(66vh,560px));height:auto;max-height:100%;aspect-ratio:1;object-fit:contain;image-rendering:pixelated;touch-action:none;cursor:grab;outline:none;position:relative;z-index:0}
+html[data-mode="geek"] #digitalLogo{display:block;width:min(100%,min(66vh,560px));height:auto;max-height:100%;aspect-ratio:1;object-fit:contain;image-rendering:auto;touch-action:none;cursor:grab;outline:none;position:relative;z-index:0}
 html[data-mode="geek"] #digitalLogo:active{cursor:grabbing}
 html[data-mode="geek"] #digitalLogo:focus-visible{outline:1px solid var(--accent-bright);outline-offset:-3px}
 html[data-mode="geek"] .terminal-pane{border:1px solid #29292b;background:#0d0d0e;padding:12px 14px;overflow:auto;min-height:0}
