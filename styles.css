@@ -16,6 +16,7 @@ html[data-mode="geek"]{background:#0d0d0e;color:#f3f0eb}html[data-mode="geek"] b
 #heroLogoFan{pointer-events:auto}
 .logo-motion-toggle{position:absolute;z-index:4;right:5%;bottom:7%;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--muted);padding:.45rem .7rem;font:500 .55rem var(--mono);text-transform:uppercase;letter-spacing:.06em;cursor:pointer}
 .logo-motion-toggle:hover,.logo-motion-toggle:focus-visible{color:var(--ink);border-color:var(--red)}
+@media(pointer:coarse){.hero-logo-motion,.hero-logo-motion canvas{touch-action:pan-y}}
 @media(max-width:600px){.hero-logo-motion{width:58%}.logo-motion-toggle{right:2%;bottom:4%;font-size:.5rem}}
 
 .ascii-logo{position:relative;overflow:hidden}.ascii-logo canvas{display:block;width:min(100%,300px);height:auto;max-height:calc(100% - 1.2rem);touch-action:none;cursor:grab;outline:none}.ascii-logo canvas:active{cursor:grabbing}.ascii-logo canvas:focus-visible{outline:1px solid var(--accent-bright);outline-offset:3px}.logo-hint{position:absolute;bottom:.45rem;left:0;right:0;text-align:center;color:#777674;font:400 .52rem var(--mono);letter-spacing:.025em;pointer-events:none}
@@ -479,7 +480,7 @@ html[data-mode="normal"] .hero{background-image:linear-gradient(rgba(23,23,22,.0
   .constellation-object{min-height:clamp(390px,102vw,500px);overflow:hidden}
   .constellation-object #digitalLogo{width:min(94vw,480px);max-width:100%;touch-action:pan-y;cursor:default}
   .orbit-a{width:84%}.orbit-b{width:63%}.coordinate{display:none}
-  .object-instruction{left:1rem;bottom:.8rem}.object-instruction b{display:none}
+  .object-instruction{left:1rem;bottom:.8rem;pointer-events:none}.object-instruction b{display:block;max-width:13rem;color:#a2a49f;font-size:.49rem;line-height:1.35;white-space:normal}
   .constellation-directions{padding:2.2rem 1.1rem}.constellation-directions>a,.constellation-directions>a:first-of-type{min-height:112px}
   .constellation-dock>a{min-height:72px;padding:1rem 1.1rem}
   .hero-logo-motion,.hero-logo-motion canvas{touch-action:pan-y}
