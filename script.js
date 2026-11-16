@@ -469,12 +469,10 @@ function resizeLogoCanvas() {
 }
 
 function buildLogoParticles() {
-  // Use a lighter field on touch-first/small screens. At phone display sizes,
-  // an 8 px source stride still gives a dense silhouette while keeping each
-  // animation frame practical on mobile hardware.
-  const compactLogo = matchMedia('(pointer: coarse)').matches || matchMedia('(max-width: 680px)').matches;
+  // Sample the master SVG at native resolution; a uniform 4 px grid gives
+  // crisp letterforms without multiplying the animation cost excessively.
   const sampleSize = 1254;
-  const sampleStep = compactLogo ? 8 : 4;
+  const sampleStep = 4;
   const samples = [];
   logoParticles.length = 0;
   particleLayers.length = 0;
@@ -503,9 +501,9 @@ function buildLogoParticles() {
       float: .08 + Math.random() * .34
     });
   }
-  // A single plane on compact screens avoids duplicating tens of thousands of
-  // particles; desktop keeps a subtle second plane for dimensionality.
-  const layerCount = compactLogo ? 1 : 2;
+  // Two depth planes are enough to retain the fluid feel while keeping the
+  // native-resolution particle field responsive on both desktop and phones.
+  const layerCount = 2;
   for (let layerIndex = 0; layerIndex < layerCount; layerIndex++) {
     const front = layerIndex === layerCount - 1;
     const particles = samples.map(sample => ({
