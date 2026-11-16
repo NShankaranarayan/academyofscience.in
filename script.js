@@ -90,6 +90,7 @@ const ambientParticles = [];
 const logoPointer = { x: -1000, y: -1000, active: false };
 const logoState = { angle: 0, speed: .012, yaw: 0, pitch: 0, paused: false, dragging: false, lastPointerAngle: 0, moved: false, lastFrame: 0, width: 0, height: 0, dpr: 1, touchGesture: false, touchIdentifier: null, touchDidSpin: false, touchWasPaused: false, touchStartX: 0, touchStartY: 0, touchLastPointerTime: 0 };
 let logoFrame = 0;
+let logoInteractionFrame = 0;
 let logoCanvasVisible = false;
 let logoUserPaused = false;
 const fan = { centerX: heroFan.centerX / 1254, centerY: heroFan.centerY / 1254 };
@@ -526,10 +527,24 @@ function drawLogo() {
   logoCanvas.setAttribute('aria-label', `Interactive particle rendering of the Academy of Science logo with ${logoParticles.length} particles. ${motionHint}`);
 }
 
+function scheduleLogoInteractionDraw() {
+  if (logoInteractionFrame) return;
+  logoInteractionFrame = requestAnimationFrame(() => {
+    logoInteractionFrame = 0;
+    drawLogo();
+  });
+}
+
+function flushLogoInteractionDraw() {
+  if (logoInteractionFrame) cancelAnimationFrame(logoInteractionFrame);
+  logoInteractionFrame = 0;
+  drawLogo();
+}
+
 function resizeLogoCanvas() {
   const rect = logoCanvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return;
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr = Math.min(window.devicePixelRatio || 1, touchInputPreference.matches ? 1.5 : 2);
   logoState.width = rect.width;
   logoState.height = rect.height;
   logoState.dpr = dpr;
@@ -546,7 +561,7 @@ function buildLogoParticles() {
   // Sample the master SVG at native resolution; a uniform 4 px grid gives
   // crisp letterforms without multiplying the animation cost excessively.
   const sampleSize = 1254;
-  const sampleStep = 4;
+  const sampleStep = touchInputPreference.matches ? 6 : 4;
   const samples = [];
   logoParticles.length = 0;
   particleLayers.length = 0;
@@ -682,7 +697,7 @@ logoCanvas.addEventListener('touchstart', event => {
   logoPointer.y = touch.clientY - rect.top;
   logoPointer.active = true;
   event.preventDefault();
-  drawLogo();
+  scheduleLogoInteractionDraw();
 }, { passive: false });
 
 logoCanvas.addEventListener('touchmove', event => {
@@ -707,7 +722,7 @@ logoCanvas.addEventListener('touchmove', event => {
   logoState.lastPointerAngle = angle;
   logoState.touchLastPointerTime = event.timeStamp;
   logoState.touchDidSpin = logoState.touchDidSpin || Math.abs(delta) > 0.01;
-  drawLogo();
+  scheduleLogoInteractionDraw();
 }, { passive: false });
 
 logoCanvas.addEventListener('touchend', event => {
@@ -728,7 +743,7 @@ logoCanvas.addEventListener('touchend', event => {
     logoState.paused = logoUserPaused;
   }
   if (!logoState.paused) startLogoMotion();
-  drawLogo();
+  flushLogoInteractionDraw();
 }, { passive: true });
 
 logoCanvas.addEventListener('touchcancel', () => {
@@ -739,7 +754,7 @@ logoCanvas.addEventListener('touchcancel', () => {
   logoState.paused = logoUserPaused;
   logoPointer.active = false;
   if (!logoState.paused) startLogoMotion();
-  drawLogo();
+  flushLogoInteractionDraw();
 }, { passive: true });
 
 logoCanvas.addEventListener('pointerdown', event => {
