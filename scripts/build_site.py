@@ -42,6 +42,7 @@ class Note:
     title: str
     hero_label: str
     slug: str
+    aliases: list[str]
     content_type: str
     category: str
     format: str
@@ -230,7 +231,9 @@ def load_notes() -> list[Note]:
         elif optional_video_fields.intersection(metadata):
             raise ValueError(f"{path}: videoDuration, videoThumbnail, videoCaption, and videoTranscript require videoUrl")
         notes.append(Note(
-            title=metadata["title"], hero_label=metadata.get("heroLabel", ""), slug=metadata["slug"], content_type=metadata["type"], category=metadata["category"], format=entry_format,
+            title=metadata["title"], hero_label=metadata.get("heroLabel", ""), slug=metadata["slug"],
+            aliases=[alias.strip() for alias in metadata.get("aliases", "").split(",") if alias.strip()],
+            content_type=metadata["type"], category=metadata["category"], format=entry_format,
             published=metadata["date"], read_time=metadata["readTime"],
             excerpt=metadata["excerpt"], number=metadata["number"],
             home=metadata.get("home", "false").lower() == "true", body=body,
@@ -241,9 +244,13 @@ def load_notes() -> list[Note]:
             video_thumbnail=video_thumbnail, video_caption=video_caption,
             video_transcript=video_transcript,
         ))
-    slugs = [note.slug for note in notes]
+    slugs = [slug for note in notes for slug in [note.slug, *note.aliases]]
     if len(slugs) != len(set(slugs)):
-        raise ValueError("Duplicate field-note slug")
+        raise ValueError("Duplicate field-note slug or redirect alias")
+    for note in notes:
+        for alias in note.aliases:
+            if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", alias):
+                raise ValueError(f"{note.slug}: aliases must contain lowercase words separated by hyphens")
     return sorted(notes, key=lambda note: (note.published, note.number), reverse=True)
 
 
@@ -337,6 +344,18 @@ def render_markdown(markdown: str) -> str:
         if stripped == "{{production-zoom}}":
             flush_paragraph(); close_list(); flush_quote()
             output.append((TEMPLATE_DIR / "production-zoom.html").read_text(encoding="utf-8"))
+            continue
+        if stripped == "{{xai-playground}}":
+            flush_paragraph(); close_list(); flush_quote()
+            output.append((TEMPLATE_DIR / "xai-playground.html").read_text(encoding="utf-8"))
+            continue
+        if stripped == "{{xai-vision-explorer}}":
+            flush_paragraph(); close_list(); flush_quote()
+            output.append((TEMPLATE_DIR / "xai-vision-explorer.html").read_text(encoding="utf-8"))
+            continue
+        if stripped == "{{xai-timing}}":
+            flush_paragraph(); close_list(); flush_quote()
+            output.append((TEMPLATE_DIR / "xai-timing.html").read_text(encoding="utf-8"))
             continue
         fence = re.match(r"^```([A-Za-z0-9_-]*)$", stripped)
         if fence:
@@ -473,6 +492,15 @@ def build_articles(notes: list[Note]) -> None:
                 "VIDEO_CONNECT_CSP": "https://www.instagram.com",
             })
         has_production_zoom = "{{production-zoom}}" in note.body
+        has_xai_playground = "{{xai-playground}}" in note.body
+        has_xai_vision = "{{xai-vision-explorer}}" in note.body
+        has_xai_timing = "{{xai-timing}}" in note.body
+        video_csp["EXTRA_SCRIPT_CSP"] = " ".join(filter(None, [
+            video_csp["VIDEO_SCRIPT_CSP"],
+        ]))
+        video_csp["EXTRA_CONNECT_CSP"] = " ".join(filter(None, [
+            video_csp["VIDEO_CONNECT_CSP"],
+        ]))
         path.write_text(fill_template("note.html", {
             "TITLE": html.escape(note.title, quote=True), "DESCRIPTION": html.escape(note.excerpt, quote=True),
             "HERO_LABEL": f'<p class="article-flag">{html.escape(note.hero_label)}</p>' if note.hero_label else "",
@@ -491,7 +519,19 @@ def build_articles(notes: list[Note]) -> None:
             "ARTICLE_BODY": render_markdown(note.body),
             "PRODUCTION_ASSETS": '<link rel="stylesheet" href="../production-zoom.css?v=10">' if has_production_zoom else "",
             "PRODUCTION_SCRIPT": '<script src="../production-zoom.js?v=10"></script>' if has_production_zoom else "",
+            "XAI_ASSETS": '<link rel="stylesheet" href="../xai-playground.css?v=4">' if has_xai_playground else "",
+            "XAI_SCRIPT": '<script src="../xai-playground.js?v=1"></script>' if has_xai_playground else "",
+            "XAI_VISION_ASSETS": '<link rel="stylesheet" href="../xai-playground.css?v=4">' if has_xai_vision and not has_xai_playground else "",
+            "XAI_VISION_SCRIPT": '<script src="../xai-vision.js?v=3"></script>' if has_xai_vision else "",
+            "XAI_TIMING_SCRIPT": '<script src="../xai-timing.js?v=1"></script>' if has_xai_timing else "",
         }), encoding="utf-8")
+        for alias in note.aliases:
+            alias_path = OUTPUT_DIR / f"{alias}.html"
+            expected.add(alias_path)
+            alias_path.write_text(fill_template("redirect.html", {
+                "TARGET_SLUG": html.escape(note.slug, quote=True),
+                "TARGET_TITLE": html.escape(note.title),
+            }), encoding="utf-8")
     for stale in OUTPUT_DIR.glob("*.html"):
         if stale not in expected:
             stale.unlink()

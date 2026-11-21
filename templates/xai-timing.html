@@ -1,0 +1,13 @@
+<section class="xai-timing" data-xai-timing aria-labelledby="xai-timing-title">
+  <header><span class="xai-kicker">WHEN DO WE EXPLAIN?</span><h3 id="xai-timing-title">Choose where explanation enters the workflow</h3></header>
+  <div class="xai-timing-tabs" role="group" aria-label="Compare explainability approaches">
+    <button type="button" data-xai-timing-tab="training" aria-pressed="true">During training</button>
+    <button type="button" data-xai-timing-tab="posthoc" aria-pressed="false">After training</button>
+  </div>
+  <div class="xai-timing-flow" aria-live="polite">
+    <div><span data-xai-timing-step>TRAIN</span><b data-xai-timing-model>Data + concept labels</b><small data-xai-timing-detail>Teach the model to predict visible concepts, then use those concepts to make its final prediction.</small></div>
+    <i aria-hidden="true">→</i>
+    <div><span>MODEL</span><b data-xai-timing-output>Inspectable by design</b><small data-xai-timing-example>Example: “whiskers present” → “cat.” A person can inspect or correct the concept.</small></div>
+  </div>
+  <p class="xai-timing-caveat" data-xai-timing-caveat>Costs: concept definitions and labels take work, and the model can still miss a concept or use it incorrectly.</p>
+</section>
