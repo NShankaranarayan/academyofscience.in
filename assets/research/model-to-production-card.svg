@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="627" viewBox="0 0 1200 627">
+  <rect width="1200" height="627" fill="#090a0a"/>
+  <rect x="16" y="16" width="1168" height="595" fill="none" stroke="#292c2a" stroke-width="2"/>
+  <rect x="16" y="16" width="8" height="595" fill="#D4AA60"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <g fill="#D4AA60" font-size="16" font-weight="600" letter-spacing="1.2">
+      <text x="72" y="126">PORTFOLIO / ARTICLES</text>
+      <text x="1128" y="126" text-anchor="end">02 / ACADEMY OF SCIENCE</text>
+    </g>
+    <path d="M72 154H1128" stroke="#343735"/>
+    <text x="72" y="217" fill="#D4AA60" font-size="16" font-weight="600" letter-spacing="1.2">02 / ARTICLES</text>
+    <text x="72" y="287" fill="#F2EFE8" font-size="58" font-weight="700" letter-spacing="-2.8">How AI models reach</text>
+    <text x="72" y="353" fill="#F2EFE8" font-size="58" font-weight="700" letter-spacing="-2.8">production</text>
+    <text x="76" y="407" fill="#B7B8B2" font-size="24">A practical visual and text guide to the data, services,</text>
+    <text x="76" y="443" fill="#B7B8B2" font-size="24">and infrastructure that take an AI model from notebook</text>
+    <text x="76" y="479" fill="#B7B8B2" font-size="24">to real users.</text>
+    <g fill="none" stroke="rgba(212,170,96,.22)">
+      <circle cx="1000" cy="344" r="106"/>
+      <circle cx="1000" cy="344" r="145" stroke-dasharray="5 8"/>
+      <circle cx="1000" cy="344" r="182"/>
+      <path d="M804 344H1196M1000 148V540" stroke="rgba(255,255,255,.14)"/>
+    </g>
+    <circle cx="1105" cy="238" r="7" fill="#D4AA60"/>
+    <circle cx="856" cy="406" r="4" fill="#D4AA60" opacity=".8"/>
+    <path d="M72 548H1128" stroke="#343735"/>
+    <text x="72" y="584" fill="#EFEDE6" font-size="14" font-weight="600" letter-spacing="1">ACADEMY OF SCIENCE</text>
+    <text x="1128" y="584" fill="#D4AA60" font-size="14" font-weight="600" letter-spacing="1" text-anchor="end">ACADEMYOFSCIENCE.IN</text>
+  </g>
+</svg>
