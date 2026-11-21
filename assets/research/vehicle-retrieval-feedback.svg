@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450" role="img" aria-labelledby="title desc">
+  <title id="title">Vehicle retrieval with a feedback loop</title>
+  <desc id="desc">A query image is encoded and ranked against a gallery. Human relevance feedback can refine the query; automatic blind feedback can harm results. A chart compares the reported baseline and explicit top-20 results.</desc>
+  <rect width="900" height="450" rx="18" fill="#f1efe8"/>
+  <text x="34" y="38" fill="#77766e" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2">RETRIEVE · CHECK · REFINE</text>
+  <rect x="34" y="67" width="142" height="77" rx="10" fill="#fffdf7" stroke="#c9c3b5"/><text x="52" y="95" fill="#77766e" font-family="Arial,sans-serif" font-size="11" font-weight="700">QUERY PHOTO</text><text x="52" y="121" fill="#282924" font-family="Arial,sans-serif" font-size="14">one vehicle</text>
+  <path d="M184 105h37m-8-6 8 6-8 6" fill="none" stroke="#a47b3d" stroke-width="2"/>
+  <rect x="230" y="67" width="160" height="77" rx="10" fill="#e7e3d8" stroke="#c9c3b5"/><text x="252" y="95" fill="#77766e" font-family="Arial,sans-serif" font-size="11" font-weight="700">RESNET FEATURES</text><text x="252" y="121" fill="#282924" font-family="Arial,sans-serif" font-size="14">2,048 values</text>
+  <path d="M398 105h37m-8-6 8 6-8 6" fill="none" stroke="#a47b3d" stroke-width="2"/>
+  <rect x="444" y="67" width="174" height="77" rx="10" fill="#fffdf7" stroke="#c9c3b5"/><text x="466" y="95" fill="#77766e" font-family="Arial,sans-serif" font-size="11" font-weight="700">RANK GALLERY</text><text x="466" y="121" fill="#282924" font-family="Arial,sans-serif" font-size="14">nearest matches first</text>
+  <path d="M626 105h37m-8-6 8 6-8 6" fill="none" stroke="#a47b3d" stroke-width="2"/>
+  <rect x="672" y="67" width="194" height="77" rx="10" fill="#fffdf7" stroke="#c9c3b5"/><text x="694" y="95" fill="#77766e" font-family="Arial,sans-serif" font-size="11" font-weight="700">REFINED RESULTS</text><text x="694" y="121" fill="#282924" font-family="Arial,sans-serif" font-size="14">updated shortlist</text>
+  <path d="M757 151v40H313v-40" fill="none" stroke="#a47b3d" stroke-width="2" stroke-dasharray="5 5"/><path d="m307 159 6-8 6 8" fill="none" stroke="#a47b3d" stroke-width="2"/>
+  <rect x="174" y="177" width="278" height="58" rx="9" fill="#d9cfb5" stroke="#c2b58f"/><text x="194" y="201" fill="#282924" font-family="Arial,sans-serif" font-size="13" font-weight="700">EXPLICIT · a person checks matches</text><text x="194" y="220" fill="#5d5b53" font-family="Arial,sans-serif" font-size="11">Use judged relevant / irrelevant images to refine.</text>
+  <rect x="468" y="177" width="258" height="58" rx="9" fill="#e6e3dc" stroke="#c9c3b5"/><text x="488" y="201" fill="#282924" font-family="Arial,sans-serif" font-size="13" font-weight="700">BLIND · system assumes top matches</text><text x="488" y="220" fill="#77766e" font-family="Arial,sans-serif" font-size="11">A wrong early match can pull results off course.</text>
+  <text x="34" y="273" fill="#77766e" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="1.5">PAPER RESULT · VeRi-776 · EXPLICIT TOP-20 FEEDBACK</text>
+  <rect x="34" y="291" width="832" height="128" rx="10" fill="#fffdf7" stroke="#c9c3b5"/>
+  <text x="58" y="320" fill="#282924" font-family="Arial,sans-serif" font-size="13" font-weight="700">mAP</text>
+  <text x="452" y="320" fill="#282924" font-family="Arial,sans-serif" font-size="13" font-weight="700">Rank-1</text>
+  <rect x="58" y="337" width="12" height="12" rx="3" fill="#c9c3b5"/><text x="78" y="347" fill="#77766e" font-family="Arial,sans-serif" font-size="11">baseline</text>
+  <rect x="58" y="371" width="12" height="12" rx="3" fill="#a47b3d"/><text x="78" y="381" fill="#77766e" font-family="Arial,sans-serif" font-size="11">explicit top-20</text>
+  <rect x="166" y="337" width="106" height="12" rx="6" fill="#c9c3b5"/><text x="282" y="347" fill="#282924" font-family="Arial,sans-serif" font-size="12">26.5%</text>
+  <rect x="166" y="371" width="137" height="12" rx="6" fill="#a47b3d"/><text x="313" y="381" fill="#282924" font-family="Arial,sans-serif" font-size="12">34.2%</text>
+  <rect x="452" y="337" width="12" height="12" rx="3" fill="#c9c3b5"/><text x="472" y="347" fill="#77766e" font-family="Arial,sans-serif" font-size="11">baseline</text>
+  <rect x="452" y="371" width="12" height="12" rx="3" fill="#a47b3d"/><text x="472" y="381" fill="#77766e" font-family="Arial,sans-serif" font-size="11">explicit top-20</text>
+  <rect x="560" y="337" width="123" height="12" rx="6" fill="#c9c3b5"/><text x="693" y="347" fill="#282924" font-family="Arial,sans-serif" font-size="12">61.6%</text>
+  <rect x="560" y="371" width="168" height="12" rx="6" fill="#a47b3d"/><text x="738" y="381" fill="#282924" font-family="Arial,sans-serif" font-size="12">83.9%</text>
+  <text x="34" y="440" fill="#77766e" font-family="Arial,sans-serif" font-size="11">Bars show the reported benchmark scores. They are not a live-service guarantee.</text>
+</svg>

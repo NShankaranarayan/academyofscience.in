@@ -1,0 +1,30 @@
+<section class="vehicle-lab text-retrieval-lab" data-text-retrieval-lab aria-labelledby="textLabTitle">
+  <header class="vehicle-lab-head"><div><span class="vehicle-lab-kicker">INTERACTIVE · TOY RETRIEVER</span><h3 id="textLabTitle">Follow a description into a ranked list</h3></div><p>Choose a search, then switch off a signal to see what that branch contributes.</p></header>
+  <div class="text-lab-presets" role="group" aria-label="Choose a sample vehicle description">
+    <button type="button" data-text-query="silver" aria-pressed="true">Silver sedan · left turn</button>
+    <button type="button" data-text-query="blue" aria-pressed="false">Blue hatchback · straight</button>
+    <button type="button" data-text-query="white" aria-pressed="false">White van · right turn</button>
+  </div>
+  <div class="text-lab-query"><span>SEARCH DESCRIPTION</span><b data-text-query-label>“A silver sedan turns left beside a bus.”</b><small>In the paper, this text is paired with a vehicle track from video.</small></div>
+  <div class="text-lab-flow" data-text-flow="appearance context motion">
+    <svg viewBox="0 0 900 260" role="img" aria-label="A text description passes through a language encoder. Video frames split into appearance, scene, and motion branches. Both representations are compared to rank candidate vehicles.">
+      <path class="lab-flow-path" d="M210 60 334 51M210 176H278M278 118V224M278 118H334M278 171H334M278 224H334M518 51H588V116H633M518 118H588M518 171H588M518 224H588M588 118V224M588 171H633"/>
+      <path class="lab-flow-pulse" d="M210 60 334 51M210 176H278M278 118V224M278 118H334M278 171H334M278 224H334M518 51H588V116H633M518 118H588M518 171H588M518 224H588M588 118V224M588 171H633"/>
+      <rect class="lab-node lab-node-query" x="20" y="30" width="190" height="60" rx="12"/><text class="lab-svg-kicker" x="40" y="53">TEXT DESCRIPTION</text><text class="lab-svg-label" x="40" y="74">written query</text>
+      <rect class="lab-node lab-node-video" x="20" y="146" width="190" height="60" rx="12"/><text class="lab-svg-kicker" x="40" y="169">VIDEO TRACK</text><text class="lab-svg-label" x="40" y="190">frames + trajectory</text>
+      <rect class="lab-node lab-node-query" x="344" y="25" width="174" height="52" rx="10"/><text class="lab-svg-kicker" x="364" y="46">TEXT ENCODER</text><text class="lab-svg-label" x="364" y="66">BERT / RoBERTa</text>
+      <rect class="lab-node lab-node-cue" data-svg-cue="appearance" x="344" y="98" width="174" height="40" rx="9"/><text class="lab-svg-kicker" x="364" y="123">01 · VEHICLE CROP</text>
+      <rect class="lab-node lab-node-cue" data-svg-cue="context" x="344" y="151" width="174" height="40" rx="9"/><text class="lab-svg-kicker" x="364" y="176">02 · SCENE CONTEXT</text>
+      <rect class="lab-node lab-node-cue" data-svg-cue="motion" x="344" y="204" width="174" height="40" rx="9"/><text class="lab-svg-kicker" x="364" y="229">03 · DIRECTION / PATH</text>
+      <rect class="lab-node lab-node-match" x="643" y="91" width="232" height="92" rx="14"/><text class="lab-svg-kicker" x="667" y="119">COMPARE FEATURES</text><text class="lab-svg-label" x="667" y="146">similarity → ranking</text><text class="lab-svg-small" x="667" y="166">not a class probability</text>
+      <circle class="lab-packet" r="5"><animateMotion dur="3s" repeatCount="indefinite" path="M210 60 334 51"/></circle>
+      <circle class="lab-packet lab-packet-two" r="5"><animateMotion dur="3.6s" repeatCount="indefinite" path="M210 176H278V118H334"/></circle>
+    </svg>
+    <p class="vehicle-lab-scroll-note">Swipe sideways to follow the branches.</p>
+  </div>
+  <div class="text-lab-controls"><div><span class="vehicle-lab-label">INCLUDE THESE CLUES</span><div class="text-lab-toggles" role="group" aria-label="Toggle clues used in the toy match">
+    <button type="button" data-text-cue="appearance" aria-pressed="true">Appearance</button><button type="button" data-text-cue="context" aria-pressed="true">Surroundings</button><button type="button" data-text-cue="motion" aria-pressed="true">Direction</button>
+  </div></div><p data-text-cue-note aria-live="polite">All three visual branches are contributing to this illustrative match.</p></div>
+  <div class="text-lab-results"><div class="vehicle-lab-label">CANDIDATE RANKING</div><ol data-text-results aria-live="polite"></ol></div>
+  <p class="vehicle-lab-caveat">Toy illustration: the points come from a small hand-written matching rule. They are not output from the published model, a real video search, or a confidence score.</p>
+</section>

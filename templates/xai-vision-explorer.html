@@ -1,0 +1,30 @@
+<section class="xai-vision" data-xai-vision aria-labelledby="xai-vision-title">
+  <header class="xai-vision-head">
+    <div><span class="xai-kicker">PRECOMPUTED · RESNET50 · NO UPLOAD</span><h3 id="xai-vision-title">One photo. Two class explanations.</h3></div>
+    <p>Choose which class to inspect. The same image gets a different Grad-CAM map for “dog” and “cat.”</p>
+  </header>
+  <div class="xai-gradcam-panel">
+    <figure class="xai-gradcam-figure">
+      <img data-xai-gradcam-image src="../assets/xai-demo/gradcam-cat-dog.jfif" alt="Original photo of a puppy beside a kitten">
+      <figcaption data-xai-gradcam-caption>Original image · puppy and kitten together</figcaption>
+    </figure>
+    <div class="xai-gradcam-controls">
+      <span class="xai-section-label">SELECT A VIEW</span>
+      <div class="xai-gradcam-options" role="group" aria-label="Choose an image or Grad-CAM target">
+        <button type="button" data-xai-gradcam-view="original" aria-pressed="true">Original</button>
+        <button type="button" data-xai-gradcam-view="dog" aria-pressed="false">Explain “dog”</button>
+        <button type="button" data-xai-gradcam-view="cat" aria-pressed="false">Explain “cat”</button>
+      </div>
+      <div class="xai-gradcam-explanation" aria-live="polite">
+        <b data-xai-gradcam-title>Start with the photo</b>
+        <p data-xai-gradcam-copy>This bundled example contains both animals. The overlays are precomputed outputs from a ResNet50 ImageNet example using Grad-CAM; this page does not run the model.</p>
+      </div>
+      <p class="xai-gradcam-caveat"><strong>Read the map carefully:</strong> warmer areas have stronger Grad-CAM response for the selected class in this model. The map is coarse evidence, not proof of what the model “understood,” and it does not show confidence.</p>
+      <a class="xai-real-demo-link" href="https://github.com/jacobgil/pytorch-grad-cam/tree/master/examples" target="_blank" rel="noopener noreferrer">Open the source example and model details</a>
+    </div>
+  </div>
+  <details class="xai-privacy-note"><summary>Source, licensing, and what runs here</summary>
+    <p>The input photo and precomputed class overlays come from the <a href="https://github.com/jacobgil/pytorch-grad-cam/tree/master/examples" target="_blank" rel="noopener noreferrer">pytorch-grad-cam example repository</a>: <code>dog_cat.jfif</code>, <code>resnet50_dog_gradcam_cam.jpg</code>, and <code>resnet50_cat_gradcam_cam.jpg</code>. Its README lists the overlays under ResNet50 examples. This page switches among bundled files; no upload, model inference, or external image request is used.</p>
+    <p>Repository license and attribution: <a href="../assets/xai-demo/pytorch-grad-cam-MIT.txt">MIT license notice for Jacob Gildenblat’s pytorch-grad-cam</a>.</p>
+  </details>
+</section>

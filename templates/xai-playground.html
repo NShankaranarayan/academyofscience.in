@@ -1,0 +1,42 @@
+<section class="xai-playground" data-xai-playground aria-labelledby="xai-title">
+  <header class="xai-head">
+    <div><span class="xai-kicker">XAI PLAYGROUND · TOY MODEL</span><h3 id="xai-title">Why did the model call this a cat?</h3></div>
+    <p>Change the clues it sees, inspect the score, then ask what would flip the result.</p>
+  </header>
+  <div class="xai-lab-grid">
+    <section class="xai-inputs" aria-labelledby="xai-input-title">
+      <h4 id="xai-input-title">Choose an example</h4>
+      <div class="xai-presets" role="group" aria-label="Choose a toy image example">
+        <button type="button" data-xai-preset="grass-cat" aria-pressed="true">Cat on grass</button>
+        <button type="button" data-xai-preset="rug-dog" aria-pressed="false">Dog on a rug</button>
+        <button type="button" data-xai-preset="ambiguous" aria-pressed="false">Ambiguous crop</button>
+      </div>
+      <p class="xai-instruction">These sliders stand in for image cues. They are not controls for a real photo.</p>
+      <label class="xai-feature-input"><span>Whiskers visible <output data-xai-value="whiskers">90%</output></span><input type="range" min="0" max="100" value="90" data-xai-input="whiskers" aria-label="How strongly whiskers are visible"></label>
+      <label class="xai-feature-input"><span>Pointed ears <output data-xai-value="ears">85%</output></span><input type="range" min="0" max="100" value="85" data-xai-input="ears" aria-label="How strongly pointed ears are visible"></label>
+      <label class="xai-feature-input"><span>Long snout <output data-xai-value="snout">10%</output></span><input type="range" min="0" max="100" value="10" data-xai-input="snout" aria-label="How strongly a long snout is visible"></label>
+      <label class="xai-feature-input"><span>Green grass background <output data-xai-value="grass">100%</output></span><input type="range" min="0" max="100" value="100" data-xai-input="grass" aria-label="How strongly a green grass background is visible"></label>
+      <button type="button" class="xai-counterfactual" data-xai-counterfactual>Find a small change that flips the label</button>
+      <p class="xai-counterfactual-result" data-xai-counterfactual-result aria-live="polite">The what-if changes model inputs only; it does not edit an image.</p>
+    </section>
+    <section class="xai-explanation" aria-label="Model output and explanation">
+      <div class="xai-output-card" aria-live="polite">
+        <div><span class="xai-section-label">TOY MODEL SCORE</span><b class="xai-score" data-xai-score>88%</b></div>
+        <div><span class="xai-section-label">LABEL AT 50% CUTOFF</span><b class="xai-label" data-xai-label>CAT</b></div>
+        <p data-xai-score-note>The score comes from a hand-written rule; it is not a calibrated confidence.</p>
+      </div>
+      <div class="xai-view-heading"><h4>What moved this result?</h4><div class="xai-view-switch" role="group" aria-label="Choose an explanation view"><button type="button" data-xai-view="case" aria-pressed="true">This example</button><button type="button" data-xai-view="rule" aria-pressed="false">Whole toy rule</button></div></div>
+      <p class="xai-view-note" data-xai-view-note>Each bar shows how one visible cue moves this example’s score from the 34% baseline.</p>
+      <ul class="xai-attributions" data-xai-attributions aria-label="Feature contributions to the toy model score">
+        <li data-xai-feature="whiskers"><span>Whiskers</span><b data-xai-impact>+16 points</b><progress data-xai-impact-bar max="30" value="16" aria-label="Whiskers contribution"></progress></li>
+        <li data-xai-feature="ears"><span>Pointed ears</span><b data-xai-impact>+14 points</b><progress data-xai-impact-bar max="30" value="14" aria-label="Pointed ears contribution"></progress></li>
+        <li data-xai-feature="snout"><span>Long snout</span><b data-xai-impact>-2 points</b><progress data-xai-impact-bar max="30" value="2" aria-label="Long snout contribution"></progress></li>
+        <li data-xai-feature="grass"><span>Grass background</span><b data-xai-impact>+26 points</b><progress data-xai-impact-bar max="30" value="26" aria-label="Grass background contribution"></progress></li>
+      </ul>
+      <p class="xai-live-summary" data-xai-summary aria-live="polite">The grass cue is the strongest push toward “cat” in this example.</p>
+      <p class="xai-caveat"><strong>Notice the shortcut:</strong> grass has a large weight even though the background does not determine the animal. This toy exposes that flaw by design.</p>
+    </section>
+  </div>
+  <details class="xai-model-rule"><summary>See the toy model’s rule</summary><p>Cat score = 34 + 18×whiskers + 16×pointed ears − 22×long snout + 26×grass. Each cue is between 0 and 1; the label changes at 50. The bars are exact arithmetic for this rule, not an explanation generated for a real neural network.</p></details>
+  <p class="xai-footnote">Try all three examples. Compare the single-case contributions with the fixed weights, then flip the label. A small mathematical change is not automatically a realistic or causal change in the world.</p>
+</section>

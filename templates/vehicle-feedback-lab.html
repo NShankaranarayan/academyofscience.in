@@ -1,0 +1,17 @@
+<section class="vehicle-lab feedback-lab" data-feedback-lab aria-labelledby="feedbackLabTitle">
+  <header class="vehicle-lab-head"><div><span class="vehicle-lab-kicker">INTERACTIVE · PAPER EXPERIMENT</span><h3 id="feedbackLabTitle">Who decides whether the first matches are right?</h3></div><p>Switch the feedback rule and the number of results used. The scores below are taken from the paper’s VeRi-776 experiment.</p></header>
+  <div class="feedback-mode-row"><span class="vehicle-lab-label">FEEDBACK RULE</span><div role="group" aria-label="Choose relevance feedback method"><button type="button" data-feedback-mode="baseline" aria-pressed="false">Baseline · no feedback</button><button type="button" data-feedback-mode="explicit" aria-pressed="true">Explicit · person checks</button><button type="button" data-feedback-mode="blind" aria-pressed="false">Blind · assume top results</button></div></div>
+  <div class="feedback-flow" data-feedback-flow="explicit">
+    <div class="feedback-step is-active" data-feedback-step="rank"><span>01</span><b>Rank gallery</b><small>ResNet features + distance</small></div><i aria-hidden="true">→</i>
+    <div class="feedback-step" data-feedback-step="judge"><span>02</span><b data-feedback-step-label>Person checks</b><small data-feedback-step-copy>Relevant or not?</small></div><i aria-hidden="true">→</i>
+    <div class="feedback-step" data-feedback-step="refine"><span>03</span><b>Refine query</b><small>Re-rank the candidates</small></div>
+  </div>
+  <div class="feedback-depth-row"><div><span class="vehicle-lab-label">HOW MANY TOP RESULTS FEED BACK?</span><div role="group" aria-label="Choose number of top results" class="feedback-depth-buttons">
+    <button type="button" data-feedback-depth="1" aria-pressed="false">Top 1</button><button type="button" data-feedback-depth="3" aria-pressed="false">Top 3</button><button type="button" data-feedback-depth="5" aria-pressed="false">Top 5</button><button type="button" data-feedback-depth="10" aria-pressed="false">Top 10</button><button type="button" data-feedback-depth="20" aria-pressed="true">Top 20</button>
+  </div></div><p data-feedback-explanation aria-live="polite">A person verifies the top 20 candidates before their features refine the query.</p></div>
+  <div class="feedback-results" aria-live="polite">
+    <div class="feedback-metric" data-feedback-metric="map"><div><span>mAP</span><b data-feedback-value>34.2%</b></div><small>quality across the ranked list</small><progress class="feedback-track" data-feedback-bar max="100" value="34.2" aria-label="Mean average precision"></progress></div>
+    <div class="feedback-metric" data-feedback-metric="rank1"><div><span>Rank-1</span><b data-feedback-value>83.9%</b></div><small>first result is correct</small><progress class="feedback-track" data-feedback-bar max="100" value="83.9" aria-label="Rank-1 accuracy"></progress></div>
+  </div>
+  <p class="vehicle-lab-caveat">These are reported benchmark scores, not a running classifier. The paper reports quality metrics, not production latency or throughput.</p>
+</section>

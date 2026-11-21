@@ -7,40 +7,73 @@
   <meta name="theme-color" content="#000000">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self' ; script-src-attr 'none'; style-src 'self' ; font-src 'self'; img-src 'self' data: ; connect-src 'self' ; media-src 'self'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="description" content="A computer-vision study of vehicle retrieval for smart traffic surveillance, published at ICCAKM 2022.">
+  <meta name="description" content="A review organizes deep vehicle-retrieval methods, benchmarks, evaluation measures, and challenges to generalizing across traffic cameras.">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Deep Vision-Based Vehicle Retrieval for Automated Smart Traffic Surveillance Systems">
-  <meta property="og:description" content="A computer-vision study of vehicle retrieval for smart traffic surveillance, published at ICCAKM 2022.">
+  <meta property="og:title" content="Deep Vehicle Retrieval: A Field Map">
+  <meta property="og:description" content="A review organizes deep vehicle-retrieval methods, benchmarks, evaluation measures, and challenges to generalizing across traffic cameras.">
   <meta property="og:image" content="https://academyofscience.in/assets/research/computer-vision-ads.png">
-  <meta property="og:image:alt" content="Research illustration for Deep Vision-Based Vehicle Retrieval for Automated Smart Traffic Surveillance Systems">
+  <meta property="og:image:alt" content="Research illustration for Deep Vehicle Retrieval: A Field Map">
   <meta property="og:url" content="https://academyofscience.in/notes/deep-vision-vehicle-retrieval.html">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://academyofscience.in/notes/deep-vision-vehicle-retrieval.html">
-  <title>Deep Vision-Based Vehicle Retrieval for Automated Smart Traffic Surveillance Systems — Academy of Science</title>
+  <title>Deep Vehicle Retrieval: A Field Map — Academy of Science</title>
   <link rel="icon" href="../assets/logo.png">
   <script src="../themes/active-theme.js?v=dcda7e55ac87"></script>
   <script src="../mode-init.js?v=1"></script>
-  <link rel="stylesheet" href="../styles.css?v=45">
+  <link rel="stylesheet" href="../styles.css?v=45"><link rel="stylesheet" href="../vehicle-article-labs.css?v=1">
 </head>
 <body class="article-page" data-entry-format="research">
   <a class="skip-link" href="#article-main">Skip to article</a><div class="noise" aria-hidden="true"></div>
   <header class="site-header profile-header"><a class="brand" href="../index.html#top" aria-label="Academy of Science, home"><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span></a><nav class="primary-nav" id="primary-navigation" aria-label="Primary navigation" data-open="false"><a href="../index.html#top">Home</a><a href="../notes.html">Portfolio</a><a href="../index.html#capabilities">Capabilities</a><a href="../index.html#people">People</a><a href="../index.html#about">About</a><a href="../index.html#contact">Contact</a></nav><button class="site-nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><span class="site-nav-toggle-label">Menu</span><span class="site-nav-toggle-icon" aria-hidden="true"><i></i><i></i></span></button><button class="page-mode-toggle" id="pageModeToggle" type="button" aria-pressed="false"><span></span> Geek mode</button></header>
   <main id="article-main" tabindex="-1">
-    <header class="article-hero"><a class="back-link" href="../notes.html">← Portfolio</a><p class="eyebrow"><span>R&amp;D</span><span>3 min read</span></p><h1>Deep Vision-Based Vehicle Retrieval for Automated Smart Traffic Surveillance Systems</h1><p>A computer-vision study of vehicle retrieval for smart traffic surveillance, published at ICCAKM 2022.</p><div class="article-date"><span>Academy of Science</span><time datetime="2022-11-01">1 November 2022</time></div><p class="article-contributors"><a href="../shankaranarayan.html">Shankaranarayan N</a> <span>Lead author</span></p></header>
+    <header class="article-hero"><a class="back-link" href="../notes.html">← Portfolio</a><p class="eyebrow"><span>R&amp;D</span><span>3 min read</span></p><h1>Deep Vehicle Retrieval: A Field Map</h1><p>A review organizes deep vehicle-retrieval methods, benchmarks, evaluation measures, and challenges to generalizing across traffic cameras.</p><div class="article-date"><span>Academy of Science</span><time datetime="2022-11-01">1 November 2022</time></div><p class="article-contributors"><a href="../shankaranarayan.html">Shankaranarayan N</a> <span>Lead author</span></p></header>
 
-    <div class="article-layout"><aside><span>PORTFOLIO</span><div class="reading-line" aria-hidden="true"><i></i></div><a href="../notes.html">Browse the portfolio ↗</a></aside><div class="article-column"><article class="markdown-body" id="article-content"><h2>Problem</h2>
-<p>This conference paper investigates deep-vision methods for vehicle retrieval in automated smart traffic surveillance systems. Its focus is retrieving a target vehicle from surveillance imagery for intelligent traffic monitoring.</p>
+    <div class="article-layout"><aside><span>PORTFOLIO</span><div class="reading-line" aria-hidden="true"><i></i></div><a href="../notes.html">Browse the portfolio ↗</a></aside><div class="article-column"><article class="markdown-body" id="article-content"><p><img class="article-inline-visual" src="../assets/research/deep-vehicle-retrieval-map.svg" alt="Four stages show how vehicle-retrieval methods add learning, ranking, result refinement, and data preparation." loading="lazy"></p>
+<h2>Problem</h2>
+<p>Traffic monitoring depends on connecting observations of the same vehicle across images or cameras. This is difficult for two reasons: different vehicles may look alike, and one vehicle may look different as the camera angle, lighting, distance, or obstruction changes. License plates and sensors can also fail when visibility or environmental conditions are poor.</p>
+<p>The review treats retrieval as a ranked search: given a query vehicle image, find likely matches in a gallery. It looks at how deep-learning methods build these rankings, what benchmark datasets and measures researchers use, and why a good test-set score may not carry over to another city or camera setup.</p>
 <h2>Approach</h2>
-<p>Shankaranarayan N. and S. Sowmya Kamath are listed as authors. The available bibliographic record identifies the work and venue but does not expose a full abstract or enough methodological detail to attribute individual components of the study.</p>
+<p>This is a literature review, not a new model experiment. The authors say they followed PRISMA criteria, searched sources including IEEE Xplore, Scopus, Springer, and arXiv, and used terms around vehicles, identification, re-identification, and retrieval. They included English-language peer-reviewed journal and core-conference studies that validated their methods.</p>
+<p>The review organizes methods into four families. They build on one another, but are a map of design choices rather than a mandatory recipe:</p>
+<ol>
+<li><strong>Feature learning:</strong> a CNN or other model learns visual cues, including global appearance and local vehicle parts.</li>
+<li><strong>Metric learning:</strong> a loss function shapes the feature space so images of the same vehicle are closer than images of different vehicles.</li>
+<li><strong>Post-processing:</strong> re-ranking or tracklet context revises the initial candidate order after feature matching.</li>
+<li><strong>Pre-processing plus the previous stages:</strong> image cleanup, super-resolution, viewpoint generation, synthetic data, or domain adaptation addresses difficult or underrepresented inputs.</li>
+</ol>
+<p>It also compares common evaluation measures. Rank-k asks how often a correct vehicle appears within the first <em>k</em> results. Mean average precision (mAP) summarizes the precision of the ranked results across queries. The review tabulates datasets with different scales and camera coverage, including VeRi-776 (about 50,000 images, 776 vehicles, 20 cameras), VeRi-Wild (about 416,000 images, 40,671 vehicles, 174 cameras), and CityFlow (about 85,000 images, 880 vehicles, 40 cameras), using the counts reported in the paper.</p>
+<h2>Explore the method map</h2>
+<section class="vehicle-lab methods-lab" data-methods-lab aria-labelledby="methodsLabTitle">
+  <header class="vehicle-lab-head"><div><span class="vehicle-lab-kicker">INTERACTIVE · REVIEW EXPLORER</span><h3 id="methodsLabTitle">Add one capability at a time</h3></div><p>Choose a stage to see what it adds to vehicle retrieval—and what extra work comes with it.</p></header>
+  <div class="methods-stage-select" role="group" aria-label="Explore stages in the review taxonomy">
+    <button type="button" data-method-stage="1" aria-pressed="false"><span>01</span>Features</button><button type="button" data-method-stage="2" aria-pressed="false"><span>02</span>Metric learning</button><button type="button" data-method-stage="3" aria-pressed="false"><span>03</span>Re-ranking</button><button type="button" data-method-stage="4" aria-pressed="true"><span>04</span>Data preparation</button>
+  </div>
+  <div class="methods-explorer-grid">
+    <div class="methods-stack" aria-label="Cumulative system stages">
+      <div class="method-layer is-included" data-method-layer="1"><span>01</span><b>Feature learning</b><small>Encode appearance and parts</small><i>INPUT → FEATURES</i></div>
+      <div class="method-layer is-included" data-method-layer="2"><span>02</span><b>Metric learning</b><small>Shape distances by identity</small><i>FEATURES → RANKING SPACE</i></div>
+      <div class="method-layer is-included" data-method-layer="3"><span>03</span><b>Post-processing</b><small>Re-rank with context</small><i>RANKING → REFINED LIST</i></div>
+      <div class="method-layer is-included" data-method-layer="4"><span>04</span><b>Pre-processing</b><small>Prepare or adapt the data</small><i>DATA → TRAINING INPUT</i></div>
+    </div>
+    <div class="methods-stage-detail" aria-live="polite"><span class="vehicle-lab-label" data-method-class>CLASS 4 · CUMULATIVE</span><h4 data-method-title>Prepare difficult data</h4><p data-method-description>Image cleanup, synthetic viewpoints, and domain adaptation can address missing or difficult training examples.</p><div class="methods-tradeoff"><b>Trade-off</b><p data-method-tradeoff>More preprocessing can improve coverage, but synthetic images may differ from real camera footage and adaptation adds work.</p></div></div>
+  </div>
+  <div class="methods-dataset"><div><span class="vehicle-lab-label">DATASET COUNTS IN THE REVIEW</span><p>Benchmarks differ in scale and camera coverage; their scores are not directly comparable.</p></div><div class="methods-dataset-tabs" role="group" aria-label="Choose a dataset"><button type="button" data-method-dataset="veri" aria-pressed="true">VeRi-776</button><button type="button" data-method-dataset="wild" aria-pressed="false">VeRi-Wild</button><button type="button" data-method-dataset="cityflow" aria-pressed="false">CityFlow</button></div><div class="methods-dataset-counts" aria-live="polite"><div><b data-dataset-images>~50k</b><span>images</span></div><div><b data-dataset-vehicles>776</b><span>identities</span></div><div><b data-dataset-cameras>20</b><span>cameras</span></div></div></div>
+  <p class="vehicle-lab-caveat">This is the paper’s organizing map, not a universal deployment checklist. A system only needs the stages that solve its actual data and retrieval problems.</p>
+</section>
+
 <h2>Findings</h2>
-<p>The public records consulted confirm the conference publication and DOI, but do not provide verifiable quantitative results. This entry therefore makes no performance or accuracy claim.</p>
+<p>The review’s synthesis points to a few recurring patterns. Models that combine local details with the overall vehicle appearance can be more robust than ones that rely on a small set of cues. Spatial and temporal context can help when multiple frames are available, while metric learning—especially triplet-loss approaches—and re-ranking often improve retrieval in the surveyed experiments.</p>
+<p>The harder problem is transferring those gains. A model can perform well on a benchmark and still struggle with new cameras, changed lighting, occlusion, or a different vehicle population. Synthetic data and adaptation can help address data gaps, but introduce their own issues, including a mismatch between synthetic and real images and the work needed to label or adapt data. Benchmark scores from different datasets should not be read as a direct head-to-head comparison because their cameras, identities, and evaluation setups differ.</p>
+<p>The paper is a survey, so it does not report a new model score or prove one design is best for every deployment. Its useful output is a way to ask what evidence a system uses, how it ranks candidates, and whether its data and evaluation resemble the conditions where it will be used.</p>
+<h2>Paper</h2>
+<p>“Deep Vision Based Vehicle Retrieval for Automated Smart Traffic Surveillance Systems,” by Shankaranarayan N. and Sowmya Kamath S. In the proceedings of the 2022 3rd International Conference on Computation, Automation and Knowledge Management (ICCAKM 2022).</p>
 <h2>Citations and publications</h2>
 <ul>
-<li><a href="https://doi.org/10.1109/ICCAKM54721.2022.9990209" rel="noopener noreferrer">IEEE publication record</a></li>
+<li><a href="https://doi.org/10.1109/ICCAKM54721.2022.9990209" rel="noopener noreferrer">IEEE paper record and DOI</a></li>
 <li><a href="https://www.proceedings.com/content/066/066911webtoc.pdf" rel="noopener noreferrer">ICCAKM 2022 proceedings table of contents</a></li>
 </ul></article><section class="article-share" aria-labelledby="articleShareTitle" data-note-url="https://academyofscience.in/notes/deep-vision-vehicle-retrieval.html"><div><p class="eyebrow"><span>PORTFOLIO / SHARE</span></p><h2 id="articleShareTitle">Pass this work along.</h2><p>Share the entry directly, or make a visual card for your post.</p></div><div class="article-share-actions"><a class="share-action-primary" data-share-linkedin href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Facademyofscience.in%2Fnotes%2Fdeep-vision-vehicle-retrieval.html" target="_blank" rel="noopener noreferrer"><span>Share on LinkedIn</span><b aria-hidden="true">↗</b></a><button class="share-action-secondary" type="button" data-copy-url>Copy article URL</button><button class="share-action-secondary" type="button" data-native-share hidden>Share from this device</button><button class="share-open-button" type="button" data-open-share><span>Create social image</span><b aria-hidden="true">↗</b></button><span class="article-share-status" role="status" aria-live="polite" data-inline-share-status></span></div></section></div></div>
   </main>
-  <dialog class="share-dialog" id="fieldNoteShareDialog" aria-labelledby="shareDialogTitle" data-note-title="Deep Vision-Based Vehicle Retrieval for Automated Smart Traffic Surveillance Systems" data-note-category="R&amp;D" data-note-number="002" data-note-url="https://academyofscience.in/notes/deep-vision-vehicle-retrieval.html">
+  <dialog class="share-dialog" id="fieldNoteShareDialog" aria-labelledby="shareDialogTitle" data-note-title="Deep Vehicle Retrieval: A Field Map" data-note-category="R&amp;D" data-note-number="002" data-note-url="https://academyofscience.in/notes/deep-vision-vehicle-retrieval.html">
     <div class="share-dialog-frame">
       <header class="share-dialog-head"><div><p>PORTFOLIO / SHARE STUDIO</p><h2 id="shareDialogTitle">Shape your post</h2></div><button type="button" class="share-close" data-close-share aria-label="Close share studio">×</button></header>
       <div class="share-dialog-content">
@@ -48,8 +81,8 @@
           <div class="share-card" data-share-card data-format="linkedin">
             <div class="share-card-top"><span>ACADEMY OF SCIENCE</span><span>PORTFOLIO / R&amp;D</span></div>
             <p class="share-card-number">002 / R&amp;D</p>
-            <h3 data-share-title>Deep Vision-Based Vehicle Retrieval for Automated Smart Traffic Surveillance Systems</h3>
-            <p class="share-card-summary" data-share-summary>A computer-vision study of vehicle retrieval for smart traffic surveillance, published at ICCAKM 2022.</p>
+            <h3 data-share-title>Deep Vehicle Retrieval: A Field Map</h3>
+            <p class="share-card-summary" data-share-summary>A review organizes deep vehicle-retrieval methods, benchmarks, evaluation measures, and challenges to generalizing across traffic cameras.</p>
             <div class="share-card-orbit" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
             <div class="share-card-bottom"><span>INDEPENDENT AI RESEARCH &amp; DEVELOPMENT</span><span>ACADEMYOFSCIENCE.IN</span></div>
           </div>
@@ -69,6 +102,6 @@
     </div>
   </dialog>
   <footer class="site-footer"><div><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div><p>Ideas being tested.<br>Knowledge worth sharing.</p><div class="footer-meta"><a href="../notes.html">More from the portfolio ↑</a></div></footer>
-  <script src="../page-mode.js?v=1"></script><script src="../theme-assets.js?v=8"></script><script src="../note-sharing.js?v=2"></script><script src="../site-nav.js?v=1"></script><script src="../video-summary.js?v=2"></script>
+  <script src="../page-mode.js?v=1"></script><script src="../theme-assets.js?v=8"></script><script src="../note-sharing.js?v=2"></script><script src="../site-nav.js?v=1"></script><script src="../video-summary.js?v=2"></script><script src="../vehicle-article-labs.js?v=1"></script>
 </body>
 </html>

@@ -201,7 +201,7 @@ Preview these representative routes:
 
 - `/`
 - `/notes.html`
-- `/notes/xai-for-dummies.html`
+- `/notes/why-explainability-matters.html` (the former XAI for Dummies article redirects here)
 - `/shankaranarayan.html`
 - `/satwik.html`
 

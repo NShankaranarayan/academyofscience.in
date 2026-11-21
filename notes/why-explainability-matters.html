@@ -5,12 +5,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#000000">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src https://www.youtube-nocookie.com; script-src 'self' ; script-src-attr 'none'; style-src 'self' ; font-src 'self'; img-src 'self' data: https://i.ytimg.com; connect-src 'self' ; media-src 'self'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self' ; script-src-attr 'none'; style-src 'self' ; font-src 'self'; img-src 'self' data: ; connect-src 'self' ; media-src 'self'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="description" content="A working premise for interpretable decisions, accountable systems, and AI that acts in the physical world.">
+  <meta name="description" content="Explore what explanations can tell us during training and after training—and where their evidence stops.">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Why explainability matters when AI acts">
-  <meta property="og:description" content="A working premise for interpretable decisions, accountable systems, and AI that acts in the physical world.">
+  <meta property="og:description" content="Explore what explanations can tell us during training and after training—and where their evidence stops.">
   <meta property="og:image" content="https://academyofscience.in/assets/research/explainable-ai.png">
   <meta property="og:image:alt" content="Research illustration for Why explainability matters when AI acts">
   <meta property="og:url" content="https://academyofscience.in/notes/why-explainability-matters.html">
@@ -20,28 +20,161 @@
   <link rel="icon" href="../assets/logo.png">
   <script src="../themes/active-theme.js?v=dcda7e55ac87"></script>
   <script src="../mode-init.js?v=1"></script>
-  <link rel="stylesheet" href="../styles.css?v=45">
+  <link rel="stylesheet" href="../styles.css?v=45"><link rel="stylesheet" href="../xai-playground.css?v=4">
 </head>
 <body class="article-page" data-entry-format="article">
   <a class="skip-link" href="#article-main">Skip to article</a><div class="noise" aria-hidden="true"></div>
   <header class="site-header profile-header"><a class="brand" href="../index.html#top" aria-label="Academy of Science, home"><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span></a><nav class="primary-nav" id="primary-navigation" aria-label="Primary navigation" data-open="false"><a href="../index.html#top">Home</a><a href="../notes.html">Portfolio</a><a href="../index.html#capabilities">Capabilities</a><a href="../index.html#people">People</a><a href="../index.html#about">About</a><a href="../index.html#contact">Contact</a></nav><button class="site-nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><span class="site-nav-toggle-label">Menu</span><span class="site-nav-toggle-icon" aria-hidden="true"><i></i><i></i></span></button><button class="page-mode-toggle" id="pageModeToggle" type="button" aria-pressed="false"><span></span> Geek mode</button></header>
   <main id="article-main" tabindex="-1">
-    <header class="article-hero"><a class="back-link" href="../notes.html">← Portfolio</a><p class="eyebrow"><span>Articles</span><span>2 min read</span></p><h1>Why explainability matters when AI acts</h1><p>A working premise for interpretable decisions, accountable systems, and AI that acts in the physical world.</p><div class="article-date"><span>Academy of Science</span><time datetime="2026-11-13">13 November 2026</time></div><p class="article-contributors"><a href="../shankaranarayan.html">Shankaranarayan N</a> <span>Author</span></p></header>
-<section class="article-video-summary" aria-label="Video summary"><div class="article-video-heading"><p>VIDEO SUMMARY <span>01:00</span></p><a href="#article-content">Read full work <b aria-hidden="true">↓</b></a></div><figure><a class="video-poster" href="https://www.youtube.com/watch?v=aqz-KE-bpKQ" target="_blank" rel="noopener noreferrer" data-video-provider="youtube" data-video-embed="https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ?end=60&amp;cc_load_policy=1&amp;playsinline=1&amp;rel=0" data-video-title="Play 01:00 video summary for Why explainability matters when AI acts" aria-label="Load video summary; opens the video host if playback is unavailable"><img src="https://i.ytimg.com/vi/aqz-KE-bpKQ/hqdefault.jpg" alt="" loading="lazy"><span class="video-play-button" aria-hidden="true"><i>▶</i> Play summary</span></a><figcaption>Manual-test placeholder: a one-minute sample to verify the video summary player, captions setting, thumbnail, transcript, and Read full work action. Replace before publication.</figcaption></figure><details class="video-transcript"><summary>Read video transcript</summary><p>[00:00] Placeholder transcript for testing the video summary layout and playback controls.
-[00:30] This sample is not a transcript of the research article or a research result. Replace it with an accurate transcript before publication.</p></details></section>
+    <header class="article-hero"><a class="back-link" href="../notes.html">← Portfolio</a><p class="eyebrow"><span>Articles</span><span>7 min · interactive examples</span></p><p class="article-flag">Explainable AI · design-time choices and post-hoc checks</p><h1>Why explainability matters when AI acts</h1><p>Explore what explanations can tell us during training and after training—and where their evidence stops.</p><div class="article-date"><span>Academy of Science</span><time datetime="2026-11-13">13 November 2026</time></div><p class="article-contributors"><a href="../shankaranarayan.html">Shankaranarayan N</a> <span>Author</span></p></header>
+
     <div class="article-layout"><aside><span>PORTFOLIO</span><div class="reading-line" aria-hidden="true"><i></i></div><a href="../notes.html">Browse the portfolio ↗</a></aside><div class="article-column"><article class="markdown-body" id="article-content"><h2>Explanation</h2>
-<p>When an AI system influences a decision or acts in the physical world, performance alone is not enough. People need ways to inspect its behaviour, understand its limits, and decide when to trust or override it.</p>
-<p>Explainable AI is one of the Academy&#x27;s core specializations. This note is a starting point for our work on interpretability, uncertainty, evaluation, human oversight, and responsible deployment across different AI systems and application domains. It is a research direction, not a claim that the lab has completed a particular system or study.</p>
+<p>An image model labels a photo <strong>cat</strong>. Before a person relies on that output, they may ask what signals influenced it, whether the same pattern holds on other photos, or what change would flip the label. <strong>Explainable AI (XAI)</strong> is a family of methods for investigating those questions.</p>
+<p>There is no single explanation that answers every question. A feature score, image highlight, or “what if?” answer is evidence about model behavior—not automatically the true cause of a prediction, proof that a model is correct, or proof that it is fair. The right explanation depends on who needs it and what decision they must make.</p>
+<h3>Start with one prediction</h3>
+<p>Use the toy cat/dog model below. Pick an example, change its visible cues, compare a <strong>single-case explanation</strong> with the <strong>whole model rule</strong>, then ask the playground to find a small change that flips the label.</p>
+<section class="xai-playground" data-xai-playground aria-labelledby="xai-title">
+  <header class="xai-head">
+    <div><span class="xai-kicker">XAI PLAYGROUND · TOY MODEL</span><h3 id="xai-title">Why did the model call this a cat?</h3></div>
+    <p>Change the clues it sees, inspect the score, then ask what would flip the result.</p>
+  </header>
+  <div class="xai-lab-grid">
+    <section class="xai-inputs" aria-labelledby="xai-input-title">
+      <h4 id="xai-input-title">Choose an example</h4>
+      <div class="xai-presets" role="group" aria-label="Choose a toy image example">
+        <button type="button" data-xai-preset="grass-cat" aria-pressed="true">Cat on grass</button>
+        <button type="button" data-xai-preset="rug-dog" aria-pressed="false">Dog on a rug</button>
+        <button type="button" data-xai-preset="ambiguous" aria-pressed="false">Ambiguous crop</button>
+      </div>
+      <p class="xai-instruction">These sliders stand in for image cues. They are not controls for a real photo.</p>
+      <label class="xai-feature-input"><span>Whiskers visible <output data-xai-value="whiskers">90%</output></span><input type="range" min="0" max="100" value="90" data-xai-input="whiskers" aria-label="How strongly whiskers are visible"></label>
+      <label class="xai-feature-input"><span>Pointed ears <output data-xai-value="ears">85%</output></span><input type="range" min="0" max="100" value="85" data-xai-input="ears" aria-label="How strongly pointed ears are visible"></label>
+      <label class="xai-feature-input"><span>Long snout <output data-xai-value="snout">10%</output></span><input type="range" min="0" max="100" value="10" data-xai-input="snout" aria-label="How strongly a long snout is visible"></label>
+      <label class="xai-feature-input"><span>Green grass background <output data-xai-value="grass">100%</output></span><input type="range" min="0" max="100" value="100" data-xai-input="grass" aria-label="How strongly a green grass background is visible"></label>
+      <button type="button" class="xai-counterfactual" data-xai-counterfactual>Find a small change that flips the label</button>
+      <p class="xai-counterfactual-result" data-xai-counterfactual-result aria-live="polite">The what-if changes model inputs only; it does not edit an image.</p>
+    </section>
+    <section class="xai-explanation" aria-label="Model output and explanation">
+      <div class="xai-output-card" aria-live="polite">
+        <div><span class="xai-section-label">TOY MODEL SCORE</span><b class="xai-score" data-xai-score>88%</b></div>
+        <div><span class="xai-section-label">LABEL AT 50% CUTOFF</span><b class="xai-label" data-xai-label>CAT</b></div>
+        <p data-xai-score-note>The score comes from a hand-written rule; it is not a calibrated confidence.</p>
+      </div>
+      <div class="xai-view-heading"><h4>What moved this result?</h4><div class="xai-view-switch" role="group" aria-label="Choose an explanation view"><button type="button" data-xai-view="case" aria-pressed="true">This example</button><button type="button" data-xai-view="rule" aria-pressed="false">Whole toy rule</button></div></div>
+      <p class="xai-view-note" data-xai-view-note>Each bar shows how one visible cue moves this example’s score from the 34% baseline.</p>
+      <ul class="xai-attributions" data-xai-attributions aria-label="Feature contributions to the toy model score">
+        <li data-xai-feature="whiskers"><span>Whiskers</span><b data-xai-impact>+16 points</b><progress data-xai-impact-bar max="30" value="16" aria-label="Whiskers contribution"></progress></li>
+        <li data-xai-feature="ears"><span>Pointed ears</span><b data-xai-impact>+14 points</b><progress data-xai-impact-bar max="30" value="14" aria-label="Pointed ears contribution"></progress></li>
+        <li data-xai-feature="snout"><span>Long snout</span><b data-xai-impact>-2 points</b><progress data-xai-impact-bar max="30" value="2" aria-label="Long snout contribution"></progress></li>
+        <li data-xai-feature="grass"><span>Grass background</span><b data-xai-impact>+26 points</b><progress data-xai-impact-bar max="30" value="26" aria-label="Grass background contribution"></progress></li>
+      </ul>
+      <p class="xai-live-summary" data-xai-summary aria-live="polite">The grass cue is the strongest push toward “cat” in this example.</p>
+      <p class="xai-caveat"><strong>Notice the shortcut:</strong> grass has a large weight even though the background does not determine the animal. This toy exposes that flaw by design.</p>
+    </section>
+  </div>
+  <details class="xai-model-rule"><summary>See the toy model’s rule</summary><p>Cat score = 34 + 18×whiskers + 16×pointed ears − 22×long snout + 26×grass. Each cue is between 0 and 1; the label changes at 50. The bars are exact arithmetic for this rule, not an explanation generated for a real neural network.</p></details>
+  <p class="xai-footnote">Try all three examples. Compare the single-case contributions with the fixed weights, then flip the label. A small mathematical change is not automatically a realistic or causal change in the world.</p>
+</section>
+
+<p>This is a deliberately small, additive rule. Its feature bars are calculated directly from the displayed formula; they are not SHAP or LIME output, and the toy does not analyze a real photograph. The rule deliberately gives “green grass” a misleading weight, so you can see how a shortcut can raise the cat score even when the animal cues do not support it.</p>
+<h3>XAI can shape training—or inspect a finished model</h3>
+<p>Explainability is not only a picture added after a model is built. <strong>During training</strong>, a team can choose an interpretable structure, such as a concept bottleneck that predicts human-named attributes before the final label, or add explanation targets or constraints to the learning objective. This can make parts of the decision inspectable by design, but it may require concept labels and still needs evaluation.</p>
+<p><strong>After training</strong>, post-hoc methods probe a fixed model. Saliency and Grad-CAM trace sensitivity or class-related activation back to image regions; occlusion asks how the score changes when a region is hidden. These methods can be applied without retraining, but they do not expose every internal rule and can produce plausible-looking evidence that is incomplete or misleading.</p>
+<section class="xai-timing" data-xai-timing aria-labelledby="xai-timing-title">
+  <header><span class="xai-kicker">WHEN DO WE EXPLAIN?</span><h3 id="xai-timing-title">Choose where explanation enters the workflow</h3></header>
+  <div class="xai-timing-tabs" role="group" aria-label="Compare explainability approaches">
+    <button type="button" data-xai-timing-tab="training" aria-pressed="true">During training</button>
+    <button type="button" data-xai-timing-tab="posthoc" aria-pressed="false">After training</button>
+  </div>
+  <div class="xai-timing-flow" aria-live="polite">
+    <div><span data-xai-timing-step>TRAIN</span><b data-xai-timing-model>Data + concept labels</b><small data-xai-timing-detail>Teach the model to predict visible concepts, then use those concepts to make its final prediction.</small></div>
+    <i aria-hidden="true">→</i>
+    <div><span>MODEL</span><b data-xai-timing-output>Inspectable by design</b><small data-xai-timing-example>Example: “whiskers present” → “cat.” A person can inspect or correct the concept.</small></div>
+  </div>
+  <p class="xai-timing-caveat" data-xai-timing-caveat>Costs: concept definitions and labels take work, and the model can still miss a concept or use it incorrectly.</p>
+</section>
+
 <h2>Visuals</h2>
-<p><img class="article-inline-visual" src="../assets/research/explainable-ai.png" alt="Concept illustration of an AI decision connected to interpretable evidence and uncertainty" loading="lazy"></p>
+<p>This bundled example uses a ResNet50 ImageNet classifier. Its cat- and dog-target Grad-CAM overlays are precomputed outputs from the open-source <code>pytorch-grad-cam</code> project; this article does not run the model or show a prediction score. Choose “dog” and then “cat.” The same photo produces different maps because Grad-CAM explains a selected class.</p>
+<section class="xai-vision" data-xai-vision aria-labelledby="xai-vision-title">
+  <header class="xai-vision-head">
+    <div><span class="xai-kicker">PRECOMPUTED · RESNET50 · NO UPLOAD</span><h3 id="xai-vision-title">One photo. Two class explanations.</h3></div>
+    <p>Choose which class to inspect. The same image gets a different Grad-CAM map for “dog” and “cat.”</p>
+  </header>
+  <div class="xai-gradcam-panel">
+    <figure class="xai-gradcam-figure">
+      <img data-xai-gradcam-image src="../assets/xai-demo/gradcam-cat-dog.jfif" alt="Original photo of a puppy beside a kitten">
+      <figcaption data-xai-gradcam-caption>Original image · puppy and kitten together</figcaption>
+    </figure>
+    <div class="xai-gradcam-controls">
+      <span class="xai-section-label">SELECT A VIEW</span>
+      <div class="xai-gradcam-options" role="group" aria-label="Choose an image or Grad-CAM target">
+        <button type="button" data-xai-gradcam-view="original" aria-pressed="true">Original</button>
+        <button type="button" data-xai-gradcam-view="dog" aria-pressed="false">Explain “dog”</button>
+        <button type="button" data-xai-gradcam-view="cat" aria-pressed="false">Explain “cat”</button>
+      </div>
+      <div class="xai-gradcam-explanation" aria-live="polite">
+        <b data-xai-gradcam-title>Start with the photo</b>
+        <p data-xai-gradcam-copy>This bundled example contains both animals. The overlays are precomputed outputs from a ResNet50 ImageNet example using Grad-CAM; this page does not run the model.</p>
+      </div>
+      <p class="xai-gradcam-caveat"><strong>Read the map carefully:</strong> warmer areas have stronger Grad-CAM response for the selected class in this model. The map is coarse evidence, not proof of what the model “understood,” and it does not show confidence.</p>
+      <a class="xai-real-demo-link" href="https://github.com/jacobgil/pytorch-grad-cam/tree/master/examples" target="_blank" rel="noopener noreferrer">Open the source example and model details</a>
+    </div>
+  </div>
+  <details class="xai-privacy-note"><summary>Source, licensing, and what runs here</summary>
+    <p>The input photo and precomputed class overlays come from the <a href="https://github.com/jacobgil/pytorch-grad-cam/tree/master/examples" target="_blank" rel="noopener noreferrer">pytorch-grad-cam example repository</a>: <code>dog_cat.jfif</code>, <code>resnet50_dog_gradcam_cam.jpg</code>, and <code>resnet50_cat_gradcam_cam.jpg</code>. Its README lists the overlays under ResNet50 examples. This page switches among bundled files; no upload, model inference, or external image request is used.</p>
+    <p>Repository license and attribution: <a href="../assets/xai-demo/pytorch-grad-cam-MIT.txt">MIT license notice for Jacob Gildenblat’s pytorch-grad-cam</a>.</p>
+  </details>
+</section>
+
+<p>The warmer region marks stronger response in that class-specific map; it is not a confidence value or proof that the highlighted pixels caused the prediction. Grad-CAM uses gradients from a chosen class score to weight feature maps from a convolutional layer. The official <a href="https://keras.io/examples/vision/grad_cam/" rel="noopener noreferrer">Keras Grad-CAM example</a> shows the full computation on a pretrained Xception model.</p>
+<h3>Four questions, four kinds of explanation</h3>
+<ul>
+<li><strong>Local:</strong> Which inputs moved this one prediction up or down? The playground’s case view answers this for one toy example.</li>
+<li><strong>Global:</strong> What patterns or rules does the model use across its behavior? A global view summarizes broader behavior; it cannot be inferred from one example alone.</li>
+<li><strong>Counterfactual:</strong> What is the smallest input change that would alter this output? The change must also be possible and meaningful in the real world.</li>
+<li><strong>Example based:</strong> Which similar cases help a person understand the current result, and where do those examples differ?</li>
+</ul>
+<p>These views answer different questions. A convincing local explanation does not establish how the model behaves for other people, images, or conditions.</p>
+<h3>How common methods work</h3>
+<p><strong>Feature attribution</strong> assigns contribution scores to inputs. <a href="https://proceedings.neurips.cc/paper_files/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html" rel="noopener noreferrer">SHAP</a> uses Shapley-value ideas to allocate a prediction among features. <strong>LIME</strong> perturbs an example and fits a simpler model near it, aiming to approximate behavior around that particular case. <strong>Integrated Gradients</strong> attributes a neural network’s output to input features along a path from a chosen baseline to the example.</p>
+<p>For images, attribution can be shown as a heatmap over pixels or regions. A bright area means the selected method assigns it importance under its assumptions; it is not a photograph of the model’s reasoning. Different methods, baselines, or perturbations can produce different views. Choose the method that fits the question and model, then test whether it actually reflects model behavior. <a href="https://openaccess.thecvf.com/content_iccv_2017/html/Selvaraju_Grad-CAM_Visual_Explanations_ICCV_2017_paper.html" rel="noopener noreferrer">Grad-CAM</a> uses gradients flowing into a convolutional layer to create a class-related localization map. The photo above shows precomputed maps; it does not calculate a new map for an arbitrary input.</p>
+<h3>An explanation can be persuasive and still mislead</h3>
+<p>The playground’s rule uses grass as a shortcut: it raises “cat” even though grass does not determine the animal. Real models can learn similar correlations—for example, an object may co-occur with a background, watermark, camera, or hospital workflow. An explanation may help uncover that pattern, but the explanation itself needs checking.</p>
+<p>Before relying on an explanation, ask:</p>
+<ul>
+<li><strong>Does it depend on the model?</strong> If model parameters or labels are randomized, does the explanation change in a way that reflects the altered model?</li>
+<li><strong>Is it stable enough?</strong> Do small, irrelevant changes leave the important parts mostly consistent?</li>
+<li><strong>Does the proposed change make sense?</strong> A model-feature change may be impossible, unsafe, or outside the data the model learned from.</li>
+<li><strong>Who is it for?</strong> A debugging view for an engineer is not automatically a useful explanation for an operator or a person affected by the decision.</li>
+</ul>
+<p>Research on saliency maps shows why a visually appealing heatmap alone is not adequate validation. <a href="https://proceedings.neurips.cc/paper/2018/hash/294a8ed24b1ad22ec2e7efea049b8737-Abstract.html" rel="noopener noreferrer">Sanity checks for saliency maps</a> compare explanations against changes to model parameters and training labels. No one check proves an explanation is faithful, but testing is stronger than trusting visual polish.</p>
+<h3>Explanations support oversight; they do not replace it</h3>
+<p>For consequential decisions, evaluate accuracy, uncertainty, robustness, privacy, and bias as well as explanation quality. NIST includes explainability and interpretability among AI trustworthiness characteristics, alongside validity, safety, fairness, and accountability. Design an explanation for a real audience and action: say what it summarizes, where it may fail, and how a person can question or override the result.</p>
+<h3>A practical XAI checklist</h3>
+<ol>
+<li><strong>Name the audience and question.</strong> Are you debugging one output, comparing behavior across a dataset, or helping someone decide what to do?</li>
+<li><strong>Select a method for the model and input.</strong> A pixel attribution method does not answer the same question as a feature contribution or a counterfactual.</li>
+<li><strong>Validate the explanation.</strong> Check model dependence, sensitivity to reasonable perturbations, and consistency with known domain evidence.</li>
+<li><strong>Check the limits.</strong> Explanations are not causal claims, confidence estimates, fairness certificates, or substitutes for model evaluation.</li>
+<li><strong>Connect it to human action.</strong> Make uncertainty and recourse clear; decide who can review, override, or stop the system.</li>
+</ol>
+<p>Explainability is not about making AI tell a convincing story. It is about producing useful, testable evidence that helps people understand model behavior and decide how much to rely on it.</p>
 <h2>References</h2>
 <ul>
+<li><a href="https://airc.nist.gov/airmf-resources/airmf/3-sec-characteristics/" rel="noopener noreferrer">NIST AI Risk Management Framework: explainable and interpretable AI</a></li>
 <li><a href="https://proceedings.neurips.cc/paper_files/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html" rel="noopener noreferrer">A Unified Approach to Interpreting Model Predictions (SHAP)</a></li>
 <li><a href="https://doi.org/10.1145/2939672.2939778" rel="noopener noreferrer">“Why Should I Trust You?”: Explaining the Predictions of Any Classifier (LIME)</a></li>
 <li><a href="https://proceedings.mlr.press/v70/sundararajan17a.html" rel="noopener noreferrer">Axiomatic Attribution for Deep Networks (Integrated Gradients)</a></li>
+<li><a href="https://proceedings.neurips.cc/paper/2018/hash/294a8ed24b1ad22ec2e7efea049b8737-Abstract.html" rel="noopener noreferrer">Sanity Checks for Saliency Maps</a></li>
+<li><a href="https://proceedings.mlr.press/v119/koh20a.html" rel="noopener noreferrer">Concept Bottleneck Models</a></li>
+<li><a href="https://arxiv.org/abs/1311.2901" rel="noopener noreferrer">Visualizing and Understanding Convolutional Networks (Zeiler and Fergus)</a></li>
+<li><a href="https://keras.io/examples/vision/grad_cam/" rel="noopener noreferrer">Keras: Grad-CAM class activation visualization</a></li>
+<li><a href="https://github.com/jacobgil/pytorch-grad-cam/tree/master/examples" rel="noopener noreferrer">PyTorch Grad-CAM: ResNet50 cat/dog example outputs</a></li>
+<li><a href="https://openaccess.thecvf.com/content_iccv_2017/html/Selvaraju_Grad-CAM_Visual_Explanations_ICCV_2017_paper.html" rel="noopener noreferrer">Grad-CAM: Visual Explanations From Deep Networks via Gradient-Based Localization</a></li>
 </ul>
 <h2>Related work</h2>
-<p>For an accessible introduction to explanation types and their limitations, see <a href="xai-for-dummies.html">XAI for Dummies</a>.</p></article><section class="article-share" aria-labelledby="articleShareTitle" data-note-url="https://academyofscience.in/notes/why-explainability-matters.html"><div><p class="eyebrow"><span>PORTFOLIO / SHARE</span></p><h2 id="articleShareTitle">Pass this work along.</h2><p>Share the entry directly, or make a visual card for your post.</p></div><div class="article-share-actions"><a class="share-action-primary" data-share-linkedin href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Facademyofscience.in%2Fnotes%2Fwhy-explainability-matters.html" target="_blank" rel="noopener noreferrer"><span>Share on LinkedIn</span><b aria-hidden="true">↗</b></a><button class="share-action-secondary" type="button" data-copy-url>Copy article URL</button><button class="share-action-secondary" type="button" data-native-share hidden>Share from this device</button><button class="share-open-button" type="button" data-open-share><span>Create social image</span><b aria-hidden="true">↗</b></button><span class="article-share-status" role="status" aria-live="polite" data-inline-share-status></span></div></section></div></div>
+<p>For the next step from model behavior to serving it for real users, read <a href="model-to-production.html">How AI models reach production</a>.</p></article><section class="article-share" aria-labelledby="articleShareTitle" data-note-url="https://academyofscience.in/notes/why-explainability-matters.html"><div><p class="eyebrow"><span>PORTFOLIO / SHARE</span></p><h2 id="articleShareTitle">Pass this work along.</h2><p>Share the entry directly, or make a visual card for your post.</p></div><div class="article-share-actions"><a class="share-action-primary" data-share-linkedin href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Facademyofscience.in%2Fnotes%2Fwhy-explainability-matters.html" target="_blank" rel="noopener noreferrer"><span>Share on LinkedIn</span><b aria-hidden="true">↗</b></a><button class="share-action-secondary" type="button" data-copy-url>Copy article URL</button><button class="share-action-secondary" type="button" data-native-share hidden>Share from this device</button><button class="share-open-button" type="button" data-open-share><span>Create social image</span><b aria-hidden="true">↗</b></button><span class="article-share-status" role="status" aria-live="polite" data-inline-share-status></span></div></section></div></div>
   </main>
   <dialog class="share-dialog" id="fieldNoteShareDialog" aria-labelledby="shareDialogTitle" data-note-title="Why explainability matters when AI acts" data-note-category="Articles" data-note-number="001" data-note-url="https://academyofscience.in/notes/why-explainability-matters.html">
     <div class="share-dialog-frame">
@@ -52,7 +185,7 @@
             <div class="share-card-top"><span>ACADEMY OF SCIENCE</span><span>PORTFOLIO / Articles</span></div>
             <p class="share-card-number">001 / Articles</p>
             <h3 data-share-title>Why explainability matters when AI acts</h3>
-            <p class="share-card-summary" data-share-summary>A working premise for interpretable decisions, accountable systems, and AI that acts in the physical world.</p>
+            <p class="share-card-summary" data-share-summary>Explore what explanations can tell us during training and after training—and where their evidence stops.</p>
             <div class="share-card-orbit" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
             <div class="share-card-bottom"><span>INDEPENDENT AI RESEARCH &amp; DEVELOPMENT</span><span>ACADEMYOFSCIENCE.IN</span></div>
           </div>
@@ -72,6 +205,6 @@
     </div>
   </dialog>
   <footer class="site-footer"><div><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div><p>Ideas being tested.<br>Knowledge worth sharing.</p><div class="footer-meta"><a href="../notes.html">More from the portfolio ↑</a></div></footer>
-  <script src="../page-mode.js?v=1"></script><script src="../theme-assets.js?v=8"></script><script src="../note-sharing.js?v=2"></script><script src="../site-nav.js?v=1"></script><script src="../video-summary.js?v=2"></script>
+  <script src="../page-mode.js?v=1"></script><script src="../theme-assets.js?v=8"></script><script src="../note-sharing.js?v=2"></script><script src="../site-nav.js?v=1"></script><script src="../video-summary.js?v=2"></script><script src="../xai-playground.js?v=1"></script><script src="../xai-vision.js?v=3"></script><script src="../xai-timing.js?v=1"></script>
 </body>
 </html>
