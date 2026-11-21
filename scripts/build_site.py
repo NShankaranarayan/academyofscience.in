@@ -40,6 +40,7 @@ PEOPLE = {
 @dataclass(frozen=True)
 class Note:
     title: str
+    hero_label: str
     slug: str
     content_type: str
     category: str
@@ -229,7 +230,7 @@ def load_notes() -> list[Note]:
         elif optional_video_fields.intersection(metadata):
             raise ValueError(f"{path}: videoDuration, videoThumbnail, videoCaption, and videoTranscript require videoUrl")
         notes.append(Note(
-            title=metadata["title"], slug=metadata["slug"], content_type=metadata["type"], category=metadata["category"], format=entry_format,
+            title=metadata["title"], hero_label=metadata.get("heroLabel", ""), slug=metadata["slug"], content_type=metadata["type"], category=metadata["category"], format=entry_format,
             published=metadata["date"], read_time=metadata["readTime"],
             excerpt=metadata["excerpt"], number=metadata["number"],
             home=metadata.get("home", "false").lower() == "true", body=body,
@@ -474,6 +475,7 @@ def build_articles(notes: list[Note]) -> None:
         has_production_zoom = "{{production-zoom}}" in note.body
         path.write_text(fill_template("note.html", {
             "TITLE": html.escape(note.title, quote=True), "DESCRIPTION": html.escape(note.excerpt, quote=True),
+            "HERO_LABEL": f'<p class="article-flag">{html.escape(note.hero_label)}</p>' if note.hero_label else "",
             "SHARE_IMAGE_URL": html.escape(f"https://academyofscience.in/{note.share_image}", quote=True),
             "CATEGORY": html.escape(note.content_type, quote=True), "READ_TIME": html.escape(note.read_time),
             "FORMAT": html.escape(note.format, quote=True),
@@ -487,8 +489,8 @@ def build_articles(notes: list[Note]) -> None:
             ),
             "VIDEO_SUMMARY": video_summary_markup(note),
             "ARTICLE_BODY": render_markdown(note.body),
-            "PRODUCTION_ASSETS": '<link rel="stylesheet" href="../production-zoom.css?v=3">' if has_production_zoom else "",
-            "PRODUCTION_SCRIPT": '<script src="../production-zoom.js?v=3"></script>' if has_production_zoom else "",
+            "PRODUCTION_ASSETS": '<link rel="stylesheet" href="../production-zoom.css?v=10">' if has_production_zoom else "",
+            "PRODUCTION_SCRIPT": '<script src="../production-zoom.js?v=10"></script>' if has_production_zoom else "",
         }), encoding="utf-8")
     for stale in OUTPUT_DIR.glob("*.html"):
         if stale not in expected:
