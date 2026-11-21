@@ -75,4 +75,4 @@ Use the controls, scroll, or arrow keys to move from one model container through
 
 ## Related work
 
-Start with [Explainable AI](xai-for-dummies.html) to explore how model behavior can be understood and evaluated.
+Start with [Explainable AI](why-explainability-matters.html) to explore how model behavior can be understood and evaluated.

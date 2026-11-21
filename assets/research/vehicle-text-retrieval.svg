@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 390" role="img" aria-labelledby="title desc">
+  <title id="title">How text finds a vehicle in video</title>
+  <desc id="desc">A text description and three visual cues are encoded into features, compared, and used to rank candidate vehicles.</desc>
+  <rect width="900" height="390" rx="18" fill="#f1efe8"/>
+  <text x="34" y="38" fill="#77766e" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2">TEXT-TO-VEHICLE RETRIEVAL · CONCEPTUAL VIEW</text>
+  <rect x="34" y="68" width="195" height="80" rx="10" fill="#fffdf7" stroke="#c9c3b5"/>
+  <text x="52" y="94" fill="#77766e" font-family="Arial,sans-serif" font-size="12" font-weight="700">A PERSON DESCRIBES</text>
+  <text x="52" y="120" fill="#282924" font-family="Arial,sans-serif" font-size="16">“white van turns left”</text>
+  <rect x="34" y="170" width="195" height="154" rx="10" fill="#fffdf7" stroke="#c9c3b5"/>
+  <text x="52" y="197" fill="#77766e" font-family="Arial,sans-serif" font-size="12" font-weight="700">VIDEO EVIDENCE</text>
+  <rect x="52" y="212" width="158" height="27" rx="6" fill="#e9e5d9"/>
+  <rect x="52" y="246" width="158" height="27" rx="6" fill="#e9e5d9"/>
+  <rect x="52" y="280" width="158" height="27" rx="6" fill="#e9e5d9"/>
+  <circle cx="67" cy="225" r="5" fill="#a47b3d"/><text x="81" y="229" fill="#282924" font-family="Arial,sans-serif" font-size="12">vehicle appearance</text>
+  <circle cx="67" cy="259" r="5" fill="#a47b3d"/><text x="81" y="263" fill="#282924" font-family="Arial,sans-serif" font-size="12">scene surroundings</text>
+  <circle cx="67" cy="293" r="5" fill="#a47b3d"/><text x="81" y="297" fill="#282924" font-family="Arial,sans-serif" font-size="12">direction of travel</text>
+  <path d="M240 106h45M240 247h45" fill="none" stroke="#a47b3d" stroke-width="2"/>
+  <path d="m279 100 8 6-8 6M279 241l8 6-8 6" fill="none" stroke="#a47b3d" stroke-width="2"/>
+  <rect x="298" y="68" width="230" height="256" rx="12" fill="#e7e3d8" stroke="#c9c3b5"/>
+  <text x="321" y="100" fill="#77766e" font-family="Arial,sans-serif" font-size="12" font-weight="700">LEARNED FEATURES</text>
+  <rect x="320" y="117" width="186" height="54" rx="8" fill="#fffdf7" stroke="#d3cdbc"/>
+  <text x="342" y="140" fill="#282924" font-family="Arial,sans-serif" font-size="14" font-weight="700">Text encoder</text><text x="342" y="158" fill="#77766e" font-family="Arial,sans-serif" font-size="11">BERT / RoBERTa</text>
+  <rect x="320" y="184" width="186" height="54" rx="8" fill="#fffdf7" stroke="#d3cdbc"/>
+  <text x="342" y="207" fill="#282924" font-family="Arial,sans-serif" font-size="14" font-weight="700">Visual branches</text><text x="342" y="225" fill="#77766e" font-family="Arial,sans-serif" font-size="11">vehicle · scene · direction</text>
+  <rect x="320" y="251" width="186" height="48" rx="8" fill="#d9cfb5" stroke="#c2b58f"/>
+  <text x="342" y="280" fill="#282924" font-family="Arial,sans-serif" font-size="14" font-weight="700">Comparable vectors</text>
+  <path d="M414 171v9M414 238v9" stroke="#a47b3d" stroke-width="2"/><path d="m408 176 6 7 6-7M408 243l6 7 6-7" fill="none" stroke="#a47b3d" stroke-width="2"/>
+  <path d="M540 195h58" fill="none" stroke="#a47b3d" stroke-width="2"/><path d="m592 189 8 6-8 6" fill="none" stroke="#a47b3d" stroke-width="2"/>
+  <rect x="612" y="116" width="250" height="160" rx="12" fill="#fffdf7" stroke="#c9c3b5"/>
+  <text x="636" y="146" fill="#77766e" font-family="Arial,sans-serif" font-size="12" font-weight="700">MATCH AND RANK</text>
+  <text x="636" y="177" fill="#282924" font-family="Arial,sans-serif" font-size="14" font-weight="700">Similarity score</text>
+  <rect x="636" y="192" width="196" height="10" rx="5" fill="#e0ddd4"/><rect x="636" y="192" width="150" height="10" rx="5" fill="#a47b3d"/>
+  <text x="636" y="231" fill="#282924" font-family="Arial,sans-serif" font-size="12">1  candidate A  ·  strongest match</text>
+  <text x="636" y="253" fill="#77766e" font-family="Arial,sans-serif" font-size="12">2  candidate B</text>
+  <text x="34" y="362" fill="#77766e" font-family="Arial,sans-serif" font-size="12">The model returns an ordered shortlist; it does not prove that the top match is correct.</text>
+</svg>

@@ -7,41 +7,84 @@
   <meta name="theme-color" content="#000000">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self' ; script-src-attr 'none'; style-src 'self' ; font-src 'self'; img-src 'self' data: ; connect-src 'self' ; media-src 'self'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="description" content="A vision-language retrieval model combines vehicle appearance, surroundings, and direction to find a vehicle from a natural-language description.">
+  <meta name="description" content="How a model matches a written description to a vehicle using appearance, scene context, and direction.">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Multi-Branch Deep Neural Model for Natural Language-Based Vehicle Retrieval">
-  <meta property="og:description" content="A vision-language retrieval model combines vehicle appearance, surroundings, and direction to find a vehicle from a natural-language description.">
+  <meta property="og:title" content="Find a Vehicle from Text">
+  <meta property="og:description" content="How a model matches a written description to a vehicle using appearance, scene context, and direction.">
   <meta property="og:image" content="https://academyofscience.in/assets/research/computer-vision-ads.png">
-  <meta property="og:image:alt" content="Research illustration for Multi-Branch Deep Neural Model for Natural Language-Based Vehicle Retrieval">
+  <meta property="og:image:alt" content="Research illustration for Find a Vehicle from Text">
   <meta property="og:url" content="https://academyofscience.in/notes/multibranch-language-vehicle-retrieval.html">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://academyofscience.in/notes/multibranch-language-vehicle-retrieval.html">
-  <title>Multi-Branch Deep Neural Model for Natural Language-Based Vehicle Retrieval — Academy of Science</title>
+  <title>Find a Vehicle from Text — Academy of Science</title>
   <link rel="icon" href="../assets/logo.png">
   <script src="../themes/active-theme.js?v=dcda7e55ac87"></script>
   <script src="../mode-init.js?v=1"></script>
-  <link rel="stylesheet" href="../styles.css?v=45">
+  <link rel="stylesheet" href="../styles.css?v=45"><link rel="stylesheet" href="../vehicle-article-labs.css?v=1">
 </head>
 <body class="article-page" data-entry-format="research">
   <a class="skip-link" href="#article-main">Skip to article</a><div class="noise" aria-hidden="true"></div>
   <header class="site-header profile-header"><a class="brand" href="../index.html#top" aria-label="Academy of Science, home"><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span></a><nav class="primary-nav" id="primary-navigation" aria-label="Primary navigation" data-open="false"><a href="../index.html#top">Home</a><a href="../notes.html">Portfolio</a><a href="../index.html#capabilities">Capabilities</a><a href="../index.html#people">People</a><a href="../index.html#about">About</a><a href="../index.html#contact">Contact</a></nav><button class="site-nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><span class="site-nav-toggle-label">Menu</span><span class="site-nav-toggle-icon" aria-hidden="true"><i></i><i></i></span></button><button class="page-mode-toggle" id="pageModeToggle" type="button" aria-pressed="false"><span></span> Geek mode</button></header>
   <main id="article-main" tabindex="-1">
-    <header class="article-hero"><a class="back-link" href="../notes.html">← Portfolio</a><p class="eyebrow"><span>R&amp;D</span><span>4 min read</span></p><h1>Multi-Branch Deep Neural Model for Natural Language-Based Vehicle Retrieval</h1><p>A vision-language retrieval model combines vehicle appearance, surroundings, and direction to find a vehicle from a natural-language description.</p><div class="article-date"><span>Academy of Science</span><time datetime="2023-01-01">2023</time></div><p class="article-contributors"><a href="../shankaranarayan.html">Shankaranarayan N</a> <span>Lead author</span></p></header>
+    <header class="article-hero"><a class="back-link" href="../notes.html">← Portfolio</a><p class="eyebrow"><span>R&amp;D</span><span>4 min read</span></p><h1>Find a Vehicle from Text</h1><p>How a model matches a written description to a vehicle using appearance, scene context, and direction.</p><div class="article-date"><span>Academy of Science</span><time datetime="2023-05-06">6 May 2023</time></div><p class="article-contributors"><a href="../shankaranarayan.html">Shankaranarayan N</a> <span>Lead author</span></p></header>
 
-    <div class="article-layout"><aside><span>PORTFOLIO</span><div class="reading-line" aria-hidden="true"><i></i></div><a href="../notes.html">Browse the portfolio ↗</a></aside><div class="article-column"><article class="markdown-body" id="article-content"><h2>Problem</h2>
-<p>Natural-language vehicle retrieval aims to identify a vehicle in video from a written description. This work proposes a multi-branch model that represents visual appearance, environmental context, and direction, then compares the combined representation with the description.</p>
+    <div class="article-layout"><aside><span>PORTFOLIO</span><div class="reading-line" aria-hidden="true"><i></i></div><a href="../notes.html">Browse the portfolio ↗</a></aside><div class="article-column"><article class="markdown-body" id="article-content"><p><img class="article-inline-visual" src="../assets/research/vehicle-text-retrieval.svg" alt="A text query and three visual cues are encoded, compared, and used to rank vehicles." loading="lazy"></p>
+<h2>Problem</h2>
+<p>Imagine an operator sees a white vehicle turn left beside a bus, then needs to find it in hours of traffic footage. A useful search system has to connect that sentence to the right vehicle track, even when the wording is informal and the camera view contains many similar cars.</p>
+<p>This task is more demanding than classifying an image as “car” or “truck.” The description can refer to the vehicle’s color and type, its direction, nearby vehicles, or the scene around it. The same vehicle also changes appearance as it moves through the frame. The paper studies retrieval from a <strong>single-view video</strong>: given a written description, rank the candidate vehicle tracks so the intended one appears near the top.</p>
 <h2>Approach</h2>
-<p>The model combines vehicle appearance and contextual cues rather than relying on appearance alone. The authors evaluate it on CityFlow-NL, a dataset for natural-language vehicle retrieval. Shankaranarayan N. and S. Sowmya Kamath are listed as authors.</p>
+<p>The authors first prepare the video as two kinds of visual input: frames from the full scene, which preserve context, and cropped vehicle images, which focus on the target. They pair these with the natural-language descriptions associated with each track.</p>
+<p>The model then learns a shared representation through two branches:</p>
+<ul>
+<li><strong>Text branch:</strong> BERT or RoBERTa turns the description into a 768-value representation, which the model projects to 256 values.</li>
+<li><strong>Visual branch:</strong> one sub-branch encodes the full scene, another encodes the cropped vehicle, and a bidirectional LSTM encodes its trajectory or direction. Their 512-, 512-, and 128-value features are combined and projected to 256 values.</li>
+</ul>
+<p>During training, bidirectional contrastive losses teach the text and visual representations to agree for a matching track and differ for other tracks. At search time, the model compares a description with candidate vehicle representations using cosine similarity, then sorts candidates by score. This lets appearance, context, and motion contribute to a match instead of forcing the system to rely on vehicle color alone.</p>
+<p>The paper tests seven combinations of visual and text encoders on CityFlow-NL. The image side includes VGG, ResNet-50, ResNeXt-50, and ViT-B/16 or ViT-B/32; the text side uses BERT or RoBERTa. Training runs for 20 epochs at a learning rate of 1e-5 on a CUDA GPU cluster.</p>
+<h2>Try the matching flow</h2>
+<section class="vehicle-lab text-retrieval-lab" data-text-retrieval-lab aria-labelledby="textLabTitle">
+  <header class="vehicle-lab-head"><div><span class="vehicle-lab-kicker">INTERACTIVE · TOY RETRIEVER</span><h3 id="textLabTitle">Follow a description into a ranked list</h3></div><p>Choose a search, then switch off a signal to see what that branch contributes.</p></header>
+  <div class="text-lab-presets" role="group" aria-label="Choose a sample vehicle description">
+    <button type="button" data-text-query="silver" aria-pressed="true">Silver sedan · left turn</button>
+    <button type="button" data-text-query="blue" aria-pressed="false">Blue hatchback · straight</button>
+    <button type="button" data-text-query="white" aria-pressed="false">White van · right turn</button>
+  </div>
+  <div class="text-lab-query"><span>SEARCH DESCRIPTION</span><b data-text-query-label>“A silver sedan turns left beside a bus.”</b><small>In the paper, this text is paired with a vehicle track from video.</small></div>
+  <div class="text-lab-flow" data-text-flow="appearance context motion">
+    <svg viewBox="0 0 900 260" role="img" aria-label="A text description passes through a language encoder. Video frames split into appearance, scene, and motion branches. Both representations are compared to rank candidate vehicles.">
+      <path class="lab-flow-path" d="M210 60 334 51M210 176H278M278 118V224M278 118H334M278 171H334M278 224H334M518 51H588V116H633M518 118H588M518 171H588M518 224H588M588 118V224M588 171H633"/>
+      <path class="lab-flow-pulse" d="M210 60 334 51M210 176H278M278 118V224M278 118H334M278 171H334M278 224H334M518 51H588V116H633M518 118H588M518 171H588M518 224H588M588 118V224M588 171H633"/>
+      <rect class="lab-node lab-node-query" x="20" y="30" width="190" height="60" rx="12"/><text class="lab-svg-kicker" x="40" y="53">TEXT DESCRIPTION</text><text class="lab-svg-label" x="40" y="74">written query</text>
+      <rect class="lab-node lab-node-video" x="20" y="146" width="190" height="60" rx="12"/><text class="lab-svg-kicker" x="40" y="169">VIDEO TRACK</text><text class="lab-svg-label" x="40" y="190">frames + trajectory</text>
+      <rect class="lab-node lab-node-query" x="344" y="25" width="174" height="52" rx="10"/><text class="lab-svg-kicker" x="364" y="46">TEXT ENCODER</text><text class="lab-svg-label" x="364" y="66">BERT / RoBERTa</text>
+      <rect class="lab-node lab-node-cue" data-svg-cue="appearance" x="344" y="98" width="174" height="40" rx="9"/><text class="lab-svg-kicker" x="364" y="123">01 · VEHICLE CROP</text>
+      <rect class="lab-node lab-node-cue" data-svg-cue="context" x="344" y="151" width="174" height="40" rx="9"/><text class="lab-svg-kicker" x="364" y="176">02 · SCENE CONTEXT</text>
+      <rect class="lab-node lab-node-cue" data-svg-cue="motion" x="344" y="204" width="174" height="40" rx="9"/><text class="lab-svg-kicker" x="364" y="229">03 · DIRECTION / PATH</text>
+      <rect class="lab-node lab-node-match" x="643" y="91" width="232" height="92" rx="14"/><text class="lab-svg-kicker" x="667" y="119">COMPARE FEATURES</text><text class="lab-svg-label" x="667" y="146">similarity → ranking</text><text class="lab-svg-small" x="667" y="166">not a class probability</text>
+      <circle class="lab-packet" r="5"><animateMotion dur="3s" repeatCount="indefinite" path="M210 60 334 51"/></circle>
+      <circle class="lab-packet lab-packet-two" r="5"><animateMotion dur="3.6s" repeatCount="indefinite" path="M210 176H278V118H334"/></circle>
+    </svg>
+    <p class="vehicle-lab-scroll-note">Swipe sideways to follow the branches.</p>
+  </div>
+  <div class="text-lab-controls"><div><span class="vehicle-lab-label">INCLUDE THESE CLUES</span><div class="text-lab-toggles" role="group" aria-label="Toggle clues used in the toy match">
+    <button type="button" data-text-cue="appearance" aria-pressed="true">Appearance</button><button type="button" data-text-cue="context" aria-pressed="true">Surroundings</button><button type="button" data-text-cue="motion" aria-pressed="true">Direction</button>
+  </div></div><p data-text-cue-note aria-live="polite">All three visual branches are contributing to this illustrative match.</p></div>
+  <div class="text-lab-results"><div class="vehicle-lab-label">CANDIDATE RANKING</div><ol data-text-results aria-live="polite"></ol></div>
+  <p class="vehicle-lab-caveat">Toy illustration: the points come from a small hand-written matching rule. They are not output from the published model, a real video search, or a confidence score.</p>
+</section>
+
 <h2>Findings</h2>
-<p>The indexed paper summary reports a standardized mean reciprocal rank (MRR) of 0.15, described by the authors as on par with state-of-the-art models at publication time.</p>
+<p>By MRR, the best tested pairing was ViT-B/16 with RoBERTa. It reached <strong>MRR 0.1499</strong>, <strong>Recall@5 20.14%</strong>, and <strong>Recall@10 31.20%</strong>. MRR rewards putting the first correct match high in the ranked list; Recall@5 and Recall@10 ask whether a correct match appears among the first five or ten candidates. The paper reports <strong>MRR 0.0269</strong> for the CityFlow-NL baseline. The highest Recall@10 came from a different setup—ViT-B/32 with BERT, at <strong>33.16%</strong>—so “best” depends on the retrieval measure being optimized.</p>
+<p>The results also show that the choice of encoder matters: the tested vision transformers generally scored above the tested CNNs, and the RoBERTa configurations generally scored above their BERT counterparts. This is evidence about these seven configurations on this benchmark, not a universal rule that transformers always win. The paper does not report inference latency, request capacity, or tests on a new camera network, so its scores do not establish production readiness.</p>
+<p>The authors identify back-translation and richer multi-branch text representations as future work. Those ideas target a real weakness of the setup: one short sentence may not fully express a vehicle’s appearance, surroundings, and movement.</p>
+<h2>Paper</h2>
+<p>“Multi-branch Deep Neural Model for Natural Language-Based Vehicle Retrieval,” by N. Shankaranarayan and S. Sowmya Kamath. <em>Computer Vision and Machine Intelligence: Proceedings of CVMI 2022</em>, LNNS 586, pp. 603–613, Springer, 6 May 2023.</p>
 <h2>Citations and publications</h2>
 <ul>
-<li><a href="https://link.springer.com/book/10.1007/978-981-19-7867-8" rel="noopener noreferrer">Springer volume and chapter listing</a></li>
-<li><a href="https://doi.org/10.1007/978-981-19-7867-8_48" rel="noopener noreferrer">Chapter DOI</a></li>
-<li><a href="https://eurekamag.com/research/099/804/099804867.php" rel="noopener noreferrer">Indexed abstract and reported MRR</a></li>
+<li><a href="https://link.springer.com/chapter/10.1007/978-981-19-7867-8_48" rel="noopener noreferrer">Springer chapter, abstract, and DOI</a></li>
 </ul></article><section class="article-share" aria-labelledby="articleShareTitle" data-note-url="https://academyofscience.in/notes/multibranch-language-vehicle-retrieval.html"><div><p class="eyebrow"><span>PORTFOLIO / SHARE</span></p><h2 id="articleShareTitle">Pass this work along.</h2><p>Share the entry directly, or make a visual card for your post.</p></div><div class="article-share-actions"><a class="share-action-primary" data-share-linkedin href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Facademyofscience.in%2Fnotes%2Fmultibranch-language-vehicle-retrieval.html" target="_blank" rel="noopener noreferrer"><span>Share on LinkedIn</span><b aria-hidden="true">↗</b></a><button class="share-action-secondary" type="button" data-copy-url>Copy article URL</button><button class="share-action-secondary" type="button" data-native-share hidden>Share from this device</button><button class="share-open-button" type="button" data-open-share><span>Create social image</span><b aria-hidden="true">↗</b></button><span class="article-share-status" role="status" aria-live="polite" data-inline-share-status></span></div></section></div></div>
   </main>
-  <dialog class="share-dialog" id="fieldNoteShareDialog" aria-labelledby="shareDialogTitle" data-note-title="Multi-Branch Deep Neural Model for Natural Language-Based Vehicle Retrieval" data-note-category="R&amp;D" data-note-number="003" data-note-url="https://academyofscience.in/notes/multibranch-language-vehicle-retrieval.html">
+  <dialog class="share-dialog" id="fieldNoteShareDialog" aria-labelledby="shareDialogTitle" data-note-title="Find a Vehicle from Text" data-note-category="R&amp;D" data-note-number="003" data-note-url="https://academyofscience.in/notes/multibranch-language-vehicle-retrieval.html">
     <div class="share-dialog-frame">
       <header class="share-dialog-head"><div><p>PORTFOLIO / SHARE STUDIO</p><h2 id="shareDialogTitle">Shape your post</h2></div><button type="button" class="share-close" data-close-share aria-label="Close share studio">×</button></header>
       <div class="share-dialog-content">
@@ -49,8 +92,8 @@
           <div class="share-card" data-share-card data-format="linkedin">
             <div class="share-card-top"><span>ACADEMY OF SCIENCE</span><span>PORTFOLIO / R&amp;D</span></div>
             <p class="share-card-number">003 / R&amp;D</p>
-            <h3 data-share-title>Multi-Branch Deep Neural Model for Natural Language-Based Vehicle Retrieval</h3>
-            <p class="share-card-summary" data-share-summary>A vision-language retrieval model combines vehicle appearance, surroundings, and direction to find a vehicle from a natural-language description.</p>
+            <h3 data-share-title>Find a Vehicle from Text</h3>
+            <p class="share-card-summary" data-share-summary>How a model matches a written description to a vehicle using appearance, scene context, and direction.</p>
             <div class="share-card-orbit" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
             <div class="share-card-bottom"><span>INDEPENDENT AI RESEARCH &amp; DEVELOPMENT</span><span>ACADEMYOFSCIENCE.IN</span></div>
           </div>
@@ -70,6 +113,6 @@
     </div>
   </dialog>
   <footer class="site-footer"><div><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div><p>Ideas being tested.<br>Knowledge worth sharing.</p><div class="footer-meta"><a href="../notes.html">More from the portfolio ↑</a></div></footer>
-  <script src="../page-mode.js?v=1"></script><script src="../theme-assets.js?v=8"></script><script src="../note-sharing.js?v=2"></script><script src="../site-nav.js?v=1"></script><script src="../video-summary.js?v=2"></script>
+  <script src="../page-mode.js?v=1"></script><script src="../theme-assets.js?v=8"></script><script src="../note-sharing.js?v=2"></script><script src="../site-nav.js?v=1"></script><script src="../video-summary.js?v=2"></script><script src="../vehicle-article-labs.js?v=1"></script>
 </body>
 </html>

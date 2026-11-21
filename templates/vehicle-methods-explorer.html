@@ -1,0 +1,17 @@
+<section class="vehicle-lab methods-lab" data-methods-lab aria-labelledby="methodsLabTitle">
+  <header class="vehicle-lab-head"><div><span class="vehicle-lab-kicker">INTERACTIVE · REVIEW EXPLORER</span><h3 id="methodsLabTitle">Add one capability at a time</h3></div><p>Choose a stage to see what it adds to vehicle retrieval—and what extra work comes with it.</p></header>
+  <div class="methods-stage-select" role="group" aria-label="Explore stages in the review taxonomy">
+    <button type="button" data-method-stage="1" aria-pressed="false"><span>01</span>Features</button><button type="button" data-method-stage="2" aria-pressed="false"><span>02</span>Metric learning</button><button type="button" data-method-stage="3" aria-pressed="false"><span>03</span>Re-ranking</button><button type="button" data-method-stage="4" aria-pressed="true"><span>04</span>Data preparation</button>
+  </div>
+  <div class="methods-explorer-grid">
+    <div class="methods-stack" aria-label="Cumulative system stages">
+      <div class="method-layer is-included" data-method-layer="1"><span>01</span><b>Feature learning</b><small>Encode appearance and parts</small><i>INPUT → FEATURES</i></div>
+      <div class="method-layer is-included" data-method-layer="2"><span>02</span><b>Metric learning</b><small>Shape distances by identity</small><i>FEATURES → RANKING SPACE</i></div>
+      <div class="method-layer is-included" data-method-layer="3"><span>03</span><b>Post-processing</b><small>Re-rank with context</small><i>RANKING → REFINED LIST</i></div>
+      <div class="method-layer is-included" data-method-layer="4"><span>04</span><b>Pre-processing</b><small>Prepare or adapt the data</small><i>DATA → TRAINING INPUT</i></div>
+    </div>
+    <div class="methods-stage-detail" aria-live="polite"><span class="vehicle-lab-label" data-method-class>CLASS 4 · CUMULATIVE</span><h4 data-method-title>Prepare difficult data</h4><p data-method-description>Image cleanup, synthetic viewpoints, and domain adaptation can address missing or difficult training examples.</p><div class="methods-tradeoff"><b>Trade-off</b><p data-method-tradeoff>More preprocessing can improve coverage, but synthetic images may differ from real camera footage and adaptation adds work.</p></div></div>
+  </div>
+  <div class="methods-dataset"><div><span class="vehicle-lab-label">DATASET COUNTS IN THE REVIEW</span><p>Benchmarks differ in scale and camera coverage; their scores are not directly comparable.</p></div><div class="methods-dataset-tabs" role="group" aria-label="Choose a dataset"><button type="button" data-method-dataset="veri" aria-pressed="true">VeRi-776</button><button type="button" data-method-dataset="wild" aria-pressed="false">VeRi-Wild</button><button type="button" data-method-dataset="cityflow" aria-pressed="false">CityFlow</button></div><div class="methods-dataset-counts" aria-live="polite"><div><b data-dataset-images>~50k</b><span>images</span></div><div><b data-dataset-vehicles>776</b><span>identities</span></div><div><b data-dataset-cameras>20</b><span>cameras</span></div></div></div>
+  <p class="vehicle-lab-caveat">This is the paper’s organizing map, not a universal deployment checklist. A system only needs the stages that solve its actual data and retrieval problems.</p>
+</section>

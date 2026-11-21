@@ -7,40 +7,70 @@
   <meta name="theme-color" content="#000000">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-src 'none'; script-src 'self' ; script-src-attr 'none'; style-src 'self' ; font-src 'self'; img-src 'self' data: ; connect-src 'self' ; media-src 'self'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="description" content="A computationally efficient vehicle re-identification approach combines deep features, image retrieval, and relevance feedback to improve ranking quality.">
+  <meta name="description" content="A vehicle-image search improves its ranking when a person marks early results as relevant or irrelevant.">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="A Novel Approach for Real-Time Vehicle Re-Identification Using Content-Based Image Retrieval with Relevance Feedback">
-  <meta property="og:description" content="A computationally efficient vehicle re-identification approach combines deep features, image retrieval, and relevance feedback to improve ranking quality.">
+  <meta property="og:title" content="Vehicle Search with Feedback">
+  <meta property="og:description" content="A vehicle-image search improves its ranking when a person marks early results as relevant or irrelevant.">
   <meta property="og:image" content="https://academyofscience.in/assets/research/computer-vision-ads.png">
-  <meta property="og:image:alt" content="Research illustration for A Novel Approach for Real-Time Vehicle Re-Identification Using Content-Based Image Retrieval with Relevance Feedback">
+  <meta property="og:image:alt" content="Research illustration for Vehicle Search with Feedback">
   <meta property="og:url" content="https://academyofscience.in/notes/vehicle-reidentification-relevance-feedback.html">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://academyofscience.in/notes/vehicle-reidentification-relevance-feedback.html">
-  <title>A Novel Approach for Real-Time Vehicle Re-Identification Using Content-Based Image Retrieval with Relevance Feedback — Academy of Science</title>
+  <title>Vehicle Search with Feedback — Academy of Science</title>
   <link rel="icon" href="../assets/logo.png">
   <script src="../themes/active-theme.js?v=dcda7e55ac87"></script>
   <script src="../mode-init.js?v=1"></script>
-  <link rel="stylesheet" href="../styles.css?v=45">
+  <link rel="stylesheet" href="../styles.css?v=45"><link rel="stylesheet" href="../vehicle-article-labs.css?v=1">
 </head>
 <body class="article-page" data-entry-format="research">
   <a class="skip-link" href="#article-main">Skip to article</a><div class="noise" aria-hidden="true"></div>
   <header class="site-header profile-header"><a class="brand" href="../index.html#top" aria-label="Academy of Science, home"><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><span><b>Academy of Science</b><small>Independent AI research &amp; development</small></span></a><nav class="primary-nav" id="primary-navigation" aria-label="Primary navigation" data-open="false"><a href="../index.html#top">Home</a><a href="../notes.html">Portfolio</a><a href="../index.html#capabilities">Capabilities</a><a href="../index.html#people">People</a><a href="../index.html#about">About</a><a href="../index.html#contact">Contact</a></nav><button class="site-nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><span class="site-nav-toggle-label">Menu</span><span class="site-nav-toggle-icon" aria-hidden="true"><i></i><i></i></span></button><button class="page-mode-toggle" id="pageModeToggle" type="button" aria-pressed="false"><span></span> Geek mode</button></header>
   <main id="article-main" tabindex="-1">
-    <header class="article-hero"><a class="back-link" href="../notes.html">← Portfolio</a><p class="eyebrow"><span>R&amp;D</span><span>4 min read</span></p><h1>A Novel Approach for Real-Time Vehicle Re-Identification Using Content-Based Image Retrieval with Relevance Feedback</h1><p>A computationally efficient vehicle re-identification approach combines deep features, image retrieval, and relevance feedback to improve ranking quality.</p><div class="article-date"><span>Academy of Science</span><time datetime="2023-01-01">2023</time></div><p class="article-contributors"><a href="../shankaranarayan.html">Shankaranarayan N</a> <span>Lead author</span></p></header>
+    <header class="article-hero"><a class="back-link" href="../notes.html">← Portfolio</a><p class="eyebrow"><span>R&amp;D</span><span>4 min read</span></p><h1>Vehicle Search with Feedback</h1><p>A vehicle-image search improves its ranking when a person marks early results as relevant or irrelevant.</p><div class="article-date"><span>Academy of Science</span><time datetime="2023-06-07">7 June 2023</time></div><p class="article-contributors"><a href="../shankaranarayan.html">Shankaranarayan N</a> <span>Lead author</span></p></header>
 
-    <div class="article-layout"><aside><span>PORTFOLIO</span><div class="reading-line" aria-hidden="true"><i></i></div><a href="../notes.html">Browse the portfolio ↗</a></aside><div class="article-column"><article class="markdown-body" id="article-content"><h2>Problem</h2>
-<p>Vehicle re-identification searches for the same vehicle across a gallery of images, despite changes in camera angle, lighting, and appearance. This work proposes a content-based image retrieval approach using computationally efficient deep neural features, with relevance feedback as a post-processing step.</p>
+    <div class="article-layout"><aside><span>PORTFOLIO</span><div class="reading-line" aria-hidden="true"><i></i></div><a href="../notes.html">Browse the portfolio ↗</a></aside><div class="article-column"><article class="markdown-body" id="article-content"><p><img class="article-inline-visual" src="../assets/research/vehicle-retrieval-feedback.svg" alt="A vehicle query is ranked against a gallery, then feedback can refine the ranking." loading="lazy"></p>
+<h2>Problem</h2>
+<p>Vehicle re-identification starts with one <strong>query image</strong> and searches a <strong>gallery</strong> for other views of the same vehicle. A system may need to match the car across different cameras, angles, distances, lighting, and partial obstruction. Two different vehicles can look alike, while the same vehicle can look very different from another viewpoint.</p>
+<p>The paper focuses on a practical follow-up question: after the system returns an initial ranked list, can information about those results improve the next search? This matters when a person can inspect a few candidates and correct the system, but it also raises a risk: if the system assumes its own first guesses are right, an early mistake may steer later results in the wrong direction.</p>
 <h2>Approach</h2>
-<p>The paper combines deep feature extraction with an image-retrieval workflow and adds user relevance feedback to refine returned candidates. Shankaranarayan N. and S. Sowmya Kamath are listed as authors.</p>
+<p>The workflow has three parts: encode images, rank the gallery, and optionally refine the query.</p>
+<ol>
+<li><strong>Encode:</strong> a ResNet feature extractor is trained with triplet loss and cross-entropy loss. Triplet loss pulls features for the same vehicle closer and pushes features for different vehicles apart; cross-entropy trains the identity classifier. After training, the classifier layer is removed and each image is stored as a 2,048-value feature vector.</li>
+<li><strong>Rank:</strong> the system compares the query vector with precomputed gallery vectors using Euclidean distance. Smaller distance means a closer feature match, so that image appears higher in the list.</li>
+<li><strong>Refine:</strong> the paper compares two feedback strategies. With <strong>explicit feedback</strong>, a person marks results as relevant or irrelevant, and relevant images help reformulate the query. With <strong>blind feedback</strong>, the system assumes the top <em>n</em> results are relevant and averages their features into the query without a person checking them.</li>
+</ol>
+<p>The evaluation uses VeRi-776, a dataset of traffic images with 776 vehicle identities recorded by 20 cameras. Its test setup contains 1,678 query images and 11,579 gallery images representing 200 identities. The authors vary the feedback type and how many top results are used, then measure mean average precision (mAP) and Rank-k accuracy.</p>
+<h2>Explore the feedback experiment</h2>
+<section class="vehicle-lab feedback-lab" data-feedback-lab aria-labelledby="feedbackLabTitle">
+  <header class="vehicle-lab-head"><div><span class="vehicle-lab-kicker">INTERACTIVE · PAPER EXPERIMENT</span><h3 id="feedbackLabTitle">Who decides whether the first matches are right?</h3></div><p>Switch the feedback rule and the number of results used. The scores below are taken from the paper’s VeRi-776 experiment.</p></header>
+  <div class="feedback-mode-row"><span class="vehicle-lab-label">FEEDBACK RULE</span><div role="group" aria-label="Choose relevance feedback method"><button type="button" data-feedback-mode="baseline" aria-pressed="false">Baseline · no feedback</button><button type="button" data-feedback-mode="explicit" aria-pressed="true">Explicit · person checks</button><button type="button" data-feedback-mode="blind" aria-pressed="false">Blind · assume top results</button></div></div>
+  <div class="feedback-flow" data-feedback-flow="explicit">
+    <div class="feedback-step is-active" data-feedback-step="rank"><span>01</span><b>Rank gallery</b><small>ResNet features + distance</small></div><i aria-hidden="true">→</i>
+    <div class="feedback-step" data-feedback-step="judge"><span>02</span><b data-feedback-step-label>Person checks</b><small data-feedback-step-copy>Relevant or not?</small></div><i aria-hidden="true">→</i>
+    <div class="feedback-step" data-feedback-step="refine"><span>03</span><b>Refine query</b><small>Re-rank the candidates</small></div>
+  </div>
+  <div class="feedback-depth-row"><div><span class="vehicle-lab-label">HOW MANY TOP RESULTS FEED BACK?</span><div role="group" aria-label="Choose number of top results" class="feedback-depth-buttons">
+    <button type="button" data-feedback-depth="1" aria-pressed="false">Top 1</button><button type="button" data-feedback-depth="3" aria-pressed="false">Top 3</button><button type="button" data-feedback-depth="5" aria-pressed="false">Top 5</button><button type="button" data-feedback-depth="10" aria-pressed="false">Top 10</button><button type="button" data-feedback-depth="20" aria-pressed="true">Top 20</button>
+  </div></div><p data-feedback-explanation aria-live="polite">A person verifies the top 20 candidates before their features refine the query.</p></div>
+  <div class="feedback-results" aria-live="polite">
+    <div class="feedback-metric" data-feedback-metric="map"><div><span>mAP</span><b data-feedback-value>34.2%</b></div><small>quality across the ranked list</small><progress class="feedback-track" data-feedback-bar max="100" value="34.2" aria-label="Mean average precision"></progress></div>
+    <div class="feedback-metric" data-feedback-metric="rank1"><div><span>Rank-1</span><b data-feedback-value>83.9%</b></div><small>first result is correct</small><progress class="feedback-track" data-feedback-bar max="100" value="83.9" aria-label="Rank-1 accuracy"></progress></div>
+  </div>
+  <p class="vehicle-lab-caveat">These are reported benchmark scores, not a running classifier. The paper reports quality metrics, not production latency or throughput.</p>
+</section>
+
 <h2>Findings</h2>
-<p>The published abstract reports significant improvement in mean average precision and Rank@k after relevance feedback. The abstract record does not provide metric values, so no numeric gain is stated here.</p>
+<p>Explicit feedback helped in this experiment, especially when the person could judge more of the top results. With the top 20 checked results, <strong>mAP rose from 26.5% to 34.2%</strong> and <strong>Rank-1 rose from 61.6% to 83.9%</strong>. mAP summarizes relevance across the ranked list; Rank-1 is the share of queries whose first result is correct.</p>
+<p>Blind feedback had the opposite effect on this model. Assuming just the top result was correct reduced mAP to <strong>7.4%</strong> and Rank-1 to <strong>13.0%</strong>. The authors explain that the base ranking was not strong enough to make those automatic assumptions safe. Blind feedback can be faster because it needs no person in the loop, but this experiment shows the tradeoff: speed can amplify an incorrect match. It may be more appropriate when the initial ranking is already reliable, and should be tested on the target data.</p>
+<p>The paper describes the approach as real-time, but the reported experiment measures retrieval quality, not end-to-end response time, throughput, or performance under live traffic load. Its benchmark improvements therefore do not establish that the implementation meets a production latency target.</p>
+<h2>Paper</h2>
+<p>“A Novel Approach for Real-Time Vehicle Re-identification Using Content-Based Image Retrieval with Relevance Feedback,” by N. Shankaranarayan and S. Sowmya Kamath. <em>Machine Learning and Big Data Analytics</em>, Springer Proceedings in Mathematics &amp; Statistics 401, pp. 203–212, Springer, 7 June 2023.</p>
 <h2>Citations and publications</h2>
 <ul>
-<li><a href="https://doi.org/10.1007/978-3-031-15175-0_16" rel="noopener noreferrer">Springer chapter record and abstract</a></li>
-<li><a href="https://smartcity.efri.uniri.hr/article.php?id=3230" rel="noopener noreferrer">Bibliographic record with abstract</a></li>
+<li><a href="https://link.springer.com/chapter/10.1007/978-3-031-15175-0_16" rel="noopener noreferrer">Springer chapter, abstract, and DOI</a></li>
 </ul></article><section class="article-share" aria-labelledby="articleShareTitle" data-note-url="https://academyofscience.in/notes/vehicle-reidentification-relevance-feedback.html"><div><p class="eyebrow"><span>PORTFOLIO / SHARE</span></p><h2 id="articleShareTitle">Pass this work along.</h2><p>Share the entry directly, or make a visual card for your post.</p></div><div class="article-share-actions"><a class="share-action-primary" data-share-linkedin href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Facademyofscience.in%2Fnotes%2Fvehicle-reidentification-relevance-feedback.html" target="_blank" rel="noopener noreferrer"><span>Share on LinkedIn</span><b aria-hidden="true">↗</b></a><button class="share-action-secondary" type="button" data-copy-url>Copy article URL</button><button class="share-action-secondary" type="button" data-native-share hidden>Share from this device</button><button class="share-open-button" type="button" data-open-share><span>Create social image</span><b aria-hidden="true">↗</b></button><span class="article-share-status" role="status" aria-live="polite" data-inline-share-status></span></div></section></div></div>
   </main>
-  <dialog class="share-dialog" id="fieldNoteShareDialog" aria-labelledby="shareDialogTitle" data-note-title="A Novel Approach for Real-Time Vehicle Re-Identification Using Content-Based Image Retrieval with Relevance Feedback" data-note-category="R&amp;D" data-note-number="001" data-note-url="https://academyofscience.in/notes/vehicle-reidentification-relevance-feedback.html">
+  <dialog class="share-dialog" id="fieldNoteShareDialog" aria-labelledby="shareDialogTitle" data-note-title="Vehicle Search with Feedback" data-note-category="R&amp;D" data-note-number="001" data-note-url="https://academyofscience.in/notes/vehicle-reidentification-relevance-feedback.html">
     <div class="share-dialog-frame">
       <header class="share-dialog-head"><div><p>PORTFOLIO / SHARE STUDIO</p><h2 id="shareDialogTitle">Shape your post</h2></div><button type="button" class="share-close" data-close-share aria-label="Close share studio">×</button></header>
       <div class="share-dialog-content">
@@ -48,8 +78,8 @@
           <div class="share-card" data-share-card data-format="linkedin">
             <div class="share-card-top"><span>ACADEMY OF SCIENCE</span><span>PORTFOLIO / R&amp;D</span></div>
             <p class="share-card-number">001 / R&amp;D</p>
-            <h3 data-share-title>A Novel Approach for Real-Time Vehicle Re-Identification Using Content-Based Image Retrieval with Relevance Feedback</h3>
-            <p class="share-card-summary" data-share-summary>A computationally efficient vehicle re-identification approach combines deep features, image retrieval, and relevance feedback to improve ranking quality.</p>
+            <h3 data-share-title>Vehicle Search with Feedback</h3>
+            <p class="share-card-summary" data-share-summary>A vehicle-image search improves its ranking when a person marks early results as relevant or irrelevant.</p>
             <div class="share-card-orbit" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
             <div class="share-card-bottom"><span>INDEPENDENT AI RESEARCH &amp; DEVELOPMENT</span><span>ACADEMYOFSCIENCE.IN</span></div>
           </div>
@@ -69,6 +99,6 @@
     </div>
   </dialog>
   <footer class="site-footer"><div><img src="../assets/logo.png" data-theme-logo alt="" width="48" height="48"><p><b>Academy of Science</b><br>Independent AI research &amp; development</p></div><p>Ideas being tested.<br>Knowledge worth sharing.</p><div class="footer-meta"><a href="../notes.html">More from the portfolio ↑</a></div></footer>
-  <script src="../page-mode.js?v=1"></script><script src="../theme-assets.js?v=8"></script><script src="../note-sharing.js?v=2"></script><script src="../site-nav.js?v=1"></script><script src="../video-summary.js?v=2"></script>
+  <script src="../page-mode.js?v=1"></script><script src="../theme-assets.js?v=8"></script><script src="../note-sharing.js?v=2"></script><script src="../site-nav.js?v=1"></script><script src="../video-summary.js?v=2"></script><script src="../vehicle-article-labs.js?v=1"></script>
 </body>
 </html>

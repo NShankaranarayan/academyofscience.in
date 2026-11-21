@@ -322,6 +322,11 @@ def render_markdown(markdown: str) -> str:
     code_lines: list[str] = []
     code_language = ""
     in_code = False
+    vehicle_labs = {
+        "{{vehicle-text-lab}}": "vehicle-text-lab.html",
+        "{{vehicle-feedback-lab}}": "vehicle-feedback-lab.html",
+        "{{vehicle-methods-explorer}}": "vehicle-methods-explorer.html",
+    }
 
     def flush_paragraph() -> None:
         if paragraph:
@@ -356,6 +361,10 @@ def render_markdown(markdown: str) -> str:
         if stripped == "{{xai-timing}}":
             flush_paragraph(); close_list(); flush_quote()
             output.append((TEMPLATE_DIR / "xai-timing.html").read_text(encoding="utf-8"))
+            continue
+        if stripped in vehicle_labs:
+            flush_paragraph(); close_list(); flush_quote()
+            output.append((TEMPLATE_DIR / vehicle_labs[stripped]).read_text(encoding="utf-8"))
             continue
         fence = re.match(r"^```([A-Za-z0-9_-]*)$", stripped)
         if fence:
@@ -495,6 +504,9 @@ def build_articles(notes: list[Note]) -> None:
         has_xai_playground = "{{xai-playground}}" in note.body
         has_xai_vision = "{{xai-vision-explorer}}" in note.body
         has_xai_timing = "{{xai-timing}}" in note.body
+        has_vehicle_lab = any(token in note.body for token in (
+            "{{vehicle-text-lab}}", "{{vehicle-feedback-lab}}", "{{vehicle-methods-explorer}}"
+        ))
         video_csp["EXTRA_SCRIPT_CSP"] = " ".join(filter(None, [
             video_csp["VIDEO_SCRIPT_CSP"],
         ]))
@@ -524,6 +536,8 @@ def build_articles(notes: list[Note]) -> None:
             "XAI_VISION_ASSETS": '<link rel="stylesheet" href="../xai-playground.css?v=4">' if has_xai_vision and not has_xai_playground else "",
             "XAI_VISION_SCRIPT": '<script src="../xai-vision.js?v=3"></script>' if has_xai_vision else "",
             "XAI_TIMING_SCRIPT": '<script src="../xai-timing.js?v=1"></script>' if has_xai_timing else "",
+            "VEHICLE_LAB_ASSETS": '<link rel="stylesheet" href="../vehicle-article-labs.css?v=1">' if has_vehicle_lab else "",
+            "VEHICLE_LAB_SCRIPT": '<script src="../vehicle-article-labs.js?v=1"></script>' if has_vehicle_lab else "",
         }), encoding="utf-8")
         for alias in note.aliases:
             alias_path = OUTPUT_DIR / f"{alias}.html"
