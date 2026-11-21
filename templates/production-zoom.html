@@ -1,0 +1,85 @@
+<section class="production-zoom" data-production-zoom aria-label="Six stages from an AI model container to an internet service">
+  <div class="zoom-topline"><span>MODEL → PRODUCTION</span><span>ONE IDEA · SIX SCALES</span></div>
+  <div class="zoom-stage" data-zoom-stage data-level="0" tabindex="0" role="group" aria-label="Use the controls to zoom out from one model container to the internet">
+    <svg class="zoom-scene" viewBox="0 0 1000 600" role="img" aria-label="Six animated diagrams showing an AI service growing from one container to an internet-connected system">
+      <defs>
+        <pattern id="zoom-grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="currentColor" stroke-opacity=".08" stroke-width="1"/></pattern>
+        <marker id="zoom-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#999b91"/></marker>
+      </defs>
+      <rect width="1000" height="600" fill="url(#zoom-grid)"/>
+
+      <g class="scene-container">
+        <text class="scene-kicker" x="500" y="95" text-anchor="middle">ONE DOCKER CONTAINER</text>
+        <rect class="container-boundary" x="220" y="125" width="560" height="365" rx="18"/>
+        <text class="scene-label" x="270" y="172">MODEL SERVICE</text>
+        <rect class="model-card" x="345" y="220" width="310" height="205" rx="12"/>
+        <g class="neural-mark"><path d="M414 286 460 255 508 286 556 255M414 346 460 376 508 346 556 376M414 286v60m48-91v121m48-91v60m48-91v121"/><circle cx="414" cy="286" r="8"/><circle cx="414" cy="346" r="8"/><circle cx="460" cy="255" r="8"/><circle cx="460" cy="376" r="8"/><circle cx="508" cy="286" r="8"/><circle cx="508" cy="346" r="8"/><circle cx="556" cy="255" r="8"/><circle cx="556" cy="376" r="8"/></g>
+        <text class="model-name" x="500" y="402" text-anchor="middle">YOUR AI MODEL</text>
+        <text class="scene-foot" x="500" y="535" text-anchor="middle">A container gives the model a repeatable place to run.</text>
+      </g>
+
+      <g class="scene-connected">
+        <text class="scene-kicker" x="500" y="88" text-anchor="middle">CONTAINERS START TALKING</text>
+        <rect class="service-box" x="65" y="220" width="230" height="160" rx="12"/><text class="box-title" x="180" y="267" text-anchor="middle">MODEL API</text><g class="neural-small"><circle cx="151" cy="311" r="5"/><circle cx="180" cy="300" r="5"/><circle cx="209" cy="311" r="5"/><circle cx="151" cy="337" r="5"/><circle cx="180" cy="348" r="5"/><circle cx="209" cy="337" r="5"/><path d="m156 309 19-7 19 7m-38 28 19 8 19-8m-24-25v30m10-33v36"/></g>
+        <rect class="service-box" x="700" y="142" width="235" height="140" rx="12"/><text class="box-title" x="817" y="188" text-anchor="middle">DATABASE</text><ellipse class="db-icon" cx="817" cy="220" rx="40" ry="12"/><path class="db-icon" d="M777 220v24c0 7 18 13 40 13s40-6 40-13v-24m-80 12c0 7 18 13 40 13s40-6 40-13"/>
+        <rect class="service-box" x="700" y="350" width="235" height="140" rx="12"/><text class="box-title" x="817" y="394" text-anchor="middle">WORKER</text><path class="worker-mark" d="M786 421h62v39h-62zM798 433h38m-38 13h24"/>
+        <rect class="bus-box" x="390" y="267" width="220" height="120" rx="12"/><text class="box-title" x="500" y="312" text-anchor="middle">EVENT BUS</text><text class="box-sub" x="500" y="342" text-anchor="middle">Kafka · Pub/Sub</text><circle class="bus-dot" cx="450" cy="367" r="4"/><circle class="bus-dot" cx="475" cy="367" r="4"/><circle class="bus-dot" cx="500" cy="367" r="4"/><circle class="bus-dot" cx="525" cy="367" r="4"/><circle class="bus-dot" cx="550" cy="367" r="4"/>
+        <path class="connection" marker-end="url(#zoom-arrow)" d="M295 265C445 170 570 155 700 205"/><text class="wire-label" x="480" y="173" text-anchor="middle">API / DB CLIENT</text>
+        <path class="connection event-wire" marker-end="url(#zoom-arrow)" d="M295 330H390"/><text class="wire-label" x="343" y="316" text-anchor="middle">PUBLISH</text>
+        <path class="connection event-wire" marker-end="url(#zoom-arrow)" d="M610 330C653 330 663 420 700 420"/><text class="wire-label" x="659" y="370" text-anchor="middle">EVENTS</text>
+        <text class="scene-foot" x="500" y="550" text-anchor="middle">Request/response for a direct call · events for work that can happen later.</text>
+      </g>
+
+      <g class="scene-scale">
+        <text class="scene-kicker" x="500" y="95" text-anchor="middle">ONE SERVICE · MORE CAPACITY</text>
+        <rect class="service-box" x="335" y="145" width="330" height="76" rx="12"/><text class="box-title" x="500" y="192" text-anchor="middle">ONE MODEL SERVICE ADDRESS</text>
+        <path class="connection" marker-end="url(#zoom-arrow)" d="M500 221v54M180 275h640M180 275v60m213-60v60m214-60v60m213-60v60"/>
+        <g class="replica-card"><rect x="100" y="335" width="160" height="110" rx="12"/><text x="180" y="382" text-anchor="middle">MODEL</text><text class="box-sub" x="180" y="411" text-anchor="middle">copy 01</text></g>
+        <g class="replica-card"><rect x="313" y="335" width="160" height="110" rx="12"/><text x="393" y="382" text-anchor="middle">MODEL</text><text class="box-sub" x="393" y="411" text-anchor="middle">copy 02</text></g>
+        <g class="replica-card"><rect x="527" y="335" width="160" height="110" rx="12"/><text x="607" y="382" text-anchor="middle">MODEL</text><text class="box-sub" x="607" y="411" text-anchor="middle">copy 03</text></g>
+        <g class="replica-card"><rect x="740" y="335" width="160" height="110" rx="12"/><text x="820" y="382" text-anchor="middle">MODEL</text><text class="box-sub" x="820" y="411" text-anchor="middle">copy 04</text></g>
+        <text class="scene-foot" x="500" y="510" text-anchor="middle">A router shares requests across copies. More copies can handle more traffic.</text>
+      </g>
+
+      <g class="scene-local">
+        <text class="scene-kicker" x="500" y="90" text-anchor="middle">ONE LOCAL KUBERNETES CLUSTER</text>
+        <rect class="cluster-boundary" x="115" y="125" width="770" height="365" rx="18"/>
+        <text class="cluster-note" x="160" y="174">YOUR MACHINE</text><text class="cluster-note" x="840" y="174" text-anchor="end">ONE CLUSTER</text>
+        <rect class="local-service" x="335" y="205" width="330" height="58" rx="10"/><text class="box-title" x="500" y="242" text-anchor="middle">SERVICE</text>
+        <path class="connection" marker-end="url(#zoom-arrow)" d="M500 263v38M270 301h460M270 301v32m230-32v32m230-32v32"/>
+        <g class="pod-card"><rect x="190" y="333" width="160" height="100" rx="10"/><text x="270" y="376" text-anchor="middle">MODEL POD</text><text class="box-sub" x="270" y="404" text-anchor="middle">container</text></g>
+        <g class="pod-card"><rect x="420" y="333" width="160" height="100" rx="10"/><text x="500" y="376" text-anchor="middle">MODEL POD</text><text class="box-sub" x="500" y="404" text-anchor="middle">container</text></g>
+        <g class="pod-card"><rect x="650" y="333" width="160" height="100" rx="10"/><text x="730" y="376" text-anchor="middle">MODEL POD</text><text class="box-sub" x="730" y="404" text-anchor="middle">container</text></g>
+        <text class="scene-foot" x="500" y="540" text-anchor="middle">Kubernetes keeps the desired Pods running and gives them a stable service.</text>
+      </g>
+
+      <g class="scene-multicluster">
+        <text class="scene-kicker" x="500" y="88" text-anchor="middle">SERVICES CAN SPAN CLUSTERS</text>
+        <rect class="cluster-boundary" x="55" y="150" width="350" height="310" rx="18"/><text class="cluster-note" x="85" y="193">CLUSTER A</text>
+        <rect class="local-service" x="115" y="236" width="230" height="54" rx="10"/><text class="box-title" x="230" y="271" text-anchor="middle">MODEL SERVICE</text>
+        <rect class="pod-card" x="130" y="334" width="200" height="75" rx="10"/><text class="box-title" x="230" y="380" text-anchor="middle">MODEL PODS</text>
+        <rect class="cluster-boundary" x="595" y="150" width="350" height="310" rx="18"/><text class="cluster-note" x="625" y="193">CLUSTER B</text>
+        <rect class="local-service" x="655" y="236" width="230" height="54" rx="10"/><text class="box-title" x="770" y="271" text-anchor="middle">DATA SERVICE</text>
+        <rect class="pod-card" x="670" y="334" width="200" height="75" rx="10"/><text class="box-title" x="770" y="380" text-anchor="middle">DATA PODS</text>
+        <path class="connection cross-cluster" marker-start="url(#zoom-arrow)" marker-end="url(#zoom-arrow)" d="M405 262H595"/><text class="wire-label" x="500" y="238" text-anchor="middle">HTTPS / gRPC</text><text class="box-sub" x="500" y="293" text-anchor="middle">gateway · identity · routing</text>
+        <text class="scene-foot" x="500" y="520" text-anchor="middle">Cross-cluster links need network routes, discovery, and security rules.</text>
+      </g>
+
+      <g class="scene-world">
+        <text class="scene-kicker" x="500" y="72" text-anchor="middle">A PERSON REACHES A SERVICE OVER THE INTERNET</text>
+        <g class="internet-orbit"><ellipse cx="500" cy="328" rx="345" ry="190"/><ellipse cx="500" cy="328" rx="225" ry="190"/><path d="M155 328h690M500 138v380M220 210l560 236M780 210 220 446"/></g>
+        <g class="world-user"><circle cx="145" cy="315" r="13"/><path d="M145 330v44m0-28-19 18m19-18 20 14m-20 14-15 25m15-25 17 22"/><text x="105" y="283">PERSON</text></g>
+        <circle class="world-globe" cx="500" cy="328" r="80"/><ellipse class="world-globe" cx="500" cy="328" rx="33" ry="80"/><path class="world-globe" d="M423 305h154m-154 46h154"/><text class="world-label" x="500" y="433" text-anchor="middle">INTERNET</text>
+        <path class="connection world-wire" marker-end="url(#zoom-arrow)" d="M171 331H415M585 331H780"/>
+        <g class="world-cluster" transform="translate(790 235)"><rect width="130" height="150" rx="12"/><text x="65" y="31" text-anchor="middle">SERVICE</text><rect x="20" y="51" width="90" height="34" rx="6"/><rect x="20" y="98" width="90" height="34" rx="6"/><circle cx="35" cy="68" r="4"/><circle cx="35" cy="115" r="4"/></g>
+        <circle class="world-node" cx="288" cy="210" r="5"/><circle class="world-node" cx="344" cy="453" r="5"/><circle class="world-node" cx="670" cy="199" r="5"/><circle class="world-node" cx="680" cy="459" r="5"/>
+        <text class="scene-foot" x="500" y="558" text-anchor="middle">The internet connects networks; services may run on clusters behind them.</text>
+      </g>
+    </svg>
+    <div class="zoom-hint" aria-hidden="true">SCROLL DOWN TO ZOOM OUT <span>·</span> DRAG LEFT / RIGHT</div>
+    <div class="zoom-controls"><button type="button" data-zoom-in aria-label="Zoom in">−</button><input data-zoom-range type="range" min="0" max="5" step="1" value="0" aria-label="Zoom level: container to internet"><button type="button" data-zoom-out aria-label="Zoom out">+</button><button type="button" data-zoom-reset>Reset</button></div>
+  </div>
+  <div class="zoom-caption" aria-live="polite"><div><span data-zoom-step>01 / 06</span><h3 data-zoom-title>One container. One model.</h3></div><p data-zoom-copy>Start with the model service in its own container. Zoom out to see what must connect around it.</p></div>
+  <div class="zoom-steps" role="tablist" aria-label="Choose a deployment stage"><button type="button" role="tab" aria-selected="true" data-zoom-tab="0"><span>01</span>Container</button><button type="button" role="tab" aria-selected="false" data-zoom-tab="1"><span>02</span>Connected</button><button type="button" role="tab" aria-selected="false" data-zoom-tab="2"><span>03</span>Replicas</button><button type="button" role="tab" aria-selected="false" data-zoom-tab="3"><span>04</span>Local cluster</button><button type="button" role="tab" aria-selected="false" data-zoom-tab="4"><span>05</span>Clusters</button><button type="button" role="tab" aria-selected="false" data-zoom-tab="5"><span>06</span>Internet</button></div>
+  <div class="zoom-footer"><span>FROM MODEL TO INTERNET</span><span>Scroll · drag · use + / − · choose a stage</span></div>
+</section>

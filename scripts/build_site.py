@@ -333,6 +333,10 @@ def render_markdown(markdown: str) -> str:
 
     for line in lines:
         stripped = line.strip()
+        if stripped == "{{production-zoom}}":
+            flush_paragraph(); close_list(); flush_quote()
+            output.append((TEMPLATE_DIR / "production-zoom.html").read_text(encoding="utf-8"))
+            continue
         fence = re.match(r"^```([A-Za-z0-9_-]*)$", stripped)
         if fence:
             flush_paragraph(); close_list(); flush_quote()
@@ -467,6 +471,7 @@ def build_articles(notes: list[Note]) -> None:
                 "VIDEO_STYLE_CSP": "'unsafe-inline'",
                 "VIDEO_CONNECT_CSP": "https://www.instagram.com",
             })
+        has_production_zoom = "{{production-zoom}}" in note.body
         path.write_text(fill_template("note.html", {
             "TITLE": html.escape(note.title, quote=True), "DESCRIPTION": html.escape(note.excerpt, quote=True),
             "SHARE_IMAGE_URL": html.escape(f"https://academyofscience.in/{note.share_image}", quote=True),
@@ -482,6 +487,8 @@ def build_articles(notes: list[Note]) -> None:
             ),
             "VIDEO_SUMMARY": video_summary_markup(note),
             "ARTICLE_BODY": render_markdown(note.body),
+            "PRODUCTION_ASSETS": '<link rel="stylesheet" href="../production-zoom.css?v=2">' if has_production_zoom else "",
+            "PRODUCTION_SCRIPT": '<script src="../production-zoom.js?v=2"></script>' if has_production_zoom else "",
         }), encoding="utf-8")
     for stale in OUTPUT_DIR.glob("*.html"):
         if stale not in expected:
