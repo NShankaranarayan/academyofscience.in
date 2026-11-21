@@ -19,25 +19,33 @@ excerpt: Follow a model outward—from its first container to connected services
 
 ## Explanation
 
-You trained a model. Now someone needs to call it reliably. Start with the model in one container, then zoom out one step at a time to see the communication, scaling, orchestration, and networking around it.
+You trained a model. Now someone needs to call it reliably. Start with the model in one container, then zoom out one step at a time to see the communication, scaling, orchestration, and networking around it. This is a map of choices, not a required stack: many first launches use a managed model endpoint and never need Kafka, Kubernetes, or multiple clusters.
 
 {{production-zoom}}
 
 ### What data engineering adds
 
-Production needs inputs that are prepared, versioned, validated, and available in the shape the model expects. The serving path returns predictions; data pipelines and monitoring help teams detect changed inputs, quality issues, and model drift, then decide whether to retrain or roll back.
+Data engineering makes the model's inputs dependable: it collects and transforms data, checks its schema and quality, tracks where it came from, and makes the right features available for training and prediction. Training and serving must agree on feature definitions and preprocessing; otherwise a model can receive different inputs in production than it saw during development.
 
-Kafka or a Pub/Sub service can carry events between producers and consumers. A direct model request usually uses an API. Airflow can schedule batch workflows; Flyte can orchestrate data and ML workflows. Those tools coordinate work around the service; they are not extra containers every model needs in its live request path. Docker packages the app and dependencies. Kubernetes can run and scale its containers.
+Kafka or a Pub/Sub service can carry events between producers and consumers. A direct model request usually uses an API. Airflow can schedule batch workflows; Flyte can orchestrate data and ML workflows. Those tools coordinate jobs around the service; they are not extra containers every model needs in its live request path. Docker packages the app and dependencies. Kubernetes can run and scale its containers.
 
-### A useful mental model
+### A sensible first production release
 
-Package the inference code and runtime. Include the model artifact in the image or load it from a model store. Run one or more copies behind a stable service. Expose that service through a controlled network entry point. Add monitoring, versioning, and a way to release or roll back safely.
+1. **Choose how predictions happen.** Use an online API when a caller needs an immediate answer; use batch scoring when predictions can be prepared on a schedule.
+2. **Define and validate the input contract.** Specify fields, types, missing-value behavior, preprocessing, and freshness. Check that training and serving produce compatible features.
+3. **Version the release.** Keep the model artifact, inference code, preprocessing, dependencies, and configuration traceable together. The model can be bundled in the image or loaded from a model store.
+4. **Release in stages.** Test with production-shaped inputs and expected resource needs, then send limited traffic to the new version. Protect the endpoint with authentication and rate limits; keep secrets out of the image. Keep a known-good version and a rollback procedure.
+5. **Monitor and respond.** Track latency, errors, availability, missing or shifted inputs, and prediction quality. Outcomes may arrive late; monitor proxy signals carefully and compare them with labeled outcomes when available. Investigate before triggering a retrain.
 
 Kubernetes is one way to orchestrate containers; it is not a requirement for every model. Cluster-to-cluster communication needs explicit network routing, identity, and security. The internet connects networks and public services; it is not made up of Kubernetes clusters.
 
+### What to learn next
+
+Start with **data contracts and validation**, then **batch vs. online serving** and **training-serving skew**. Next learn **model and data versioning**, **API security**, **container images**, and **safe release/rollback**. Add **workflow orchestration** for repeatable data or training jobs, and **monitoring** for service health and model behavior. Learn Kubernetes when you need to manage your own container workloads; it is one deployment option, not the first prerequisite.
+
 ## Visuals
 
-Use the controls, scroll, drag, or arrow keys to zoom outward from one model container through connected containers, service replicas, a local Kubernetes cluster, multiple clusters, and an internet-reachable service. The stages add one new idea at a time.
+Use the controls, scroll, or arrow keys to zoom outward from one model container through connected containers, service replicas, a local Kubernetes cluster, multiple clusters, and an internet-reachable service. Click any box to open a focused diagram and a practical use case below it. The stages add one new idea at a time.
 
 ## References
 
@@ -51,6 +59,9 @@ Use the controls, scroll, drag, or arrow keys to zoom outward from one model con
 - [Docker images package applications and their dependencies](https://docs.docker.com/get-started/introduction/index.html)
 - [Kubernetes cluster administration covers local, hosted, and multi-cluster setups](https://kubernetes.io/docs/concepts/cluster-administration/)
 - [Google Cloud: MLOps pipelines, model delivery, and monitoring](https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning)
+- [Google: Production ML logging, monitoring, and rollout guidance](https://developers.google.com/machine-learning/managing-ml-projects/production)
+- [Google: Training-serving skew and feature consistency](https://developers.google.com/machine-learning/guides/rules-of-ml/)
+- [MLflow Model Registry: model versioning, lineage, and aliases](https://www.mlflow.org/docs/latest/registry/)
 
 ## Related work
 

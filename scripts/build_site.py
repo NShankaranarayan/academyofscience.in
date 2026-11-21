@@ -487,8 +487,8 @@ def build_articles(notes: list[Note]) -> None:
             ),
             "VIDEO_SUMMARY": video_summary_markup(note),
             "ARTICLE_BODY": render_markdown(note.body),
-            "PRODUCTION_ASSETS": '<link rel="stylesheet" href="../production-zoom.css?v=2">' if has_production_zoom else "",
-            "PRODUCTION_SCRIPT": '<script src="../production-zoom.js?v=2"></script>' if has_production_zoom else "",
+            "PRODUCTION_ASSETS": '<link rel="stylesheet" href="../production-zoom.css?v=3">' if has_production_zoom else "",
+            "PRODUCTION_SCRIPT": '<script src="../production-zoom.js?v=3"></script>' if has_production_zoom else "",
         }), encoding="utf-8")
     for stale in OUTPUT_DIR.glob("*.html"):
         if stale not in expected:
