@@ -64,6 +64,10 @@ class Note:
     video_transcript: str
 
     @property
+    def share_image(self) -> str:
+        return f"assets/social-previews/{self.slug}.png"
+
+    @property
     def type_code(self) -> str:
         return "RD" if self.content_type == "R&D" else "ART"
 
@@ -474,6 +478,12 @@ def build_articles(notes: list[Note]) -> None:
     OUTPUT_DIR.mkdir(exist_ok=True)
     expected: set[Path] = set()
     for note in notes:
+        share_image_path = ROOT / note.share_image
+        if not share_image_path.is_file():
+            raise FileNotFoundError(
+                f"Missing social preview image for {note.slug}: {note.share_image}. "
+                "Run scripts/generate_social_previews.py after installing Pillow."
+            )
         path = OUTPUT_DIR / f"{note.slug}.html"
         expected.add(path)
         video_csp = {
@@ -509,6 +519,7 @@ def build_articles(notes: list[Note]) -> None:
         ]))
         path.write_text(fill_template("note.html", {
             "TITLE": html.escape(note.title, quote=True), "DESCRIPTION": html.escape(note.excerpt, quote=True),
+            "SHARE_IMAGE_URL": html.escape(f"https://academyofscience.in/{note.share_image}", quote=True),
             "HERO_LABEL": f'<p class="article-flag">{html.escape(note.hero_label)}</p>' if note.hero_label else "",
             "CATEGORY": html.escape(note.content_type, quote=True), "READ_TIME": html.escape(note.read_time),
             "FORMAT": html.escape(note.format, quote=True),

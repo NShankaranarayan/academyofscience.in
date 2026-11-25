@@ -8,6 +8,7 @@ The homepage and profile pages are hand-authored HTML. Portfolio articles are au
 
 - Python 3.9 or newer
 - A local HTTP server for previewing the site
+- Optional: Pillow, only needed to generate or refresh article social preview images
 
 No Python packages need to be installed.
 
@@ -154,7 +155,7 @@ The generator supports headings, paragraphs, emphasis, inline code, safe Markdow
 
 ### Sharing a Portfolio entry
 
-Detail pages provide a LinkedIn share link and a copy-URL action. Browsers with the Web Share API also show a device share action. **Create social image** opens the Share Kit, where visitors can personalize a caption and download a PNG sized for a LinkedIn post (1200 × 627), Instagram post (1080 × 1350), or Instagram story (1080 × 1920). Visitors upload Instagram images in the Instagram app; the website does not claim to publish directly to Instagram. Portfolio cards and page link-preview metadata are text-only and do not specify a thumbnail.
+Detail pages provide a LinkedIn share link and a copy-URL action. Browsers with the Web Share API also show a device share action. **Create social image** opens the Share Kit, where visitors can personalize a caption and download a PNG sized for a LinkedIn post (1200 × 627), Instagram post (1080 × 1350), or Instagram story (1080 × 1920). Visitors upload Instagram images in the Instagram app; the website does not claim to publish directly to Instagram. Each article URL also has a fixed, article-specific 1200 × 627 social card in its Open Graph metadata for WhatsApp and other link previews. That card uses the article title and excerpt; the visitor-customized download remains separate. Generate or refresh those static images with `python3 scripts/generate_social_previews.py`.
 
 ## Selecting the site theme
 
