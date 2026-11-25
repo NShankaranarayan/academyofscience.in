@@ -7,7 +7,6 @@ category: Research and Development
 format: research
 contributors: shankaranarayan|Lead author
 tags: Vehicle retrieval, Multimodal AI, Natural language
-shareImage: assets/research/computer-vision-ads.png
 sourceUrl: https://doi.org/10.1007/978-981-19-7867-8_48
 status: published
 readTime: 4 min read

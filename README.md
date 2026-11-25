@@ -138,7 +138,6 @@ Keep these optional fields inside the item's front matter. The video block inclu
 | `number` | Sequence number within the content type |
 | `home` | Set to `true` to include the note on the homepage |
 | `excerpt` | Library card, article introduction, and meta description |
-| `shareImage` | Optional image under `assets/` used for LinkedIn and social link previews; defaults to the XAI research illustration |
 | `tags` | Comma-separated topics used by Portfolio topic filters |
 | `sourceUrl` | Optional canonical publication or project link shown on the Portfolio card |
 
@@ -155,7 +154,7 @@ The generator supports headings, paragraphs, emphasis, inline code, safe Markdow
 
 ### Sharing a Portfolio entry
 
-Detail pages provide a LinkedIn share link and a copy-URL action. Browsers with the Web Share API also show a device share action. **Create social image** opens the Share Kit, where visitors can personalize a caption and download a PNG sized for a LinkedIn post (1200 × 627), Instagram post (1080 × 1350), or Instagram story (1080 × 1920). Visitors upload Instagram images in the Instagram app; the website does not claim to publish directly to Instagram. The article's `shareImage` and Open Graph metadata provide the thumbnail for link previews.
+Detail pages provide a LinkedIn share link and a copy-URL action. Browsers with the Web Share API also show a device share action. **Create social image** opens the Share Kit, where visitors can personalize a caption and download a PNG sized for a LinkedIn post (1200 × 627), Instagram post (1080 × 1350), or Instagram story (1080 × 1920). Visitors upload Instagram images in the Instagram app; the website does not claim to publish directly to Instagram. Portfolio cards and page link-preview metadata are text-only and do not specify a thumbnail.
 
 ## Selecting the site theme
 

@@ -52,7 +52,6 @@ class Note:
     number: str
     home: bool
     body: str
-    share_image: str
     contributors: list[Contributor]
     tags: list[str]
     source_url: str
@@ -186,10 +185,6 @@ def load_notes() -> list[Note]:
             raise ValueError(f"{path}: date must use YYYY-MM-DD") from error
         if not metadata["number"].isdigit():
             raise ValueError(f"{path}: number must contain digits only")
-        share_image = metadata.get("shareImage", "assets/research/explainable-ai.png")
-        share_image_path = (ROOT / share_image).resolve()
-        if not share_image.startswith("assets/") or not share_image_path.is_file() or ROOT not in share_image_path.parents:
-            raise ValueError(f"{path}: shareImage must point to an existing file under assets/")
         source_url = metadata.get("sourceUrl", "")
         if source_url:
             safe_source_url = safe_url(source_url)
@@ -237,7 +232,7 @@ def load_notes() -> list[Note]:
             published=metadata["date"], read_time=metadata["readTime"],
             excerpt=metadata["excerpt"], number=metadata["number"],
             home=metadata.get("home", "false").lower() == "true", body=body,
-            share_image=share_image, contributors=contributors,
+            contributors=contributors,
             tags=[tag.strip() for tag in metadata["tags"].split(",") if tag.strip()],
             source_url=source_url,
             video_url=video_url, video_provider=video_provider, video_id=video_id, video_duration=video_duration,
@@ -444,7 +439,6 @@ def note_card(note: Note, *, home: bool = False) -> str:
                    if safe_source_url else "")
     return (f'<article class="library-note{extra}" data-category="{category}" data-authors="{html.escape(author_ids, quote=True)}" '
             f'data-tags="{html.escape("|".join(tag.casefold() for tag in note.tags), quote=True)}">'
-            f'<a class="library-cover" href="{href}" aria-label="Open {title}"><img src="{html.escape(note.share_image, quote=True)}" alt="" loading="lazy"></a>'
             f'<div class="library-note-body"><p class="portfolio-card-meta"><span>{category}</span><time datetime="{html.escape(note.published, quote=True)}">{html.escape(note.display_date)}</time></p>'
             f'<h3><a href="{href}">{title}</a></h3><span class="portfolio-card-excerpt">{excerpt}</span>'
             f'<small class="note-contributors">{contributors}</small><div class="portfolio-tags">{tags}</div>'
@@ -516,7 +510,6 @@ def build_articles(notes: list[Note]) -> None:
         path.write_text(fill_template("note.html", {
             "TITLE": html.escape(note.title, quote=True), "DESCRIPTION": html.escape(note.excerpt, quote=True),
             "HERO_LABEL": f'<p class="article-flag">{html.escape(note.hero_label)}</p>' if note.hero_label else "",
-            "SHARE_IMAGE_URL": html.escape(f"https://academyofscience.in/{note.share_image}", quote=True),
             "CATEGORY": html.escape(note.content_type, quote=True), "READ_TIME": html.escape(note.read_time),
             "FORMAT": html.escape(note.format, quote=True),
             "EXCERPT": html.escape(note.excerpt), "DATE": html.escape(note.published, quote=True),
