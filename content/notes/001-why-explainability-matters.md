@@ -8,7 +8,6 @@ category: Articles
 format: article
 contributors: shankaranarayan|Author
 tags: Explainable AI, AI fundamentals, Responsible AI
-shareImage: assets/research/explainable-ai.png
 status: published
 readTime: 7 min · interactive examples
 number: 001

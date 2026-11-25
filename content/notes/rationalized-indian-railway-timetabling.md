@@ -7,7 +7,6 @@ category: Research and Development
 format: research
 contributors: satwik|Co-author
 tags: Railway optimization, Simulation, Timetabling
-shareImage: assets/research/embodied-physical-ai.png
 sourceUrl: https://doi.org/10.1287/inte.2023.1158
 status: published
 readTime: 5 min read

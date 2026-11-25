@@ -7,7 +7,6 @@ category: Research and Development
 format: research
 contributors: shankaranarayan|Lead author
 tags: Vehicle retrieval, Computer vision
-shareImage: assets/research/computer-vision-ads.png
 sourceUrl: https://doi.org/10.1007/978-3-031-15175-0_16
 status: published
 readTime: 4 min read

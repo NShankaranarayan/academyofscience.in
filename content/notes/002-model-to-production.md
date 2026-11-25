@@ -7,7 +7,6 @@ category: Articles
 format: article
 contributors: shankaranarayan|Author
 tags: AI engineering, Data engineering, MLOps
-shareImage: assets/research/model-to-production.png
 status: published
 readTime: 6 min + interactive
 heroLabel: The only data engineering article on this site
