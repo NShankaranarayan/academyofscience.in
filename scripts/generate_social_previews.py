@@ -12,10 +12,8 @@ from typing import Optional, Union
 
 from PIL import Image, ImageDraw, ImageFont
 
-from build_site import ROOT, load_notes
-
-
 WIDTH, HEIGHT = 1200, 627
+ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "assets" / "social-previews"
 BACKGROUND = "#090a0a"
 GOLD = "#d4aa60"
@@ -28,17 +26,22 @@ def load_font(size: int, *, bold: bool = False, mono: bool = False) -> Union[Ima
     if mono:
         candidates = [
             "/System/Library/Fonts/Supplemental/Courier New.ttf",
+            "C:/Windows/Fonts/cour.ttf",
             "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
         ]
     elif bold:
         candidates = [
             "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+            "C:/Windows/Fonts/arialbd.ttf",
             "/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
         ]
     else:
         candidates = [
             "/System/Library/Fonts/Supplemental/Arial.ttf",
+            "C:/Windows/Fonts/arial.ttf",
             "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         ]
     for candidate in candidates:
         if Path(candidate).is_file():
@@ -134,9 +137,9 @@ def make_preview(note) -> Image.Image:
     return image.convert("RGB")
 
 
-def main() -> None:
+def generate_social_previews(notes) -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    notes = load_notes()
+    expected = {f"{note.slug}.png" for note in notes}
     for note in notes:
         destination = OUTPUT_DIR / f"{note.slug}.png"
         make_preview(note).save(destination, format="PNG", optimize=True)
@@ -144,6 +147,17 @@ def main() -> None:
         if size_kb >= 600:
             raise ValueError(f"{destination} is {size_kb:.0f} KB; WhatsApp preview images must be under 600 KB")
         print(f"Generated {destination.relative_to(ROOT)} ({size_kb:.0f} KB)")
+
+    for stale in OUTPUT_DIR.glob("*.png"):
+        if stale.name not in expected:
+            stale.unlink()
+            print(f"Removed obsolete {stale.relative_to(ROOT)}")
+
+
+def main() -> None:
+    from build_site import load_notes
+
+    generate_social_previews(load_notes())
 
 
 if __name__ == "__main__":

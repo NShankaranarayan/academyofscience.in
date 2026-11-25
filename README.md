@@ -2,15 +2,19 @@
 
 Static website for [academyofscience.in](https://academyofscience.in), an independent AI research and development lab. The site is designed for GitHub Pages and has no runtime framework, package manager, database, or third-party JavaScript dependency.
 
-The homepage and profile pages are hand-authored HTML. Portfolio articles are authored in Markdown and converted into static HTML by a dependency-free Python build script. Normal and Geek modes share the same page content; Geek Mode is a visual theme, not a parallel copy of each page.
+The homepage and profile pages are hand-authored HTML. Portfolio articles are authored in Markdown and converted into static HTML by a Python build script. It also generates the article-specific social preview PNGs from each article's title and excerpt. Normal and Geek modes share the same page content; Geek Mode is a visual theme, not a parallel copy of each page.
 
 ## Requirements
 
-- Python 3.9 or newer
+- Python 3.8 or newer
 - A local HTTP server for previewing the site
-- Optional: Pillow, only needed to generate or refresh article social preview images
+- Pillow, used to generate article social preview images
 
-No Python packages need to be installed.
+Install the image-generation dependency once:
+
+```bash
+python3 -m pip install -r requirements.txt
+```
 
 ## Quick start
 
@@ -24,7 +28,9 @@ python3 -m http.server 8000
 
 Open [http://localhost:8000](http://localhost:8000).
 
-Always run the build before committing changes to Field Notes. The generated HTML is committed because GitHub Pages serves the repository directly without running a build step.
+When this workspace opens in VS Code, the **Watch articles and rebuild social images** task starts. It rebuilds the article pages and social cards when a Markdown note is created, edited, renamed, or deleted. Allow the workspace task to run if VS Code prompts. To start it manually, run **Tasks: Run Task** and select the watcher. `python3 scripts/build_site.py` also regenerates all preview images. The build removes obsolete generated PNGs and article pages after a note is deleted, renamed, or unpublished.
+
+Always run the build before committing changes to Field Notes. The generated HTML and PNGs are committed because GitHub Pages serves the repository directly without running a build step.
 
 ## Repository structure
 
@@ -43,6 +49,7 @@ Always run the build before committing changes to Field Notes. The generated HTM
 │   ├── logo-gold.svg           # Generated gold accent variant
 │   ├── logo-mark.svg           # Compact vector emblem used in Geek chrome
 │   ├── logo-mark-gold.svg      # Generated gold compact emblem
+│   ├── social-previews/        # Generated article-specific share cards
 │   ├── profiles/              # Profile project illustration atlases
 │   └── research/              # Homepage research illustrations
 │
@@ -55,7 +62,9 @@ Always run the build before committing changes to Field Notes. The generated HTM
 │   └── notes.html             # Field Notes library template
 │
 ├── scripts/
-│   ├── build_site.py          # Markdown renderer and static-site generator
+│   ├── build_site.py          # Markdown renderer, preview generation, and site build
+│   ├── generate_social_previews.py # Article-specific social card generator
+│   ├── watch_articles.py      # Rebuilds the site when Markdown notes change
 │   └── build_theme.py         # Compiles the repository-selected theme
 │
 ├── themes/
@@ -219,4 +228,4 @@ See [DESIGN.md](DESIGN.md) for the visual system and [SECURITY.md](SECURITY.md) 
 
 The root `CNAME` points to `academyofscience.in`. Configure GitHub Pages to publish from the intended branch and repository root. Enable **Enforce HTTPS** after DNS and certificate verification.
 
-Because generated HTML is committed, deployment requires no server-side or CI build process. A future CI workflow can run `python3 scripts/build_site.py` and fail when generated files are stale.
+Because generated HTML and social images are committed, deployment requires no server-side or CI build process. The local watcher and regular build keep those generated files aligned with the Markdown sources.

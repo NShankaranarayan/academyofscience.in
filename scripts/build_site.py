@@ -435,7 +435,8 @@ def note_card(note: Note, *, home: bool = False) -> str:
                 f'{html.escape(note.number)}</span><div><h3><a href="{href}">{title}</a></h3><p>{excerpt}</p>'
                 f'<small class="note-contributors">{contributors}</small></div><a class="note-card-arrow" href="{href}" aria-label="Open {title}">↗</a></article>')
     extra = " featured-note" if note.content_type == "Articles" else ""
-    author_ids = " ".join(person.profile.removesuffix(".html") for person in note.contributors)
+    author_ids = " ".join(person.profile[:-5] if person.profile.endswith(".html") else person.profile
+                           for person in note.contributors)
     category = html.escape(note.category, quote=True)
     tags = "".join(f'<span>{html.escape(tag)}</span>' for tag in note.tags)
     safe_source_url = safe_url(note.source_url) if note.source_url else None
@@ -481,8 +482,8 @@ def build_articles(notes: list[Note]) -> None:
         share_image_path = ROOT / note.share_image
         if not share_image_path.is_file():
             raise FileNotFoundError(
-                f"Missing social preview image for {note.slug}: {note.share_image}. "
-                "Run scripts/generate_social_previews.py after installing Pillow."
+                f"Missing generated social preview for {note.slug}: {note.share_image}. "
+                "Run scripts/build_site.py to regenerate article previews."
             )
         path = OUTPUT_DIR / f"{note.slug}.html"
         expected.add(path)
@@ -577,7 +578,7 @@ def build_notes_index(notes: list[Note]) -> None:
     authors = {}
     for note in notes:
         for person in note.contributors:
-            person_id = person.profile.removesuffix(".html")
+            person_id = person.profile[:-5] if person.profile.endswith(".html") else person.profile
             authors[person_id] = person.name
     author_options = [
         f'<option value="{html.escape(person_id, quote=True)}">{html.escape(name)}</option>'
@@ -631,10 +632,14 @@ def update_contributor_profiles(notes: list[Note]) -> None:
 
 def main() -> None:
     import subprocess
+
     subprocess.run(["python3", str(ROOT / "scripts" / "build_theme.py")], check=True)
     notes = load_notes()
     if not notes:
         raise ValueError("No published field notes found")
+    from generate_social_previews import generate_social_previews
+
+    generate_social_previews(notes)
     build_articles(notes)
     build_notes_index(notes)
     update_homepage(notes)
